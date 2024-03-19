@@ -1,0 +1,1 @@
+# SCPSL_PluginCollection
