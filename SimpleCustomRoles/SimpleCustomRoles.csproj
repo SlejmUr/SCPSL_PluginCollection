@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<PlatformTarget>x64</PlatformTarget>
+		<OutputType>Library</OutputType>
+
+		<AssemblyName>SimpleCustomRoles</AssemblyName>
+		<RootNamespace>SimpleCustomRoles</RootNamespace>
+
+		<Configurations>Release</Configurations>
+		<Platforms>AnyCPU</Platforms>
+		<Copyright>SlejmUr</Copyright>
+		<IsPackable>false</IsPackable>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<!-- Disable automatic generation of version attribute -->
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="EXILED" Version="8.8.0" ExcludeAssets="RUNTIME" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Mirror">
+	    <HintPath>..\AllRef\Mirror.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Mirror.Components">
+	    <HintPath>..\AllRef\Mirror.Components.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UnityEngine">
+	    <HintPath>..\AllRef\UnityEngine.dll</HintPath>
+	    <Private>False</Private>
+	  </Reference>
+	  <Reference Include="UnityEngine.CoreModule">
+	    <HintPath>..\AllRef\UnityEngine.CoreModule.dll</HintPath>
+	    <Private>False</Private>
+	  </Reference>
+	</ItemGroup>
+</Project>
