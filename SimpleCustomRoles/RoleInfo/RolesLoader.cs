@@ -19,17 +19,20 @@ namespace SimpleCustomRoles.RoleInfo
                 File.WriteAllText(Dir + "/Template.yml", Serialize(CreateTemplate()));
                 foreach (var file in Directory.GetFiles(Dir))
                 {
+                    if (file.Contains(".disable") || file.Contains(".d"))
+                        continue;
                     if (file.Contains(".yml"))
                     {
                         Log.Info(file + " Loaded as custom role!");
                         RoleInfos.Add(Deserialize(File.ReadAllText(file)));
                     }
+                    
                 }
             }
             else
             {
                 Directory.CreateDirectory(Dir);
-                File.WriteAllText(Dir + "/Template.yml", Serialize(CreateTemplate()));
+                File.WriteAllText(Dir + "/Template.yml.d", Serialize(CreateTemplate()));
             }
         }
 

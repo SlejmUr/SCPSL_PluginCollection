@@ -6,7 +6,7 @@ namespace SimpleCustomRoles
 {
     internal class HelperTxts
     {
-        static string Dir = Path.Combine(Paths.Configs, "SimpleCustomRoles");
+        static string Dir = Path.Combine(Path.Combine(Paths.Configs, "SimpleCustomRoles"), "HelpTXT");
         static Dictionary<string, string> TxtPair = new Dictionary<string, string>()
         {
             { "EffectTypes", "AmnesiaItems,\r\nAmnesiaVision,\r\nAsphyxiated,\r\nBleeding,\r\nBlinded,\r\nBurned,\r\nConcussed,\r\nCorroding,\r\nDeafened,\r\nDecontaminating,\r\nDisabled,\r\nEnsnared,\r\nExhausted,\r\nFlashed,\r\nHemorrhage,\r\nInvigorated,\r\nBodyshotReduction,\r\nPoisoned,\r\nScp207,\r\nInvisible,\r\nSinkHole,\r\nDamageReduction,\r\nMovementBoost,\r\nRainbowTaste,\r\nSeveredHands,\r\nStained,\r\nVitality,\r\nHypothermia,\r\nScp1853,\r\nCardiacArrest,\r\nInsufficientLighting,\r\nSoundtrackMute,\r\nSpawnProtected,\r\nTraumatized,\r\nAntiScp207,\r\nScanned,\r\nPocketCorroding,\r\nSilentWalk,\r\nMarshmallow,\r\nStrangled,\r\nGhostly" },
@@ -22,6 +22,8 @@ namespace SimpleCustomRoles
         };
         public static void WriteAll()
         {
+            if (!Directory.Exists(Dir))
+                Directory.CreateDirectory(Dir);
             foreach (var item in TxtPair)
             {
                 var txt = Path.Combine(Dir, item.Key);

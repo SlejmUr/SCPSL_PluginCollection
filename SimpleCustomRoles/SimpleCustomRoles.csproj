@@ -24,22 +24,26 @@
 
 	<ItemGroup>
 	  <PackageReference Include="EXILED" Version="8.8.0" ExcludeAssets="RUNTIME" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Reference Include="Assembly-CSharp-firstpass">
+	    <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
+	  </Reference>
 	  <Reference Include="Mirror">
-	    <HintPath>..\AllRef\Mirror.dll</HintPath>
+	    <HintPath>..\References\Mirror.dll</HintPath>
+	    <Private>False</Private>
 	  </Reference>
 	  <Reference Include="Mirror.Components">
-	    <HintPath>..\AllRef\Mirror.Components.dll</HintPath>
+	    <HintPath>..\References\Mirror.Components.dll</HintPath>
+	    <Private>False</Private>
 	  </Reference>
 	  <Reference Include="UnityEngine">
-	    <HintPath>..\AllRef\UnityEngine.dll</HintPath>
+	    <HintPath>..\References\UnityEngine.dll</HintPath>
 	    <Private>False</Private>
 	  </Reference>
 	  <Reference Include="UnityEngine.CoreModule">
-	    <HintPath>..\AllRef\UnityEngine.CoreModule.dll</HintPath>
+	    <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
 	    <Private>False</Private>
 	  </Reference>
 	</ItemGroup>

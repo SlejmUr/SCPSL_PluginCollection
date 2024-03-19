@@ -11,6 +11,7 @@ namespace SimpleCustomRoles.RoleInfo
         public int SpawnChance { get; set; } = 0;
         public int SpawnAmount { get; set; } = 0;
         public bool ReplaceInSpawnWave { get; set; } = false;
+        public bool UsedAfterDeath { get; set; } = false;
         public SpawnWaveSpecific SpawnWaveSpecific { get; set; } = new SpawnWaveSpecific();
         public RoleTypeId RoleToSpawnAs { get; set; } = RoleTypeId.None;
         public RoleTypeId RoleToReplace { get; set; } = RoleTypeId.None;
@@ -84,7 +85,19 @@ namespace SimpleCustomRoles.RoleInfo
         public V3 Scale { get; set; } = new V3();
         public RoleTypeId RoleAppearance { get; set; } = RoleTypeId.None;
         public bool CanEscape { get; set; } = true;
+        public RoleTypeId RoleAfterEscape { get; set; } = RoleTypeId.None;
+        public DeadBy DeadBy { get; set; } = new DeadBy();
+        public bool BypassEnabled { get; set; } = false;
     }
+
+    public class DeadBy
+    {
+        public bool IsConfigurated { get; set; } = false;
+        public RoleTypeId RoleAfterKilled { get; set; } = RoleTypeId.None;
+        public string RoleNameToRespawnAs { get; set; }
+        public List<string> RoleNameRandom { get; set; } = new List<string>();
+    }
+
 
     public class V3 //Vector3
     {

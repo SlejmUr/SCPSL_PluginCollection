@@ -14,7 +14,7 @@ namespace SimpleCustomRoles
         public override string Author => "SlejmUr";
         public override string Name => "SimpleCustomRoles";
         public override string Prefix => "SimpleCustomRoles";
-        public override Version Version => new Version(0,1);
+        public override Version Version => new Version(0,1,2);
         #endregion
 
         public RolesLoader RolesLoader;
@@ -28,6 +28,8 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Server.WaitingForPlayers += TheHandler.WaitingForPlayers;
             Exiled.Events.Handlers.Server.RoundStarted += TheHandler.RoundStarted;
             Exiled.Events.Handlers.Player.Escaping += TheHandler.Escaping;
+            Exiled.Events.Handlers.Player.Died += TheHandler.Died;
+
             RespawnManager.ServerOnRespawned += TheHandler.RespawnManager_ServerOnRespawned;
 
 
@@ -39,7 +41,10 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Server.WaitingForPlayers -= TheHandler.WaitingForPlayers;
             Exiled.Events.Handlers.Server.RoundStarted -= TheHandler.RoundStarted;
             Exiled.Events.Handlers.Player.Escaping -= TheHandler.Escaping;
+            Exiled.Events.Handlers.Player.Died -= TheHandler.Died;
+
             RespawnManager.ServerOnRespawned -= TheHandler.RespawnManager_ServerOnRespawned;
+
             RolesLoader.Dispose();
             RolesLoader = null;
             Instance = null;
