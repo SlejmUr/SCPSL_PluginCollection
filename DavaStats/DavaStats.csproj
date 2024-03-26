@@ -8,7 +8,7 @@
 		<AssemblyName>DavaStats</AssemblyName>
 		<RootNamespace>DavaStats</RootNamespace>
 
-		<Configurations>Release</Configurations>
+		<Configurations>Release;EXILED Release</Configurations>
 		<Platforms>AnyCPU</Platforms>
 		<Copyright>SlejmUr</Copyright>
 		<IsPackable>false</IsPackable>

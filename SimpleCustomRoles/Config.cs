@@ -7,5 +7,6 @@ namespace SimpleCustomRoles
     {
         public bool IsEnabled { get; set; }
         public bool Debug { get; set; }
+        public bool ShowInfo { get; set; }
     }
 }

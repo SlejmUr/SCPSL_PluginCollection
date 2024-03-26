@@ -8,7 +8,7 @@
 		<AssemblyName>SimpleCustomRoles</AssemblyName>
 		<RootNamespace>SimpleCustomRoles</RootNamespace>
 
-		<Configurations>Release</Configurations>
+		<Configurations>Release;EXILED Release</Configurations>
 		<Platforms>AnyCPU</Platforms>
 		<Copyright>SlejmUr</Copyright>
 		<IsPackable>false</IsPackable>
@@ -23,12 +23,27 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="TheYML.yml" />
+	  <None Remove="TheYML_NoComments.yml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="TheYML.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TheYML_NoComments.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="EXILED" Version="8.8.0" ExcludeAssets="RUNTIME" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Reference Include="Assembly-CSharp-firstpass">
 	    <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
+	    <Private>False</Private>
 	  </Reference>
 	  <Reference Include="Mirror">
 	    <HintPath>..\References\Mirror.dll</HintPath>

@@ -23,10 +23,8 @@ namespace SimpleCustomRoles.RoleInfo
                         continue;
                     if (file.Contains(".yml"))
                     {
-                        Log.Info(file + " Loaded as custom role!");
                         RoleInfos.Add(Deserialize(File.ReadAllText(file)));
                     }
-                    
                 }
             }
             else
@@ -110,7 +108,7 @@ namespace SimpleCustomRoles.RoleInfo
                 },
                 Ammos = new Dictionary<Exiled.API.Enums.AmmoType, ushort>()
                 {
-                    {  Exiled.API.Enums.AmmoType.Nato9, 30 }
+                    
                 }
             };
 

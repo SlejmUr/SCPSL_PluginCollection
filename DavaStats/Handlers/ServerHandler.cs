@@ -28,6 +28,8 @@ namespace DavaStats.Handlers
         {
             foreach (var item in respawningTeamEventArgs.Players)
             {
+                if (item.DoNotTrack)
+                    return;
                 var stat = Main.Instance.Statistic.GetStatForPlayer(item.UserId);
                 stat.ServerStat.Respawned++;
                 // Cheap check if what role you spawn in

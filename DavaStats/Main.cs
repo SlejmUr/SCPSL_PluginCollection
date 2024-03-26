@@ -1,7 +1,6 @@
 ﻿using DavaStats.DataBase;
 using DavaStats.Handlers;
 using Exiled.API.Features;
-using PluginAPI.Core;
 using System;
 
 namespace DavaStats
@@ -13,7 +12,7 @@ namespace DavaStats
         public override string Author => "SlejmUr";
         public override string Name => "DavaStats";
         public override string Prefix => "DavaStats";
-        public override Version Version => new Version(0,1);
+        public override Version Version => new Version(0,2,2);
         #endregion
         public IDatabase Database { get; private set; }
         public StatisticStuff Statistic { get; private set; }

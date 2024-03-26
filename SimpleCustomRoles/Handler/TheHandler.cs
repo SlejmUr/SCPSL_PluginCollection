@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using MEC;
+using Exiled.Events.Features;
+using Exiled.CustomItems.API;
 
 namespace SimpleCustomRoles.Handler
 {
@@ -19,43 +21,33 @@ namespace SimpleCustomRoles.Handler
 
         public static void Died(DiedEventArgs args)
         {
-            Log.Info("Died");
             PlayerCustomRole.Remove(args.Player.UserId);
             args.Player.Scale = Vector3.one;
             args.Player.Position += new Vector3(0, 1, 0);
-            Log.Info(args.Attacker == null);
             if (args.Attacker == null)
                 return;
             if (PlayerCustomRole.TryGetValue(args.Attacker.UserId, out var role))
             {
-                Log.Info("1");
                 if (role.Advanced.DeadBy.IsConfigurated)
                 {
-                    Log.Info("2");
                     if (role.Advanced.DeadBy.RoleAfterKilled != PlayerRoles.RoleTypeId.None)
                     {
-                        Log.Info("3");
                         args.Player.Role.Set(role.Advanced.DeadBy.RoleAfterKilled, PlayerRoles.RoleSpawnFlags.None);
                     }
                     else
                     {
-                        Log.Info("4");
                         if (!string.IsNullOrEmpty(role.Advanced.DeadBy.RoleNameToRespawnAs))
                         {
-                            Log.Info("4.1");
                             var customRoleInfo = AfterDeathRoles.Where(x=>x.RoleName == role.Advanced.DeadBy.RoleNameToRespawnAs).FirstOrDefault();
                             if (customRoleInfo == null)
                                 return;
-                            Log.Info("5");
                             SetCustomInfoToPlayer(args.Player, customRoleInfo);
                         }
                         else if (role.Advanced.DeadBy.RoleNameRandom.Count != 0)
                         {
-                            Log.Info("4.2");
                             var customRoleInfo = AfterDeathRoles.Where(x => x.RoleName == role.Advanced.DeadBy.RoleNameRandom.RandomItem()).FirstOrDefault();
                             if (customRoleInfo == null)
                                 return;
-                            Log.Info("6");
                             SetCustomInfoToPlayer(args.Player, customRoleInfo);
                         }
                     }
@@ -77,7 +69,6 @@ namespace SimpleCustomRoles.Handler
 
         public static void RespawnManager_ServerOnRespawned(SpawnableTeamType spawnableTeamType, List<ReferenceHub> players)
         {
-            Log.Info("RespawnManager_ServerOnRespawned");
             if (players.Count == 0)
                 return;
             foreach (var item in SpawningRoles)
@@ -86,14 +77,10 @@ namespace SimpleCustomRoles.Handler
                     continue;
                 if (spawnableTeamType != item.SpawnWaveSpecific.Team)
                 {
-                    Log.Info("item.SpawnWaveSpecific.Team");
                     continue;
                 }
-                Log.Info(players.Count);
-                Log.Info(item.SpawnWaveSpecific.MinimumTeamMemberRequired);
                 if (item.SpawnWaveSpecific.MinimumTeamMemberRequired > players.Count)
                 {
-                    Log.Info("Count > MinimumTeamMemberRequired");
                     continue;
                 }
 
@@ -102,7 +89,8 @@ namespace SimpleCustomRoles.Handler
                 var player = Player.List.Where(x => x.ReferenceHub == referenceHub).FirstOrDefault();
                 if (player == null)
                     continue;
-                Log.Info("Player choosen: " + player.UserId);
+                if (Main.Instance.Config.Debug)
+                    Log.Info("Player choosen: " + player.UserId);
                 SetCustomInfoToPlayer(player, item);
             }
         }
@@ -114,12 +102,14 @@ namespace SimpleCustomRoles.Handler
             SpawningRoles = new List<CustomRoleInfo>();
             AfterDeathRoles = new List<CustomRoleInfo>();
             Main.Instance.RolesLoader.Load();
-            Log.Info("Loading custom roles!");
+            if (Main.Instance.Config.Debug)
+                Log.Info("Loading custom roles!");
             foreach (var item in Main.Instance.RolesLoader.RoleInfos)
             {
                 if (item.UsedAfterDeath)
                 {
-                    Log.Info($"After Death Role added: " + item.RoleName);
+                    if (Main.Instance.Config.Debug)
+                        Log.Info($"After Death Role added: " + item.RoleName);
                     AfterDeathRoles.Add(item);
                     continue;
                 }
@@ -132,9 +122,11 @@ namespace SimpleCustomRoles.Handler
                         IsSpawning = true;
                         PlayersRolled.Add(item);
                     }
-                    Log.Info($"Rolled chance: {random} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ")  + "spawning.");
+                    if (Main.Instance.Config.Debug)
+                        Log.Info($"Rolled chance: {random} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ")  + "spawning.");
                 }
             }
+            Log.Info("Loading custom roles finished!");
         }
 
         public static void RoundStarted()
@@ -157,25 +149,35 @@ namespace SimpleCustomRoles.Handler
                 }
                 if (player == null)
                     continue;
-                Log.Info("Player Selected to spawn: " + player.UserId);
+                if (Main.Instance.Config.Debug)
+                    Log.Info("Player Selected to spawn: " + player.UserId);
                 SetCustomInfoToPlayer(player, item);
             }
         }
 
-
+        public static void SetFromCMD(Player player, CustomRoleInfo customRoleInfo)
+        {
+            if (PlayerCustomRole.ContainsKey(player.UserId))
+            {
+                PlayerCustomRole.Remove(player.UserId);
+            }
+            SetCustomInfoToPlayer(player, customRoleInfo);
+        }
         public static void SetCustomInfoToPlayer(Player player , CustomRoleInfo customRoleInfo)
         {
+            if (Main.Instance.Config.Debug)
+                Log.Info("SetCustomInfoToPlayer: " + player.UserId + " Role: " + customRoleInfo.RoleName);
             if (PlayerCustomRole.ContainsKey(player.UserId))
             {
                 return;
             }
             if (customRoleInfo.Location.UseDefault)
             {
-                player.Role.Set(customRoleInfo.RoleToSpawnAs, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
+                player.Role.Set(customRoleInfo.RoleToSpawnAs, Exiled.API.Enums.SpawnReason.ForceClass, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
             }
             else
             {
-                player.Role.Set(customRoleInfo.RoleToSpawnAs, PlayerRoles.RoleSpawnFlags.None);
+                player.Role.Set(customRoleInfo.RoleToSpawnAs, Exiled.API.Enums.SpawnReason.ForceClass, PlayerRoles.RoleSpawnFlags.None);
                 switch (customRoleInfo.Location.LocationSpawnPriority)
                 {
                     case LocationSpawnPriority.None:
@@ -184,33 +186,30 @@ namespace SimpleCustomRoles.Handler
                         if (customRoleInfo.Location.SpawnZones.Count > 0)
                         {
                             var tp = Room.List.Where(x => customRoleInfo.Location.SpawnZones.Contains(x.Zone)).GetRandomValue();
-                            player.Position = tp.AdjustRoomPosition();
+                            player.Teleport(tp.AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3());
                         }
                         break;
                     case LocationSpawnPriority.SpawnRoom:
                         if (customRoleInfo.Location.SpawnRooms.Count > 0)
                         {
                             var tp = Room.List.Where(x => customRoleInfo.Location.SpawnRooms.Contains(x.Type)).GetRandomValue();
-                            player.Position = tp.AdjustRoomPosition();
+                            player.Teleport(tp.AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3());
                         }
                         break;
                     case LocationSpawnPriority.ExactPosition:
                         if (customRoleInfo.Location.ExactPosition.ConvertFromV3() != new V3(0, 0, 0).ConvertFromV3())
                         {
-                            player.Position = customRoleInfo.Location.ExactPosition.ConvertFromV3();
+                            player.Teleport(customRoleInfo.Location.ExactPosition.ConvertFromV3());
                         }
                         break;
                     case LocationSpawnPriority.FullRandom:
-                        if (customRoleInfo.Location.SpawnRooms.Count > 0)
-                        {
-                            var tp = Room.List.GetRandomValue();
-                            player.Position = tp.AdjustRoomPosition();
-                        }
+                        player.Teleport(Room.List.GetRandomValue().AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3());
                         break;
                     default:
                         break;
                 }
             }
+            //Inventory and ammo
             player.ClearInventory(true);
             player.ResetInventory(customRoleInfo.InventoryItems);
             player.ClearAmmo();
@@ -218,6 +217,15 @@ namespace SimpleCustomRoles.Handler
             {
                 player.SetAmmo(ammo.Key, ammo.Value);
             }
+
+            // Custom Item
+            foreach (var item in customRoleInfo.CustomItemIds)
+            {
+                var id = Exiled.CustomItems.API.Features.CustomItem.Get(item);
+                id.Give(player);
+            }
+
+            //  HealthMod
             player.Health += customRoleInfo.HealthModifiers.Health;
             player.MaxHealth += customRoleInfo.HealthModifiers.Health;
             if (player.IsScp)
@@ -229,46 +237,65 @@ namespace SimpleCustomRoles.Handler
                 player.ArtificialHealth += customRoleInfo.HealthModifiers.Ahp;
                 player.MaxArtificialHealth += customRoleInfo.HealthModifiers.Ahp;
             }
+
+            //  HealthSet
+            if (customRoleInfo.HealthReplacer.UseReplace)
+            {
+                player.Health = customRoleInfo.HealthReplacer.Health;
+                player.MaxHealth = customRoleInfo.HealthReplacer.Health;
+                if (player.IsScp)
+                {
+                    player.HumeShield = customRoleInfo.HealthReplacer.HumeShield;
+                }
+                if (player.IsHuman)
+                {
+                    player.ArtificialHealth = customRoleInfo.HealthReplacer.Ahp;
+                    player.MaxArtificialHealth = customRoleInfo.HealthReplacer.Ahp;
+                }
+            }
+
+            //  Effect
             foreach (var effect in customRoleInfo.Effects)
             {
-                player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration);
+                Log.Info($"Effect {effect.EffectType.ToString()}: IsSet? " + player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration));
 
             }
-            if (Main.Instance.Config.Debug)
-            {
-                Log.Info(customRoleInfo.Advanced.Scale.ConvertFromV3());
-                Log.Info(new V3(0, 0, 0).ConvertFromV3());
-                Log.Info(customRoleInfo.Advanced.Scale.ConvertFromV3() != new V3(0, 0, 0).ConvertFromV3());
-            }
+            //  Scale
             if (customRoleInfo.Advanced.Scale.ConvertFromV3() != new V3(0, 0, 0).ConvertFromV3())
             {
-                if (Main.Instance.Config.Debug)
-                {
-                    Log.Info("Scale Before: " + player.Scale);
-                }
                 Timing.CallDelayed(2.5f, () => 
                 {
                     player.Scale = customRoleInfo.Advanced.Scale.ConvertFromV3();
-                    if (Main.Instance.Config.Debug)
-                    {
-                        Log.Info("Scale After: " + player.Scale);
-                    }
                 });
             }
-
+            //  HINT
             if (customRoleInfo.Hint.SpawnBroadcast != string.Empty)
             {
                 Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast(customRoleInfo.Hint.SpawnBroadcast, customRoleInfo.Hint.SpawnBroadcastDuration);
                 player.Broadcast(broadcast);
             }
-
             if (customRoleInfo.Hint.SpawnHint != string.Empty)
             {
                 player.ShowHint(customRoleInfo.Hint.SpawnHint, customRoleInfo.Hint.SpawnHintDuration);
             }
+
+            //  Appearance
             if (customRoleInfo.Advanced.RoleAppearance != PlayerRoles.RoleTypeId.None)
             {
                 player.ChangeAppearance(customRoleInfo.Advanced.RoleAppearance);
+            }
+
+
+            //Candy
+            if (customRoleInfo.Advanced.Candy.CandiesToGive.Count != 0)
+            {
+                foreach (var item in customRoleInfo.Advanced.Candy.CandiesToGive)
+                {
+                    if (item != InventorySystem.Items.Usables.Scp330.CandyKindID.None)
+                    {
+                        player.TryAddCandy(item);
+                    }
+                }
             }
 
             player.IsBypassModeEnabled = customRoleInfo.Advanced.BypassEnabled;

@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Enums;
+using InventorySystem.Items.Usables.Scp330;
 using PlayerRoles;
 using Respawning;
 using System.Collections.Generic;
@@ -20,8 +21,9 @@ namespace SimpleCustomRoles.RoleInfo
         public List<ItemType> InventoryItems { get; set; } = new List<ItemType>();
         public Dictionary<AmmoType, ushort> Ammos { get; set; } = new Dictionary<AmmoType, ushort>();
         public List<Effect> Effects { get; set; } = new List<Effect>();
-        public List<ushort> CustomItemIds { get; set; } = new List<ushort>();
+        public List<uint> CustomItemIds { get; set; } = new List<uint>();
         public HealthMod HealthModifiers { get; set; } = new HealthMod();
+        public HealthReplace HealthReplacer { get; set; } = new HealthReplace();
         public HintStuff Hint { get; set; } = new HintStuff();
         public Advanced Advanced { get; set; } = new Advanced();
 
@@ -43,10 +45,16 @@ namespace SimpleCustomRoles.RoleInfo
 
     }
 
-
-
     public class HealthMod
     {
+        public float Health { get; set; } = 0;
+        public float Ahp { get; set; } = 0;
+        public float HumeShield { get; set; } = 0;
+    }
+
+    public class HealthReplace
+    {
+        public bool UseReplace { get; set; } = false;
         public float Health { get; set; } = 0;
         public float Ahp { get; set; } = 0;
         public float HumeShield { get; set; } = 0;
@@ -60,6 +68,7 @@ namespace SimpleCustomRoles.RoleInfo
         public List<ZoneType> SpawnZones { get; set; }
         public List<RoomType> SpawnRooms { get; set; }
         public V3 ExactPosition { get; set; } = new V3();
+        public V3 OffsetPosition { get; set; } = new V3();
     }
 
     public enum LocationSpawnPriority
@@ -87,15 +96,23 @@ namespace SimpleCustomRoles.RoleInfo
         public bool CanEscape { get; set; } = true;
         public RoleTypeId RoleAfterEscape { get; set; } = RoleTypeId.None;
         public DeadBy DeadBy { get; set; } = new DeadBy();
+        public CandyStuff Candy { get; set; } = new CandyStuff();
         public bool BypassEnabled { get; set; } = false;
     }
 
     public class DeadBy
     {
         public bool IsConfigurated { get; set; } = false;
+        public RoleTypeId KillerRole { get; set; } = RoleTypeId.None;
+        public Team KillerTeam { get; set; } = Team.Dead;
         public RoleTypeId RoleAfterKilled { get; set; } = RoleTypeId.None;
         public string RoleNameToRespawnAs { get; set; }
         public List<string> RoleNameRandom { get; set; } = new List<string>();
+    }
+
+    public class CandyStuff
+    {
+        public List<CandyKindID> CandiesToGive { get; set; } = new List<CandyKindID>();
     }
 
 

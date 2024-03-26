@@ -16,8 +16,9 @@ namespace SimpleCustomRoles
             { "RoomTypes", "Unknown,\r\nLczArmory,\r\nLczCurve,\r\nLczStraight,\r\nLcz914,\r\nLczCrossing,\r\nLczTCross,\r\nLczCafe,\r\nLczPlants,\r\nLczToilets,\r\nLczAirlock,\r\nLcz173,\r\nLczClassDSpawn,\r\nLczCheckpointB,\r\nLczGlassBox,\r\nLczCheckpointA,\r\nHcz079,\r\nHczEzCheckpointA,\r\nHczEzCheckpointB,\r\nHczArmory,\r\nHcz939,\r\nHczHid,\r\nHcz049,\r\nHczCrossing,\r\nHcz106,\r\nHczNuke,\r\nHczTesla,\r\nHczServers,\r\nHczTCross,\r\nHczCurve,\r\nHcz096,\r\nEzVent,\r\nEzIntercom,\r\nEzGateA,\r\nEzDownstairsPcs,\r\nEzCurve,\r\nEzPcs,\r\nEzCrossing,\r\nEzCollapsedTunnel,\r\nEzConference,\r\nEzStraight,\r\nEzCafeteria,\r\nEzUpstairsPcs,\r\nEzGateB,\r\nEzShelter,\r\nPocket,\r\nSurface,\r\nHczStraight,\r\nEzTCross,\r\nLcz330,\r\nEzCheckpointHallway,\r\nHczTestRoom,\r\nHczElevatorA,\r\nHczElevatorB" },
             { "ZoneTypes", "Unspecified,\r\nLightContainment,\r\nHeavyContainment,\r\nEntrance,\r\nSurface,\r\nOther" },
             { "AmmoTypes", "None,\r\nNato556,\r\nNato762,\r\nNato9,\r\nAmmo12Gauge,\r\nAmmo44Cal" },
-            { "SpawnableTeamType", "None,\r\nChaosInsurgency,\r\nNineTailedFox" },
-            { "Team", "SCPs,\r\nFoundationForces,\r\nChaosInsurgency,\r\nScientists,\r\nClassD,\r\nDead,\r\nOtherAlive" },
+            { "SpawnableTeamTypes", "None,\r\nChaosInsurgency,\r\nNineTailedFox" },
+            { "Teams", "SCPs,\r\nFoundationForces,\r\nChaosInsurgency,\r\nScientists,\r\nClassD,\r\nDead,\r\nOtherAlive" },
+            { "CandyKindIds", "None,\r\nRainbow,\r\nYellow,\r\nPurple,\r\nRed,\r\nGreen,\r\nBlue,\r\nPink" },
             //{ "", "" },
         };
         public static void WriteAll()
