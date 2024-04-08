@@ -1,7 +1,7 @@
 ﻿using CommandSystem;
 using Exiled.API.Features;
 using RemoteAdmin;
-using SimpleCustomRoles.Handler;
+using SimpleCustomRoles.RoleInfo;
 using System;
 using System.Linq;
 
@@ -46,7 +46,7 @@ namespace SimpleCustomRoles.Commands
                     response = $"Role with name {name} not exist!";
                     return false;
                 }
-                TheHandler.SetFromCMD(player, role);
+                RoleSetter.SetFromCMD(player, role);
                 response = $"You set yourself as a role: {name}!";
                 return true;
 

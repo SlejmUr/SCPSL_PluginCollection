@@ -3,6 +3,7 @@ using Respawning;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.RoleInfo;
 using System;
+using System.Collections.Generic;
 
 namespace SimpleCustomRoles
 {
@@ -18,6 +19,11 @@ namespace SimpleCustomRoles
         #endregion
 
         public RolesLoader RolesLoader;
+        public List<CustomRoleInfo> PlayersRolled;
+        public List<CustomRoleInfo> SpawningRoles;
+        public Dictionary<string, CustomRoleInfo> PlayerCustomRole;
+        public List<CustomRoleInfo> AfterDeathRoles;
+        public List<CustomRoleInfo> ScpSpecificRoles;
 
         public override void OnEnabled()
         {;
@@ -29,6 +35,12 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Server.RoundStarted += TheHandler.RoundStarted;
             Exiled.Events.Handlers.Player.Escaping += TheHandler.Escaping;
             Exiled.Events.Handlers.Player.Died += TheHandler.Died;
+            Exiled.Events.Handlers.Scp049.FinishingRecall += SCP_049_Handler.FinishingRecall;
+            Exiled.Events.Handlers.Scp0492.ConsumingCorpse += SCP_0492_Handler.ConsumingCorpse;
+            Exiled.Events.Handlers.Scp096.AddingTarget += SCP_096_Handler.AddingTarget;
+            Exiled.Events.Handlers.Player.UsingItem += TheHandler.UsingItem;
+            Exiled.Events.Handlers.Player.DroppingItem += TheHandler.DroppingItem;
+            Exiled.Events.Handlers.Item.ChargingJailbird += TheHandler.ChargingJailbird;
 
             RespawnManager.ServerOnRespawned += TheHandler.RespawnManager_ServerOnRespawned;
 
@@ -42,6 +54,12 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Server.RoundStarted -= TheHandler.RoundStarted;
             Exiled.Events.Handlers.Player.Escaping -= TheHandler.Escaping;
             Exiled.Events.Handlers.Player.Died -= TheHandler.Died;
+            Exiled.Events.Handlers.Scp049.FinishingRecall -= SCP_049_Handler.FinishingRecall;
+            Exiled.Events.Handlers.Scp0492.ConsumingCorpse -= SCP_0492_Handler.ConsumingCorpse;
+            Exiled.Events.Handlers.Scp096.AddingTarget -= SCP_096_Handler.AddingTarget;
+            Exiled.Events.Handlers.Player.UsingItem -= TheHandler.UsingItem;
+            Exiled.Events.Handlers.Player.DroppingItem -= TheHandler.DroppingItem;
+            Exiled.Events.Handlers.Item.ChargingJailbird -= TheHandler.ChargingJailbird;
 
             RespawnManager.ServerOnRespawned -= TheHandler.RespawnManager_ServerOnRespawned;
 

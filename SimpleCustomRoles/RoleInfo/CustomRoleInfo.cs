@@ -1,4 +1,6 @@
-﻿using Exiled.API.Enums;
+﻿
+
+using Exiled.API.Enums;
 using InventorySystem.Items.Usables.Scp330;
 using PlayerRoles;
 using Respawning;
@@ -18,7 +20,9 @@ namespace SimpleCustomRoles.RoleInfo
         public RoleTypeId RoleToReplace { get; set; } = RoleTypeId.None;
         public Team ReplaceFromTeam { get; set; } = Team.Dead;
         public Location Location { get; set; } = new Location();
-        public List<ItemType> InventoryItems { get; set; } = new List<ItemType>();
+        public List<ItemType> InventoryItems { get; set; } = new List<ItemType>(); 
+        public List<ItemType> DeniedUsingItems { get; set; } = new List<ItemType>();
+        public List<ItemType> CannotDropItems { get; set; } = new List<ItemType>();
         public Dictionary<AmmoType, ushort> Ammos { get; set; } = new Dictionary<AmmoType, ushort>();
         public List<Effect> Effects { get; set; } = new List<Effect>();
         public List<uint> CustomItemIds { get; set; } = new List<uint>();
@@ -26,7 +30,7 @@ namespace SimpleCustomRoles.RoleInfo
         public HealthReplace HealthReplacer { get; set; } = new HealthReplace();
         public HintStuff Hint { get; set; } = new HintStuff();
         public Advanced Advanced { get; set; } = new Advanced();
-
+        public SCP_Specific SCP_Specific { get; set; } = new SCP_Specific();
     }
 
     public class SpawnWaveSpecific
@@ -82,6 +86,7 @@ namespace SimpleCustomRoles.RoleInfo
 
     public class Effect
     {
+        public bool CanRemovedwithSCP500 { get; set; } = false;
         public EffectType EffectType { get; set; }
         public float Duration { get; set; }
         public byte Intensity { get; set; }
@@ -90,7 +95,6 @@ namespace SimpleCustomRoles.RoleInfo
 
     public class Advanced
     {
-        public string RunOnServer { get; set; }
         public V3 Scale { get; set; } = new V3();
         public RoleTypeId RoleAppearance { get; set; } = RoleTypeId.None;
         public bool CanEscape { get; set; } = true;
@@ -98,6 +102,7 @@ namespace SimpleCustomRoles.RoleInfo
         public DeadBy DeadBy { get; set; } = new DeadBy();
         public CandyStuff Candy { get; set; } = new CandyStuff();
         public bool BypassEnabled { get; set; } = false;
+        public bool CanChargeJailBird { get; set; } = true;
     }
 
     public class DeadBy
@@ -115,6 +120,34 @@ namespace SimpleCustomRoles.RoleInfo
         public List<CandyKindID> CandiesToGive { get; set; } = new List<CandyKindID>();
     }
 
+    public class SCP_Specific
+    {
+        public bool SCP_Specific_Role { get; set; } = false;
+        public _049 SCP_049 { get; set; } = new _049();
+        public _0492 SCP_0492 { get; set; } = new _0492();
+        public _096 SCP_096 { get; set; } = new _096();
+        public class _049
+        {
+            public bool CanRecall { get; set; } = true;
+
+            // These Applied to the recalled player:
+
+            //Specific role to respawn after you got recalled.
+            public RoleTypeId RoleAfterKilled { get; set; } = RoleTypeId.None;
+            public string RoleNameToRespawnAs { get; set; }
+            public List<string> RoleNameRandom { get; set; } = new List<string>();
+        }
+
+        public class _0492
+        {
+            public bool CanConsumeCorpse { get; set; } = true;
+        }
+
+        public class _096
+        {
+            public bool CanTrigger096 { get; set; } = true;
+        }
+    }
 
     public class V3 //Vector3
     {
