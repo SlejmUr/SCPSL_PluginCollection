@@ -1,0 +1,34 @@
+﻿using CommandSystem;
+using Exiled.API.Features;
+using System;
+using System.Linq;
+
+namespace SimpleCustomRoles.Commands
+{
+    [CommandHandler(typeof(RemoteAdminCommandHandler))]
+    public class ShowCurCustomRole : ICommand
+    {
+        public string Command => "scrcur";
+
+        public string[] Aliases => new string[] { "simplecustomrolecurrently", "scr_current", "scr_match" };
+
+        public string Description => "List currently what player is which role.";
+
+        public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
+        {
+            if (!sender.CheckPermission(PlayerPermissions.PlayersManagement))
+            {
+                response = "You dont have permission!";
+                return false;
+            }
+            response = "Currently Playing roles:\n";
+            foreach (var role in Main.Instance.PlayerCustomRole)
+            {
+                var player = Player.List.Where(x => x.RawUserId == role.Key).FirstOrDefault();
+                if (player != null)
+                    response += $"{role.Value.RoleName}: {player.DisplayNickname}\n";
+            }
+            return true;
+        }
+    }
+}

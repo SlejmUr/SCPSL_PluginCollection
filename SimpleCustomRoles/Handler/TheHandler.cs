@@ -131,6 +131,8 @@ namespace SimpleCustomRoles.Handler
                 if (Main.Instance.Config.Debug)
                     Log.Info("Player choosen: " + player.UserId);
                 RoleSetter.SetCustomInfoToPlayer(player, item);
+                // this should fix the issue having multiple?
+                //Main.Instance.SpawningRoles.Remove(item);
             }
         }
 

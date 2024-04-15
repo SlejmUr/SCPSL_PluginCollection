@@ -39,6 +39,8 @@ namespace XPSystem
             {
                 if (hub.DeleteLog())
                     Main.LogDebug($"Deleted log for {hub.nicknameSync.Network_myNickSync} because of dnt");
+                //hub.gameConsoleTransmission.SendToClient($"[REPORTING] {Main.Instance.Config.DNTHint}", "white");
+                var x = 1;  //dummy
                 return;
             }
 

@@ -28,6 +28,12 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EXILED Release|AnyCPU'">
 	  <DefineConstants>$(DefineConstants);EXILED</DefineConstants>
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -37,6 +43,12 @@
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(Configuration)|$(Platform)'!='EXILED Release|AnyCPU'">
+		<Reference Include="NWAPIPermissionSystem">
+			<HintPath>..\References\NWAPIPermissionSystem.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	
 	<ItemGroup>
 	  <Reference Include="AdvancedHints">
 	    <HintPath>..\References\AdvancedHints.dll</HintPath>
@@ -56,9 +68,7 @@
 	  <Reference Include="NorthwoodLib">
 	    <HintPath>..\References\NorthwoodLib.dll</HintPath>
 	  </Reference>
-	  <Reference Include="NWAPIPermissionSystem">
-	    <HintPath>..\References\NWAPIPermissionSystem.dll</HintPath>
-	  </Reference>
+
 	  <Reference Include="PluginAPI">
 	    <HintPath>..\References\PluginAPI.dll</HintPath>
 	  </Reference>

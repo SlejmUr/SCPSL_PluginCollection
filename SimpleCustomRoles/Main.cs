@@ -15,7 +15,7 @@ namespace SimpleCustomRoles
         public override string Author => "SlejmUr";
         public override string Name => "SimpleCustomRoles";
         public override string Prefix => "SimpleCustomRoles";
-        public override Version Version => new Version(0,1,2);
+        public override Version Version => new Version(0,2,0);
         #endregion
 
         public RolesLoader RolesLoader;
@@ -26,7 +26,7 @@ namespace SimpleCustomRoles
         public List<CustomRoleInfo> ScpSpecificRoles;
 
         public override void OnEnabled()
-        {;
+        {
             Instance = this;
             HelperTxts.WriteAll();
             RolesLoader = new RolesLoader();
