@@ -2,7 +2,6 @@
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
-using Exiled.Events.Features;
 using MEC;
 using Respawning;
 using SimpleCustomRoles.RoleInfo;
@@ -110,6 +109,7 @@ namespace SimpleCustomRoles.Handler
         {
             if (players.Count == 0)
                 return;
+            List<CustomRoleInfo> tmp = new List<CustomRoleInfo>();
             foreach (var item in Main.Instance.SpawningRoles)
             {
                 if (!item.ReplaceInSpawnWave)
@@ -131,8 +131,12 @@ namespace SimpleCustomRoles.Handler
                 if (Main.Instance.Config.Debug)
                     Log.Info("Player choosen: " + player.UserId);
                 RoleSetter.SetCustomInfoToPlayer(player, item);
-                // this should fix the issue having multiple?
-                //Main.Instance.SpawningRoles.Remove(item);
+                tmp.Add(item);
+            }
+
+            foreach (var item in tmp)
+            {
+                Main.Instance.SpawningRoles.Remove(item);
             }
         }
 
@@ -168,7 +172,7 @@ namespace SimpleCustomRoles.Handler
                             Main.Instance.PlayersRolled.Add(item);
                     }
                     if (Main.Instance.Config.Debug)
-                        Log.Info($"Rolled chance: {random} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ")  + "spawning.");
+                        Log.Info($"Rolled chance: {random}/{item.SpawnChance} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ")  + "spawning.");
                 }
             }
             Log.Info("Loading custom roles finished!");
@@ -198,6 +202,7 @@ namespace SimpleCustomRoles.Handler
                     Log.Info("Player Selected to spawn: " + player.UserId);
                 RoleSetter.SetCustomInfoToPlayer(player, item);
             }
+            Main.Instance.PlayersRolled.Clear();
         }
 
 

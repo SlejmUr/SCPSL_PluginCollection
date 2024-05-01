@@ -11,6 +11,7 @@ namespace SimpleCustomRoles.RoleInfo
         {
             if (Main.Instance.PlayerCustomRole.ContainsKey(player.UserId))
             {
+                Log.Debug("player removed " + player.UserId);
                 Main.Instance.PlayerCustomRole.Remove(player.UserId);
             }
             SetCustomInfoToPlayer(player, customRoleInfo);
@@ -146,9 +147,10 @@ namespace SimpleCustomRoles.RoleInfo
             //  Appearance
             if (customRoleInfo.Advanced.RoleAppearance != PlayerRoles.RoleTypeId.None)
             {
-                Timing.CallDelayed(1.5f, () =>
+                Timing.CallDelayed(2.5f, () =>
                 {
                     player.ChangeAppearance(customRoleInfo.Advanced.RoleAppearance);
+                    Log.Debug("Role Appearance should have changed!");
                 });
             }
 

@@ -22,12 +22,20 @@ namespace SimpleCustomRoles.Commands
                 return false;
             }
             response = "Currently Playing roles:\n";
-            foreach (var role in Main.Instance.PlayerCustomRole)
+            if (Main.Instance.PlayerCustomRole.Count == 0)
             {
-                var player = Player.List.Where(x => x.RawUserId == role.Key).FirstOrDefault();
-                if (player != null)
-                    response += $"{role.Value.RoleName}: {player.DisplayNickname}\n";
+                response += $"There is no Custom Roles\n";
             }
+            else
+            {
+                foreach (var role in Main.Instance.PlayerCustomRole)
+                {
+                    var player = Player.List.Where(x => x.UserId == role.Key).FirstOrDefault();
+                    if (player != null)
+                        response += $"{role.Value.RoleName}: [Id]{player.Id} [Name]{player.DisplayNickname}\n";
+                }
+            }
+
             return true;
         }
     }

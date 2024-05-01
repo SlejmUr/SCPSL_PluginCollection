@@ -15,7 +15,7 @@ namespace SimpleCustomRoles
         public override string Author => "SlejmUr";
         public override string Name => "SimpleCustomRoles";
         public override string Prefix => "SimpleCustomRoles";
-        public override Version Version => new Version(0,2,0);
+        public override Version Version => new Version(0,2,2);
         #endregion
 
         public RolesLoader RolesLoader;
