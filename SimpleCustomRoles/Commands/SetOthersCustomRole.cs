@@ -12,7 +12,7 @@ namespace SimpleCustomRoles.Commands
     {
         public string Command => "setoscr";
 
-        public string[] Aliases => new string[] { "setsimplecustomrole" };
+        public string[] Aliases => new string[] { "setotherssimplecustomrole" };
 
         public string Description => "Set others custom role with a given roleName";
 

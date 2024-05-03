@@ -103,6 +103,7 @@ namespace SimpleCustomRoles.RoleInfo
         public CandyStuff Candy { get; set; } = new CandyStuff();
         public bool BypassEnabled { get; set; } = false;
         public bool CanChargeJailBird { get; set; } = true;
+        public string ColorHex { get; set; } = "#ffffff";
     }
 
     public class DeadBy
@@ -141,6 +142,8 @@ namespace SimpleCustomRoles.RoleInfo
         public class _0492
         {
             public bool CanConsumeCorpse { get; set; } = true;
+            public bool CanSpawnIfNoCustom094 { get; set; } = false;
+            public int ChanceForSpawn { get; set; } = 0;
         }
 
         public class _096

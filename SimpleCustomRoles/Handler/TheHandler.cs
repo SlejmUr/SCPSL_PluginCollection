@@ -2,6 +2,7 @@
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
+using Exiled.Events.Features;
 using MEC;
 using Respawning;
 using SimpleCustomRoles.RoleInfo;
@@ -13,6 +14,16 @@ namespace SimpleCustomRoles.Handler
 {
     public class TheHandler
     {
+        public static void ChangingSpectatedPlayer(ChangingSpectatedPlayerEventArgs args)
+        {
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.NewTarget.UserId, out var role))
+            {
+                Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast($"\nThis user has a special role: <color={role.Advanced.ColorHex}>{role.RoleName}</color>", 7);
+                args.Player.Broadcast(broadcast, false);
+            }
+           
+        }
+
         public static void ChargingJailbird(ChargingJailbirdEventArgs args)
         {
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
@@ -118,7 +129,7 @@ namespace SimpleCustomRoles.Handler
                 {
                     continue;
                 }
-                if (item.SpawnWaveSpecific.MinimumTeamMemberRequired > players.Count)
+                if (item.SpawnWaveSpecific.MinimumTeamMemberRequired >= players.Count)
                 {
                     continue;
                 }

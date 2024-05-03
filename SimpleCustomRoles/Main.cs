@@ -15,7 +15,7 @@ namespace SimpleCustomRoles
         public override string Author => "SlejmUr";
         public override string Name => "SimpleCustomRoles";
         public override string Prefix => "SimpleCustomRoles";
-        public override Version Version => new Version(0,2,2);
+        public override Version Version => new Version(0,2,3);
         #endregion
 
         public RolesLoader RolesLoader;
@@ -41,6 +41,7 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Player.UsingItem += TheHandler.UsingItem;
             Exiled.Events.Handlers.Player.DroppingItem += TheHandler.DroppingItem;
             Exiled.Events.Handlers.Item.ChargingJailbird += TheHandler.ChargingJailbird;
+            Exiled.Events.Handlers.Player.ChangingSpectatedPlayer += TheHandler.ChangingSpectatedPlayer;
 
             RespawnManager.ServerOnRespawned += TheHandler.RespawnManager_ServerOnRespawned;
 
@@ -60,6 +61,7 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Player.UsingItem -= TheHandler.UsingItem;
             Exiled.Events.Handlers.Player.DroppingItem -= TheHandler.DroppingItem;
             Exiled.Events.Handlers.Item.ChargingJailbird -= TheHandler.ChargingJailbird;
+            Exiled.Events.Handlers.Player.ChangingSpectatedPlayer -= TheHandler.ChangingSpectatedPlayer;
 
             RespawnManager.ServerOnRespawned -= TheHandler.RespawnManager_ServerOnRespawned;
 

@@ -170,6 +170,9 @@ namespace SimpleCustomRoles.RoleInfo
             player.IsBypassModeEnabled = customRoleInfo.Advanced.BypassEnabled;
 
             Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);
+
+            if (Main.Instance.Config.Debug)
+                Log.Info("SetCustomInfoToPlayer: " + player.UserId + " Role: " + customRoleInfo.RoleName + " Success");
         }
     }
 }
