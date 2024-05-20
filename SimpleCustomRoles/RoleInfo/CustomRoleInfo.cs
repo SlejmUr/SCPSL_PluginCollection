@@ -11,6 +11,7 @@ namespace SimpleCustomRoles.RoleInfo
     public class CustomRoleInfo
     {
         public string RoleName { get; set; }
+        public string DisplayRoleName { get; set; }
         public int SpawnChance { get; set; } = 0;
         public int SpawnAmount { get; set; } = 0;
         public bool ReplaceInSpawnWave { get; set; } = false;
@@ -37,6 +38,7 @@ namespace SimpleCustomRoles.RoleInfo
     {
         public SpawnableTeamType Team { get; set; } = SpawnableTeamType.None;
         public int MinimumTeamMemberRequired { get; set; } = 0;
+        public bool SkipMinimumCheck { get; set; } = false;
     }
 
 
@@ -104,6 +106,7 @@ namespace SimpleCustomRoles.RoleInfo
         public bool BypassEnabled { get; set; } = false;
         public bool CanChargeJailBird { get; set; } = true;
         public string ColorHex { get; set; } = "#ffffff";
+        public bool OpenDoorsNextToSpawn { get; set; } = false;
     }
 
     public class DeadBy

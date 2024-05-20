@@ -32,7 +32,7 @@ namespace SimpleCustomRoles.Commands
                 {
                     var player = Player.List.Where(x => x.UserId == role.Key).FirstOrDefault();
                     if (player != null)
-                        response += $"{role.Value.RoleName}: [Id]{player.Id} [Name]{player.DisplayNickname}\n";
+                        response += $"{role.Value.RoleName} [{role.Value.DisplayRoleName}]: [Id]{player.Id} [Name]{player.DisplayNickname}\n";
                 }
             }
 

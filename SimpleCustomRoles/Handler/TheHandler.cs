@@ -16,12 +16,15 @@ namespace SimpleCustomRoles.Handler
     {
         public static void ChangingSpectatedPlayer(ChangingSpectatedPlayerEventArgs args)
         {
+            if (Main.Instance.PlayerCustomRole.ContainsKey(args.OldTarget.UserId))
+            {
+                args.Player.ClearBroadcasts();
+            }
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.NewTarget.UserId, out var role))
             {
-                Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast($"\nThis user has a special role: <color={role.Advanced.ColorHex}>{role.RoleName}</color>", 7);
+                Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast($"\nThis user has a special role: <color={role.Advanced.ColorHex}>{role.DisplayRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
                 args.Player.Broadcast(broadcast, false);
             }
-           
         }
 
         public static void ChargingJailbird(ChargingJailbirdEventArgs args)
@@ -108,10 +111,11 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
             {
-                args.IsAllowed = role.Advanced.CanEscape;
                 if (role.Advanced.RoleAfterEscape != PlayerRoles.RoleTypeId.None)
                 {
+                    args.IsAllowed = role.Advanced.CanEscape;
                     args.NewRole = role.Advanced.RoleAfterEscape;
+                    Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
                 }
             }
         }
@@ -121,17 +125,27 @@ namespace SimpleCustomRoles.Handler
             if (players.Count == 0)
                 return;
             List<CustomRoleInfo> tmp = new List<CustomRoleInfo>();
-            foreach (var item in Main.Instance.SpawningRoles)
+
+            foreach (var item in players)
             {
-                if (!item.ReplaceInSpawnWave)
+                var player = Player.List.Where(x => x.ReferenceHub == item).FirstOrDefault();
+                if (player == null)
                     continue;
-                if (spawnableTeamType != item.SpawnWaveSpecific.Team)
+                player.Scale = new Vector3(1, 1, 1);
+
+                //remove again if we already have one.
+                Main.Instance.PlayerCustomRole.Remove(player.UserId);
+            }
+
+            foreach (var item in Main.Instance.SpawningRoles.Where(x=>x.SpawnWaveSpecific.Team == spawnableTeamType && x.ReplaceInSpawnWave))
+            {
+
+                if (!item.SpawnWaveSpecific.SkipMinimumCheck)
                 {
-                    continue;
-                }
-                if (item.SpawnWaveSpecific.MinimumTeamMemberRequired >= players.Count)
-                {
-                    continue;
+                    if (item.SpawnWaveSpecific.MinimumTeamMemberRequired > players.Count)
+                    {
+                        continue;
+                    }
                 }
 
                 var referenceHub = players.Where(x => x.roleManager.CurrentRole.RoleTypeId == item.RoleToReplace).GetRandomValue();
@@ -141,6 +155,7 @@ namespace SimpleCustomRoles.Handler
                     continue;
                 if (Main.Instance.Config.Debug)
                     Log.Info("Player choosen: " + player.UserId);
+                
                 RoleSetter.SetCustomInfoToPlayer(player, item);
                 tmp.Add(item);
             }

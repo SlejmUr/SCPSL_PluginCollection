@@ -11,7 +11,7 @@ namespace SimpleCustomRoles.RoleInfo
         {
             if (Main.Instance.PlayerCustomRole.ContainsKey(player.UserId))
             {
-                Log.Debug("player removed " + player.UserId);
+                Log.Debug("Player removed " + player.UserId);
                 Main.Instance.PlayerCustomRole.Remove(player.UserId);
             }
             SetCustomInfoToPlayer(player, customRoleInfo);
@@ -116,6 +116,7 @@ namespace SimpleCustomRoles.RoleInfo
                     Log.Info($"Effect {effect.EffectType.ToString()}: IsSet? " + player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration));
                 });
             }
+            player.Scale = new V3(1, 1, 1).ConvertFromV3();
             //  Scale
             if (customRoleInfo.Advanced.Scale.ConvertFromV3() != new V3(0, 0, 0).ConvertFromV3())
             {
@@ -162,12 +163,25 @@ namespace SimpleCustomRoles.RoleInfo
                 {
                     if (item != InventorySystem.Items.Usables.Scp330.CandyKindID.None)
                     {
+                       
                         player.TryAddCandy(item);
                     }
                 }
             }
 
             player.IsBypassModeEnabled = customRoleInfo.Advanced.BypassEnabled;
+
+            if (customRoleInfo.Advanced.OpenDoorsNextToSpawn)
+            {
+                Timing.CallDelayed(2.5f, () =>
+                {
+                    var inroom = Room.List.Where(x => x.Players.Contains(player)).FirstOrDefault();
+                    foreach (var door in inroom.Doors)
+                    {
+                        door.IsOpen = true;
+                    }
+                });
+            }
 
             Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);
 

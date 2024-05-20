@@ -17,7 +17,7 @@ namespace SimpleCustomRoles.Commands
             response = "Roles: \n";
             foreach (var item in Main.Instance.RolesLoader.RoleInfos)
             {
-                response += $"{item.RoleName}, ";
+                response += $"{item.RoleName} [{item.DisplayRoleName}], ";
             }
             response = response.Remove(response.Length - 2);
             return true;
