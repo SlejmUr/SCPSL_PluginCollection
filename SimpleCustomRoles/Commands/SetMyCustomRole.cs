@@ -16,6 +16,8 @@ namespace SimpleCustomRoles.Commands
 
         public string Description => "Set your custom role with a given roleName";
 
+        public bool SanitizeResponse => true;
+
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             if (sender is PlayerCommandSender)

@@ -1,6 +1,4 @@
-﻿
-
-using Exiled.API.Enums;
+﻿using Exiled.API.Enums;
 using InventorySystem.Items.Usables.Scp330;
 using PlayerRoles;
 using Respawning;
@@ -107,6 +105,8 @@ namespace SimpleCustomRoles.RoleInfo
         public bool CanChargeJailBird { get; set; } = true;
         public string ColorHex { get; set; } = "#ffffff";
         public bool OpenDoorsNextToSpawn { get; set; } = false;
+
+        public Damager Damager { get; set; } = new Damager();
     }
 
     public class DeadBy
@@ -122,6 +122,17 @@ namespace SimpleCustomRoles.RoleInfo
     public class CandyStuff
     {
         public List<CandyKindID> CandiesToGive { get; set; } = new List<CandyKindID>();
+        public bool CanTakeCandy { get; set; } = true;
+        public int MaxTakeCandy { get; set; } = 2;
+        public bool GlobalCanEatCandy { get; set; } = true;
+        public bool GlobalCanDropCandy { get; set; } = true;
+
+        public Dictionary<CandyKindID, CandySpecific> SpecialCandy { get; set; } = new Dictionary<CandyKindID, CandySpecific>();
+        public class CandySpecific
+        {
+            public bool CanEatCandy { get; set; } = true;
+            public bool CanDropCandy { get; set; } = true;
+        }
     }
 
     public class SCP_Specific
@@ -152,6 +163,17 @@ namespace SimpleCustomRoles.RoleInfo
         public class _096
         {
             public bool CanTrigger096 { get; set; } = true;
+        }
+    }
+
+    public class Damager
+    {
+        public Dictionary<DamageType, SubDamager> DamageDict { get; set; } = new Dictionary<DamageType, SubDamager>();
+        public class SubDamager
+        {
+            public bool IsSet { get; set; } = false;
+            public bool IsAddition { get; set; } = true;
+            public float Damage { get; set; } = 0f;
         }
     }
 

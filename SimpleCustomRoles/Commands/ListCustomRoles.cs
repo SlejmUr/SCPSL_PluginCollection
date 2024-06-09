@@ -12,6 +12,7 @@ namespace SimpleCustomRoles.Commands
         public string[] Aliases => new string[] { "listsimplecustomrole" };
 
         public string Description => "List the Custom Role Names";
+        public bool SanitizeResponse => true;
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             response = "Roles: \n";

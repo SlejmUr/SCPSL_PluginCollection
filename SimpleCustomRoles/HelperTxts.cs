@@ -19,6 +19,7 @@ namespace SimpleCustomRoles
             { "SpawnableTeamTypes", "None,\r\nChaosInsurgency,\r\nNineTailedFox" },
             { "Teams", "SCPs,\r\nFoundationForces,\r\nChaosInsurgency,\r\nScientists,\r\nClassD,\r\nDead,\r\nOtherAlive" },
             { "CandyKindIds", "None,\r\nRainbow,\r\nYellow,\r\nPurple,\r\nRed,\r\nGreen,\r\nBlue,\r\nPink" },
+            { "DamageType", "Unknown,\r\nFalldown,\r\nWarhead,\r\nDecontamination,\r\nAsphyxiation,\r\nPoison,\r\nBleeding,\r\nFirearm,\r\nMicroHid,\r\nTesla,\r\nScp,\r\nExplosion,\r\nScp018,\r\nScp207,\r\nRecontainment,\r\nCrushed,\r\nFemurBreaker,\r\nPocketDimension,\r\nFriendlyFireDetector,\r\nSeveredHands,\r\nCustom,\r\nScp049,\r\nScp096,\r\nScp173,\r\nScp939,\r\nScp0492,\r\nScp106,\r\nCrossvec,\r\nLogicer,\r\nRevolver,\r\nShotgun,\r\nAK,\r\nCom15,\r\nCom18,\r\nFsp9,\r\nE11Sr,\r\nHypothermia,\r\nParticleDisruptor,\r\nCardiacArrest,\r\nCom45,\r\nJailbird,\r\nFrmg0,\r\nA7,\r\nScp3114,\r\nStrangled,\r\nMarshmallow" }
             //{ "", "" },
         };
         public static void WriteAll()

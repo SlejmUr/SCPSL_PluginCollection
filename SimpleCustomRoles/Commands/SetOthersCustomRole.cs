@@ -3,7 +3,11 @@ using Exiled.API.Features;
 using RemoteAdmin;
 using SimpleCustomRoles.RoleInfo;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
+using UnityEngine;
+using Utils;
 
 namespace SimpleCustomRoles.Commands
 {
@@ -15,6 +19,8 @@ namespace SimpleCustomRoles.Commands
         public string[] Aliases => new string[] { "setotherssimplecustomrole" };
 
         public string Description => "Set others custom role with a given roleName";
+
+        public bool SanitizeResponse => true;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -37,35 +43,91 @@ namespace SimpleCustomRoles.Commands
                     response = "You forgot to add PlayerId!";
                     return false;
                 }
-                var name = args[0];
+                string name = args[0];
 
-                var playerId = args[1];
-                if (!int.TryParse(playerId, out int player_int_id))
+                string playerId = args[1];
+                if (playerId.Contains(".."))
                 {
-                    response = "PlayerId must be int!";
-                    return false;
+                    var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out var array, false);
+                    bool allplayerSuccess = false;
+                    foreach (var item in list)
+                    {
+                        allplayerSuccess = SetIdToRole(name, item.PlayerId, out response);
+                        if (!allplayerSuccess)
+                        {
+                            break;
+                        }
+                    }
+                    if (!allplayerSuccess)
+                    {
+                        response = "Some player couldnt be set as a role!";
+                        return false;
+                    }
+                    else
+                    {
+                        response = "All PlayerIds set to role!";
+                        return true;
+                    }
                 }
-
-                var pcs = sender as PlayerCommandSender;
-                var player = Player.List.Where(x => x.Id == player_int_id).FirstOrDefault();
-                if (player == null)
+                else if (playerId.Contains(","))
                 {
-                    response = "Must be a Player!";
-                    return false;
+                    bool allplayerSuccess = false;
+                    foreach (var item in playerId.Split(','))
+                    {
+                        if (!int.TryParse(playerId, out int player_int_id))
+                        {
+                            response = "PlayerId must be int!";
+                            return false;
+                        }
+                        allplayerSuccess = SetIdToRole(name, player_int_id, out response);
+                        if (!allplayerSuccess)
+                        {
+                            break;
+                        }
+                    }
+                    if (!allplayerSuccess)
+                    {
+                        response = "Some player couldnt be set as a role!";
+                        return false;
+                    }
+                    else
+                    {
+                        response = "All PlayerIds set to role!";
+                        return true;
+                    }
                 }
-                var role = Main.Instance.RolesLoader.RoleInfos.Where(x => x.RoleName == name).FirstOrDefault();
-                if (role == null)
+                else 
                 {
-                    response = $"Role with name {name} not exist!";
-                    return false;
+                    if (!int.TryParse(playerId, out int player_int_id))
+                    {
+                        response = "PlayerId must be int!";
+                        return false;
+                    }
+                    bool ret = SetIdToRole(name, player_int_id, out response);
+                    return ret;
                 }
-                RoleSetter.SetFromCMD(player, role);
-                response = $"You set {player.Id} as a role: {name}!";
-                return true;
-
             }
             response = "Must be coming from Player!";
             return false;
+        }
+
+        public bool SetIdToRole(string rolename, int playerId, out string response)
+        {
+            var player = Player.List.Where(x => x.Id == playerId).FirstOrDefault();
+            if (player == null)
+            {
+                response = "Must be a Player!";
+                return false;
+            }
+            var role = Main.Instance.RolesLoader.RoleInfos.Where(x => x.RoleName == rolename).FirstOrDefault();
+            if (role == null)
+            {
+                response = $"Role with name {rolename} not exist!";
+                return false;
+            }
+            RoleSetter.SetFromCMD(player, role);
+            response = $"You set {player.Id} as a role: {rolename}[{role.DisplayRoleName}]!";
+            return true;
         }
     }
 }

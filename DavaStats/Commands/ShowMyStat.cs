@@ -18,6 +18,8 @@ namespace DavaStats.Commands
 
         public string Description => "Show My Stats";
 
+        public bool SanitizeResponse => true;
+
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             var pcs = sender as PlayerCommandSender;

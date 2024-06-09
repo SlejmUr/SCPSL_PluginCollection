@@ -14,6 +14,8 @@ namespace SimpleCustomRoles.Commands
 
         public string Description => "List currently what player is which role.";
 
+        public bool SanitizeResponse => true;
+
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             if (!sender.CheckPermission(PlayerPermissions.PlayersManagement))

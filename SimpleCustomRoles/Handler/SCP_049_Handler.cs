@@ -30,27 +30,24 @@ namespace SimpleCustomRoles.Handler
                 {
                     if (!string.IsNullOrEmpty(role.SCP_Specific.SCP_049.RoleNameToRespawnAs))
                     {
-                        var customRoleInfo = Main.Instance.ScpSpecificRoles.Where(x => x.RoleName == role.Advanced.DeadBy.RoleNameToRespawnAs).FirstOrDefault();
+                        var customRoleInfo = Main.Instance.AfterDeathRoles.Where(x => x.RoleName == role.SCP_Specific.SCP_049.RoleNameToRespawnAs).FirstOrDefault();
                         if (customRoleInfo == null)
                             return;
                         Timing.CallDelayed(0.2f, () =>
                         {
                             RoleSetter.SetCustomInfoToPlayer(args.Target, customRoleInfo);
                         });
-                        
-                        Main.Instance.ScpSpecificRoles.Remove(customRoleInfo);
                         return;
                     }
                     else if (role.SCP_Specific.SCP_049.RoleNameRandom.Count != 0)
                     {
-                        var customRoleInfo = Main.Instance.ScpSpecificRoles.Where(x => x.RoleName == role.Advanced.DeadBy.RoleNameRandom.RandomItem()).FirstOrDefault();
+                        var customRoleInfo = Main.Instance.AfterDeathRoles.Where(x => x.RoleName == role.SCP_Specific.SCP_049.RoleNameRandom.RandomItem()).FirstOrDefault();
                         if (customRoleInfo == null)
                             return;
                         Timing.CallDelayed(0.2f, () =>
                         {
                             RoleSetter.SetCustomInfoToPlayer(args.Target, customRoleInfo);
                         });
-                        Main.Instance.ScpSpecificRoles.Remove(customRoleInfo);
                         return;
                     }
                 }

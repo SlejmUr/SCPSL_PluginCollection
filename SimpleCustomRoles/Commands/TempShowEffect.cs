@@ -16,6 +16,9 @@ namespace SimpleCustomRoles.Commands
         public string[] Aliases => new string[] { "showeffects", "geteffects", "scr_ef" };
 
         public string Description => "Show your current Effects";
+
+        public bool SanitizeResponse => true;
+
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             if (sender is PlayerCommandSender)
@@ -31,7 +34,7 @@ namespace SimpleCustomRoles.Commands
                 foreach (var effect in player.ActiveEffects)
                 {
                     string effectName = EffectTypeExtension.GetEffectType(effect).ToString();
-                    response += effectName + ", ";
+                    response += effectName + $" (d: {effect.Duration} i:{effect.Intensity})" + "\n";
                 }
                 return true;
 

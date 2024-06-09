@@ -26,11 +26,13 @@ namespace SimpleCustomRoles.RoleInfo
             }
             if (customRoleInfo.Location.UseDefault)
             {
-                player.Role.Set(customRoleInfo.RoleToSpawnAs, Exiled.API.Enums.SpawnReason.ForceClass, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
+                if (player.Role.Type != customRoleInfo.RoleToSpawnAs)
+                    player.Role.Set(customRoleInfo.RoleToSpawnAs, Exiled.API.Enums.SpawnReason.ForceClass, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
             }
             else
             {
-                player.Role.Set(customRoleInfo.RoleToSpawnAs, Exiled.API.Enums.SpawnReason.ForceClass, PlayerRoles.RoleSpawnFlags.None);
+                if (player.Role.Type != customRoleInfo.RoleToSpawnAs)
+                    player.Role.Set(customRoleInfo.RoleToSpawnAs, Exiled.API.Enums.SpawnReason.ForceClass, PlayerRoles.RoleSpawnFlags.None);
                 switch (customRoleInfo.Location.LocationSpawnPriority)
                 {
                     case LocationSpawnPriority.None:
