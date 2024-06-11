@@ -1,4 +1,5 @@
-﻿using Exiled.Events.EventArgs.Scp330;
+﻿using Exiled.API.Features;
+using Exiled.Events.EventArgs.Scp330;
 using Exiled.Events.Features;
 
 namespace SimpleCustomRoles.Handler
@@ -44,6 +45,10 @@ namespace SimpleCustomRoles.Handler
                 }
 
                 args.ShouldSever = args.UsageCount >= role.Advanced.Candy.MaxTakeCandy;
+                if (args.IsAllowed && !args.ShouldSever)
+                {
+                    args.Player.ShowHint($"You can take {(role.Advanced.Candy.MaxTakeCandy - args.UsageCount - 1)} more candy", 5);
+                }
             }
         }
     }
