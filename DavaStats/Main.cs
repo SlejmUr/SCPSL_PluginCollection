@@ -17,7 +17,7 @@ namespace DavaStats
         public IDatabase Database { get; private set; }
         public StatisticStuff Statistic { get; private set; }
         public override void OnEnabled()
-        {;
+        {
             Instance = this;
 
             Database = new NoDB();

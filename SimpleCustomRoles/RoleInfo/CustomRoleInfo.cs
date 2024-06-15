@@ -126,7 +126,7 @@ namespace SimpleCustomRoles.RoleInfo
         public int MaxTakeCandy { get; set; } = 2;
         public bool GlobalCanEatCandy { get; set; } = true;
         public bool GlobalCanDropCandy { get; set; } = true;
-
+        public bool ShowCandyLeft { get; set; } = false;
         public Dictionary<CandyKindID, CandySpecific> SpecialCandy { get; set; } = new Dictionary<CandyKindID, CandySpecific>();
         public class CandySpecific
         {
