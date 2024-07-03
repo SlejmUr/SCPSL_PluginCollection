@@ -58,6 +58,29 @@ namespace DavaStats
             Exiled.Events.Handlers.Player.TriggeringTesla += PlayerEventsHandler.TriggeringTesla;
             Exiled.Events.Handlers.Player.UsingItemCompleted += PlayerEventsHandler.UsingItemCompleted;
 
+            Exiled.Events.Handlers.Item.KeycardInteracting += ItemHandler.KeycardInteracting;
+            Exiled.Events.Handlers.Item.Swinging += ItemHandler.Swinging;
+
+            Exiled.Events.Handlers.Scp049.SendingCall += SCP_049_Handler.SendingCall;
+            Exiled.Events.Handlers.Scp049.ActivatingSense += SCP_049_Handler.ActivatingSense;
+            Exiled.Events.Handlers.Scp049.FinishingRecall += SCP_049_Handler.FinishingRecall;
+            Exiled.Events.Handlers.Scp049.Attacking += SCP_049_Handler.Attacking;
+
+            Exiled.Events.Handlers.Scp0492.ConsumedCorpse += SCP_0492_Handler.ConsumedCorpse;
+
+            Exiled.Events.Handlers.Scp079.ChangingCamera += SCP_079_Handler.ChangingCamera;
+            Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus += SCP_079_Handler.ChangingSpeakerStatus;
+            Exiled.Events.Handlers.Scp079.ElevatorTeleporting += SCP_079_Handler.ElevatorTeleporting;
+            Exiled.Events.Handlers.Scp079.GainingExperience += SCP_079_Handler.GainingExperience;
+            Exiled.Events.Handlers.Scp079.GainingLevel += SCP_079_Handler.GainingLevel;
+            Exiled.Events.Handlers.Scp079.InteractingTesla += SCP_079_Handler.InteractingTesla;
+            Exiled.Events.Handlers.Scp079.LockingDown += SCP_079_Handler.LockingDown;
+            Exiled.Events.Handlers.Scp079.Pinging += SCP_079_Handler.Pinging;
+            Exiled.Events.Handlers.Scp079.Recontained += SCP_079_Handler.Recontained;
+            Exiled.Events.Handlers.Scp079.RoomBlackout += SCP_079_Handler.RoomBlackout;
+            Exiled.Events.Handlers.Scp079.TriggeringDoor += SCP_079_Handler.TriggeringDoor;
+            Exiled.Events.Handlers.Scp079.ZoneBlackout += SCP_079_Handler.ZoneBlackout;
+
             base.OnEnabled();
         }
 

@@ -45,66 +45,25 @@ namespace SimpleCustomRoles.Commands
                 }
                 string name = args[0];
 
-                string playerId = args[1];
-                if (playerId.Contains(".."))
+                var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 1, out var array, false);
+                bool allplayerSuccess = false;
+                foreach (var item in list)
                 {
-                    var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out var array, false);
-                    bool allplayerSuccess = false;
-                    foreach (var item in list)
-                    {
-                        allplayerSuccess = SetIdToRole(name, item.PlayerId, out response);
-                        if (!allplayerSuccess)
-                        {
-                            break;
-                        }
-                    }
+                    allplayerSuccess = SetIdToRole(name, item.PlayerId, out response);
                     if (!allplayerSuccess)
                     {
-                        response = "Some player couldnt be set as a role!";
-                        return false;
-                    }
-                    else
-                    {
-                        response = "All PlayerIds set to role!";
-                        return true;
+                        break;
                     }
                 }
-                else if (playerId.Contains(","))
+                if (!allplayerSuccess)
                 {
-                    bool allplayerSuccess = false;
-                    foreach (var item in playerId.Split(','))
-                    {
-                        if (!int.TryParse(playerId, out int player_int_id))
-                        {
-                            response = "PlayerId must be int!";
-                            return false;
-                        }
-                        allplayerSuccess = SetIdToRole(name, player_int_id, out response);
-                        if (!allplayerSuccess)
-                        {
-                            break;
-                        }
-                    }
-                    if (!allplayerSuccess)
-                    {
-                        response = "Some player couldnt be set as a role!";
-                        return false;
-                    }
-                    else
-                    {
-                        response = "All PlayerIds set to role!";
-                        return true;
-                    }
+                    response = "Some player couldnt be set as a role!";
+                    return false;
                 }
-                else 
+                else
                 {
-                    if (!int.TryParse(playerId, out int player_int_id))
-                    {
-                        response = "PlayerId must be int!";
-                        return false;
-                    }
-                    bool ret = SetIdToRole(name, player_int_id, out response);
-                    return ret;
+                    response = "All PlayerIds set to role!";
+                    return true;
                 }
             }
             response = "Must be coming from Player!";

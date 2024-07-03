@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleCustomRoles", "Simple
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPSystem", "XPSystem\XPSystem.csproj", "{A08B4A70-F12C-424E-B55A-14E7A821B74E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiStall", "AntiStall\AntiStall.csproj", "{EBCE4C31-BAE3-4031-B385-18D53314BD51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiStall", "AntiStall\AntiStall.csproj", "{EBCE4C31-BAE3-4031-B385-18D53314BD51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

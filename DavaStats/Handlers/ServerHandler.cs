@@ -67,9 +67,6 @@ namespace DavaStats.Handlers
             }
             Log.Info("Saving!");
             Main.Instance.Database.Save(Main.Instance.Statistic.AllStats);
-
-            var path = Exiled.Loader.PathExtensions.GetPath(Main.Instance);
-            //SAVE!!!
         }
     }
 }

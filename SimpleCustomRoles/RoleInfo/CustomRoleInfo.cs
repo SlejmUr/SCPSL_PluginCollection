@@ -9,7 +9,7 @@ namespace SimpleCustomRoles.RoleInfo
     public class CustomRoleInfo
     {
         public string RoleName { get; set; }
-        public string DisplayRoleName { get; set; }
+        public string DisplayRoleName { get; set; } = string.Empty;
         public int SpawnChance { get; set; } = 0;
         public int SpawnAmount { get; set; } = 0;
         public bool ReplaceInSpawnWave { get; set; } = false;

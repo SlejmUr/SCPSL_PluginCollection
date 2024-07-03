@@ -31,11 +31,10 @@ namespace AntiStall
 
         public static IEnumerator<float> AntiStaller(Player player, Room room)
         {
-            int max_stall = 480; // this is 4 min +/- some ms
+            int max_stall = Main.Instance.Config.StallMin; // this is 4 min +/- some ms
             int stall = 0;
             bool IsNotifiedSent = false;
-            int renotify = 540; // arbitrary number
-            int notifyagain_time = 12; // should be 10s +/- some ms difference
+            int renotify = Main.Instance.Config.StallResend; // arbitrary number
             while (true)
             {
                 if (player == null)
@@ -46,18 +45,26 @@ namespace AntiStall
                     break;
                 if (Warhead.IsDetonated)
                     break;
+                if (player.IsScp && Main.Instance.Config.UseOnSCP)
+                    break;
                 if (player.CurrentRoom != room)
                 {
                     stall = 0;
                     IsNotifiedSent = false;
-                    renotify = 400;
-                    notifyagain_time = 10;
+                    renotify = Main.Instance.Config.StallResend;
                 }
                 if (stall > max_stall && (!IsNotifiedSent || stall > renotify))
                 {
-                    player.ShowHint(Main.Instance.Config.DontStallMSG, Main.Instance.Config.DontStallMGSTime);
+                    if (stall > renotify)
+                    {
+                        player.ShowHint(Main.Instance.Config.DontStallMSG_Resend, Main.Instance.Config.DontStallMGSTime_Resend);
+                    }
+                    else
+                    {
+                        player.ShowHint(Main.Instance.Config.DontStallMSG, Main.Instance.Config.DontStallMGSTime);
+                    }
                     IsNotifiedSent = true;
-                    renotify += notifyagain_time;
+                    renotify += Main.Instance.Config.StallAddResend;
                 }
                 if (room != player.CurrentRoom)
                     room = player.CurrentRoom;
