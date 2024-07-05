@@ -146,6 +146,10 @@ namespace SimpleCustomRoles.RoleInfo
             {
                 player.ShowHint(customRoleInfo.Hint.SpawnHint, customRoleInfo.Hint.SpawnHintDuration);
             }
+            if (customRoleInfo.Hint.SpawnBroadcastToAll != string.Empty)
+            {
+                Broadcast.Singleton.RpcAddElement(customRoleInfo.Hint.SpawnBroadcastToAll, customRoleInfo.Hint.SpawnBroadcastToAllDuration, Broadcast.BroadcastFlags.Normal);
+            }
 
             //  Appearance
             if (customRoleInfo.Advanced.RoleAppearance != PlayerRoles.RoleTypeId.None)

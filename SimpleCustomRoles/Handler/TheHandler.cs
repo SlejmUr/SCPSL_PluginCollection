@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Extensions;
 using Exiled.API.Features;
+using Exiled.API.Features.Roles;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.Features;
@@ -7,6 +8,7 @@ using MEC;
 using Respawning;
 using SimpleCustomRoles.RoleInfo;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using UnityEngine;
 
@@ -43,6 +45,25 @@ namespace SimpleCustomRoles.Handler
             {
                 args.Amount += dmg.Damage;
             }
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var damage_got))
+            {
+                if (!string.IsNullOrEmpty(damage_got.EventCaller.OnReceiveDamage))
+                {
+                    int attackerID = 0;
+                    if (args.Attacker != null)
+                        attackerID = args.Attacker.Id;
+                    // Call event
+                    Server.ExecuteCommand($"{damage_got.EventCaller.OnReceiveDamage} {args.Player.Id} {attackerID} {args.DamageHandler.Type.ToString()} {args.Amount}");
+                }
+            }
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Attacker.UserId, out var attacker_role))
+            {
+                if (!string.IsNullOrEmpty(attacker_role.EventCaller.OnDealDamage))
+                {
+                    // Call event
+                    Server.ExecuteCommand($"{attacker_role.EventCaller.OnDealDamage} {args.Attacker.Id} {args.Player.Id}  {args.DamageHandler.Type.ToString()} {args.Amount}");
+                }
+            }
         }
 
         public static void ChangingSpectatedPlayer(ChangingSpectatedPlayerEventArgs args)
@@ -53,7 +74,7 @@ namespace SimpleCustomRoles.Handler
             {
                 args.Player.ClearBroadcasts();
             }
-            if (args.NewTarget.UserId != null && Main.Instance.PlayerCustomRole.TryGetValue(args.NewTarget.UserId, out var role))
+            if (args.NewTarget != null && Main.Instance.PlayerCustomRole.TryGetValue(args.NewTarget.UserId, out var role))
             {
                 Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast($"\nThis user has a special role: <color={role.Advanced.ColorHex}>{role.DisplayRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
                 args.Player.Broadcast(broadcast, false);
@@ -106,6 +127,17 @@ namespace SimpleCustomRoles.Handler
 
         public static void Died(DiedEventArgs args)
         {
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var died_player_role))
+            {
+                if (!string.IsNullOrEmpty(died_player_role.EventCaller.OnDied))
+                {
+                    int attackerID = 0;
+                    if (args.Attacker != null)
+                        attackerID = args.Attacker.Id;
+                    // Call event
+                    Server.ExecuteCommand($"{died_player_role.EventCaller.OnDied} {args.Player.Id} {attackerID} {args.DamageHandler.Type.ToString()}");
+                }
+            }
             Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
             args.Player.Scale = new Vector3(1, 1, 1);
             args.Player.Position += new Vector3(0, 1, 0);
@@ -113,6 +145,14 @@ namespace SimpleCustomRoles.Handler
                 return;
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Attacker.UserId, out var role))
             {
+                if (!string.IsNullOrEmpty(role.EventCaller.OnKill))
+                {
+                    int attackerID = 0;
+                    if (args.Attacker != null)
+                        attackerID = args.Attacker.Id;
+                    // Call event
+                    Server.ExecuteCommand($"{role.EventCaller.OnKill} {args.Attacker.Id} {args.Player.Id} {args.DamageHandler.Type.ToString()}");
+                }
                 if (role.Advanced.DeadBy.IsConfigurated)
                 {
                     if (role.Advanced.DeadBy.RoleAfterKilled != PlayerRoles.RoleTypeId.None)
@@ -196,6 +236,16 @@ namespace SimpleCustomRoles.Handler
             foreach (var item in tmp)
             {
                 Main.Instance.SpawningRoles.Remove(item);
+            }
+
+            foreach (var item in Main.Instance.PlayerCustomRole)
+            {
+                var player = Player.List.Where(x=>x.RawUserId == item.Key).FirstOrDefault();
+                if (!string.IsNullOrEmpty(item.Value.EventCaller.OnSpawnWave))
+                {
+                    // Call event
+                    Server.ExecuteCommand($"{item.Value.EventCaller.OnSpawnWave} {player.Id} {item.Value.RoleName} {spawnableTeamType.ToString()} {players.Count}");
+                }
             }
         }
 

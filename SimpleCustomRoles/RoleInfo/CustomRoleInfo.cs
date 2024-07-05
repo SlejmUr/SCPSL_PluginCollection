@@ -30,6 +30,8 @@ namespace SimpleCustomRoles.RoleInfo
         public HintStuff Hint { get; set; } = new HintStuff();
         public Advanced Advanced { get; set; } = new Advanced();
         public SCP_Specific SCP_Specific { get; set; } = new SCP_Specific();
+
+        public EventCaller EventCaller { get; set; } = new EventCaller();
     }
 
     public class SpawnWaveSpecific
@@ -46,6 +48,8 @@ namespace SimpleCustomRoles.RoleInfo
         public ushort SpawnBroadcastDuration { get; set; } = 0;
         public string SpawnHint { get; set; } = "";
         public float SpawnHintDuration { get; set; } = 0;
+        public string SpawnBroadcastToAll { get; set; } = "";
+        public ushort SpawnBroadcastToAllDuration { get; set; } = 0;
 
     }
 
@@ -175,6 +179,15 @@ namespace SimpleCustomRoles.RoleInfo
             public bool IsAddition { get; set; } = true;
             public float Damage { get; set; } = 0f;
         }
+    }
+
+    public class EventCaller
+    {
+        public string OnDied { get; set; } = string.Empty;
+        public string OnKill { get; set; } = string.Empty;
+        public string OnSpawnWave { get; set; } = string.Empty;
+        public string OnDealDamage { get; set; } = string.Empty;
+        public string OnReceiveDamage { get; set; } = string.Empty;
     }
 
     public class V3 //Vector3
