@@ -8,13 +8,8 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Target.UserId, out var role))
             {
-                if (!role.SCP_Specific.SCP_096.CanTrigger096)
-                {
-                    args.IsAllowed = false;
-                    return;
-                }
+                args.IsAllowed = role.Advanced.CanTrigger096;
             }
-
         }
     }
 }

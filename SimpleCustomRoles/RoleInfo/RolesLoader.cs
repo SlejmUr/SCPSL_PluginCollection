@@ -102,7 +102,7 @@ namespace SimpleCustomRoles.RoleInfo
                     RoleAppearance = RoleTypeId.ClassD,
                     Damager = new Damager()
                     {
-                        DamageDict = new Dictionary<DamageType, Damager.SubDamager>()
+                        DamageReceivedDict = new Dictionary<DamageType, Damager.SubDamager>()
                         {
                             {
                                 DamageType.Revolver, new Damager.SubDamager()
@@ -132,7 +132,7 @@ namespace SimpleCustomRoles.RoleInfo
                         RoleNameToRespawnAs = "yeeet"
                     },
                     OpenDoorsNextToSpawn = false,
-                    BypassEnabled = false,
+                    BypassModeEnabled = false,
                     CanChargeJailBird = true,
                     Candy = new CandyStuff()
                     {

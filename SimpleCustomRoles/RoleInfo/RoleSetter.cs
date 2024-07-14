@@ -7,6 +7,48 @@ namespace SimpleCustomRoles.RoleInfo
 {
     public class RoleSetter
     {
+        public static float MathWithFloat(MathOption mathOption, float inFloat, float myValue)
+        {
+            switch (mathOption)
+            {
+                case MathOption.None:
+                    return inFloat;
+                case MathOption.Set:
+                    return myValue;
+                case MathOption.Add:
+                    return inFloat + myValue;
+                case MathOption.Subtract:
+                    return inFloat - myValue;
+                case MathOption.Multiply:
+                    return inFloat * myValue;
+                case MathOption.Divide:
+                    return inFloat / myValue;
+                default:
+                    return inFloat;
+            }
+        }
+
+        public static int MathWithInt(MathOption mathOption, int inInt, int myValue)
+        {
+            switch (mathOption)
+            {
+                case MathOption.None:
+                    return inInt;
+                case MathOption.Set:
+                    return myValue;
+                case MathOption.Add:
+                    return inInt + myValue;
+                case MathOption.Subtract:
+                    return inInt - myValue;
+                case MathOption.Multiply:
+                    return inInt * myValue;
+                case MathOption.Divide:
+                    return inInt / myValue;
+                default:
+                    return inInt;
+            }
+        }
+
         public static void SetFromCMD(Player player, CustomRoleInfo customRoleInfo)
         {
             if (Main.Instance.PlayerCustomRole.ContainsKey(player.UserId))
@@ -66,47 +108,31 @@ namespace SimpleCustomRoles.RoleInfo
             }
             //Inventory and ammo
             player.ClearInventory(true);
-            player.ResetInventory(customRoleInfo.InventoryItems);
+            player.ResetInventory(customRoleInfo.Inventory.InventoryItems);
             player.ClearAmmo();
-            foreach (var ammo in customRoleInfo.Ammos)
+            foreach (var ammo in customRoleInfo.Inventory.Ammos)
             {
                 player.SetAmmo(ammo.Key, ammo.Value);
             }
 
             // Custom Item
-            foreach (var item in customRoleInfo.CustomItemIds)
+            foreach (var item in customRoleInfo.Inventory.CustomItemIds)
             {
                 var id = Exiled.CustomItems.API.Features.CustomItem.Get(item);
                 id.Give(player);
             }
 
-            //  HealthMod
-            player.MaxHealth += customRoleInfo.HealthModifiers.Health;
-            player.Health += customRoleInfo.HealthModifiers.Health;
+            //  Health
+            player.MaxHealth = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
+            player.Health += MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
             if (player.IsScp)
             {
-                player.HumeShield += customRoleInfo.HealthModifiers.HumeShield;
+                player.HumeShield = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
             }
             if (player.IsHuman)
             {
-                player.MaxArtificialHealth += customRoleInfo.HealthModifiers.Ahp;
-                player.ArtificialHealth += customRoleInfo.HealthModifiers.Ahp;
-            }
-
-            //  HealthSet
-            if (customRoleInfo.HealthReplacer.UseReplace)
-            {
-                player.MaxHealth = customRoleInfo.HealthReplacer.Health;
-                player.Health = customRoleInfo.HealthReplacer.Health;
-                if (player.IsScp)
-                {
-                    player.HumeShield = customRoleInfo.HealthReplacer.HumeShield;
-                }
-                if (player.IsHuman)
-                {
-                    player.MaxArtificialHealth = customRoleInfo.HealthReplacer.Ahp;
-                    player.ArtificialHealth = customRoleInfo.HealthReplacer.Ahp;
-                }
+                player.MaxArtificialHealth = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
+                player.ArtificialHealth = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
             }
 
             //  Effect
@@ -118,9 +144,9 @@ namespace SimpleCustomRoles.RoleInfo
                     Log.Info($"Effect {effect.EffectType.ToString()}: IsSet? " + player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration));
                 });
             }
-            player.Scale = new V3(1, 1, 1).ConvertFromV3();
+            player.Scale = new V3(1).ConvertFromV3();
             //  Scale
-            if (customRoleInfo.Advanced.Scale.ConvertFromV3() != new V3(0, 0, 0).ConvertFromV3())
+            if (customRoleInfo.Advanced.Scale.ConvertFromV3() != new V3().ConvertFromV3())
             {
                 Timing.CallDelayed(2.5f, () =>
                 {
@@ -148,7 +174,10 @@ namespace SimpleCustomRoles.RoleInfo
             }
             if (customRoleInfo.Hint.SpawnBroadcastToAll != string.Empty)
             {
-                Broadcast.Singleton.RpcAddElement(customRoleInfo.Hint.SpawnBroadcastToAll, customRoleInfo.Hint.SpawnBroadcastToAllDuration, Broadcast.BroadcastFlags.Normal);
+                Timing.CallDelayed(customRoleInfo.Hint.SpawnBroadcastDuration + 0.5f, () =>
+                {
+                    Broadcast.Singleton.RpcAddElement(customRoleInfo.Hint.SpawnBroadcastToAll, customRoleInfo.Hint.SpawnBroadcastToAllDuration, Broadcast.BroadcastFlags.Normal);
+                });
             }
 
             //  Appearance
@@ -175,7 +204,7 @@ namespace SimpleCustomRoles.RoleInfo
                 }
             }
 
-            player.IsBypassModeEnabled = customRoleInfo.Advanced.BypassEnabled;
+            player.IsBypassModeEnabled = customRoleInfo.Advanced.BypassModeEnabled;
 
             if (customRoleInfo.Advanced.OpenDoorsNextToSpawn)
             {
