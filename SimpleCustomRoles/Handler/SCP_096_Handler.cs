@@ -1,4 +1,5 @@
 ﻿using Exiled.Events.EventArgs.Scp096;
+using SimpleCustomRoles.RoleInfo;
 
 namespace SimpleCustomRoles.Handler
 {
@@ -9,6 +10,43 @@ namespace SimpleCustomRoles.Handler
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Target.UserId, out var role))
             {
                 args.IsAllowed = role.Advanced.CanTrigger096;
+            }
+        }
+
+        public static void StartPryingGate(StartPryingGateEventArgs args)
+        {
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            {
+                if (role.Scp_Specific.Scp096.DoorToNotPryOn.Contains(args.Door.Type))
+                {
+                    args.IsAllowed = false;
+                    return;
+                }
+                args.IsAllowed = role.Scp_Specific.Scp096.CanPry;
+            }
+        }
+
+        public static void Charging(ChargingEventArgs args)
+        {
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            {
+                args.IsAllowed = role.Scp_Specific.Scp096.CanCharge;
+            }
+        }
+
+        public static void TryingNotToCry(TryingNotToCryEventArgs args)
+        {
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            {
+                args.IsAllowed = role.Scp_Specific.Scp096.CanTryingNotToCry;
+            }
+        }
+
+        public static void Enraging(EnragingEventArgs args)
+        {
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            {
+                args.InitialDuration = RoleSetter.MathWithFloat(role.Scp_Specific.Scp096.Enraging.SetType, args.InitialDuration, role.Scp_Specific.Scp096.Enraging.Value);
             }
         }
     }

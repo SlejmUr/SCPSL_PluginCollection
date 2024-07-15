@@ -19,7 +19,9 @@ namespace SimpleCustomRoles
             { "SpawnableTeamTypes", "None,\r\nChaosInsurgency,\r\nNineTailedFox" },
             { "Teams", "SCPs,\r\nFoundationForces,\r\nChaosInsurgency,\r\nScientists,\r\nClassD,\r\nDead,\r\nOtherAlive" },
             { "CandyKindIds", "None,\r\nRainbow,\r\nYellow,\r\nPurple,\r\nRed,\r\nGreen,\r\nBlue,\r\nPink" },
-            { "DamageType", "Unknown,\r\nFalldown,\r\nWarhead,\r\nDecontamination,\r\nAsphyxiation,\r\nPoison,\r\nBleeding,\r\nFirearm,\r\nMicroHid,\r\nTesla,\r\nScp,\r\nExplosion,\r\nScp018,\r\nScp207,\r\nRecontainment,\r\nCrushed,\r\nFemurBreaker,\r\nPocketDimension,\r\nFriendlyFireDetector,\r\nSeveredHands,\r\nCustom,\r\nScp049,\r\nScp096,\r\nScp173,\r\nScp939,\r\nScp0492,\r\nScp106,\r\nCrossvec,\r\nLogicer,\r\nRevolver,\r\nShotgun,\r\nAK,\r\nCom15,\r\nCom18,\r\nFsp9,\r\nE11Sr,\r\nHypothermia,\r\nParticleDisruptor,\r\nCardiacArrest,\r\nCom45,\r\nJailbird,\r\nFrmg0,\r\nA7,\r\nScp3114,\r\nStrangled,\r\nMarshmallow" }
+            { "DamageType", "Unknown,\r\nFalldown,\r\nWarhead,\r\nDecontamination,\r\nAsphyxiation,\r\nPoison,\r\nBleeding,\r\nFirearm,\r\nMicroHid,\r\nTesla,\r\nScp,\r\nExplosion,\r\nScp018,\r\nScp207,\r\nRecontainment,\r\nCrushed,\r\nFemurBreaker,\r\nPocketDimension,\r\nFriendlyFireDetector,\r\nSeveredHands,\r\nCustom,\r\nScp049,\r\nScp096,\r\nScp173,\r\nScp939,\r\nScp0492,\r\nScp106,\r\nCrossvec,\r\nLogicer,\r\nRevolver,\r\nShotgun,\r\nAK,\r\nCom15,\r\nCom18,\r\nFsp9,\r\nE11Sr,\r\nHypothermia,\r\nParticleDisruptor,\r\nCardiacArrest,\r\nCom45,\r\nJailbird,\r\nFrmg0,\r\nA7,\r\nScp3114,\r\nStrangled,\r\nMarshmallow" },
+            { "CustomRoleTypes", "Regular,        // Only appears when start of the game.\r\nAfterDead,      // Only appears after dying\r\nInWave,         // Only appears inside the SpawnWave.\r\nSPC_Specific    // Only appears if set by Custom SCP's.\r\nEscape,         // Only appears after Players escaped." },
+            { "EscapeScenarios", "None,\r\nClassD,\r\nCuffedClassD,\r\nScientist,\r\nCuffedScientist,\r\nCustomEscape" },
             //{ "", "" },
         };
         public static void WriteAll()
@@ -34,8 +36,8 @@ namespace SimpleCustomRoles
                     File.WriteAllText(txt + ".txt", item.Value);
                 }
             }
-            
-
         }
+
+        public static string TheYML_PRE_Comment = "# Welcome to small in-file documentation for the SimpleCustomRoles.\r\n#\r\n# REQUIRED: Required under normal condition\r\n# NOTDEAD: NOT required if the roleType is AfterDead\r\n# WAVE: Required if roleType is InWave\r\n# TEAMREPLACE: Required if replaceFromTeam is Dead OR roleToReplace is None!\r\n#\r\n# ARRAYS:\r\n# something: [] is an array, to set a values to it use like:\r\n#\r\n# something:\r\n#   - MyValue\r\n#\r\n# ONLY \"effects\" has a class inside and not a single value, set more as copy - paste it\r\n#\r\n# DICTONARY:\r\n# ammos: {} is an dictionary, to set key,value to it use like:\r\n#\r\n# ammos:\r\n#   MyKey: 40\r\n#\r\n#\r\n# RoleTypeIds: None | means it gonna skip it.\r\n# Team: Dead | means it gonna skip it. (Sorry!)\r\n#\r\n#";
     }
 }

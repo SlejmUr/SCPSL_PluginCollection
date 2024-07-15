@@ -5,6 +5,7 @@ using YamlDotNet.Serialization.NamingConventions;
 using Exiled.API.Features;
 using Exiled.API.Enums;
 using PlayerRoles;
+using System.Linq;
 
 namespace SimpleCustomRoles.RoleInfo
 {
@@ -18,6 +19,7 @@ namespace SimpleCustomRoles.RoleInfo
             RoleInfos = new List<CustomRoleInfo>();
             if (Directory.Exists(Dir))
             {
+                File.WriteAllText(Dir + "/Template.yml.d", HelperTxts.TheYML_PRE_Comment + "\n" + Serialize(CreateTemplate()));
                 File.WriteAllText(Dir + "/Template.yml", Serialize(CreateTemplate()));
                 foreach (var file in Directory.GetFiles(Dir))
                 {
@@ -34,6 +36,7 @@ namespace SimpleCustomRoles.RoleInfo
                 Directory.CreateDirectory(Dir);
                 File.WriteAllText(Dir + "/Template.yml.d", Serialize(CreateTemplate()));
             }
+            Main.Instance.RolesLoader.RoleInfos = Main.Instance.RolesLoader.RoleInfos.OrderBy(x=>x.SpawnChance).ToList();
         }
 
         public void Dispose()
@@ -45,6 +48,8 @@ namespace SimpleCustomRoles.RoleInfo
         {
             var serializer = new SerializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .WithTypeInspector(inner => new CommentGatheringTypeInspector(inner))
+            .WithEmissionPhaseObjectGraphVisitor(args => new CommentsObjectGraphVisitor(args.InnerVisitor))
             .Build();
             var yaml = serializer.Serialize(customRole);
             return yaml;
@@ -66,14 +71,31 @@ namespace SimpleCustomRoles.RoleInfo
             return new CustomRoleInfo()
             {
                 RoleName = "Temp",
+                RoleDisplayColorHex = "#ffffff",
+                RoleType = CustomRoleType.Regular,
                 SpawnAmount = 1,
                 SpawnChance = 0,
-                ReplaceInSpawnWave = false,
                 RoleToSpawnAs = RoleTypeId.Scientist,
                 RoleToReplace = RoleTypeId.ClassD,
-                InventoryItems = new List<ItemType>()
+                Inventory = new Inventory()
                 {
-                     ItemType.KeycardScientist, ItemType.Medkit, ItemType.Adrenaline, ItemType.Coin
+                    InventoryItems = new List<ItemType>()
+                    {
+                         ItemType.KeycardScientist, ItemType.Medkit, ItemType.Adrenaline, ItemType.Coin
+                    },
+                    Ammos = new Dictionary<AmmoType, ushort>()
+                    {
+                        { AmmoType.Nato762, 3  }
+                    },
+                    DeniedUsingItems = new List<ItemType>()
+                    {
+                        ItemType.Coin
+                    },
+                    CannotDropItems = new List<ItemType>()
+                    {
+                        ItemType.Coin
+                    },
+                    CustomItemIds = new List<uint>()
                 },
                 Effects = new List<Effect>()
                 {
@@ -82,6 +104,13 @@ namespace SimpleCustomRoles.RoleInfo
                          EffectType = EffectType.DamageReduction,
                          Duration = 100,
                          Intensity = 3
+                     },
+                     new Effect()
+                     {
+                         CanRemovedWithSCP500 = false,
+                         EffectType = EffectType.MovementBoost,
+                         Duration = 433,
+                         Intensity = 12
                      }
                 },
                 Location = new Location()
@@ -102,25 +131,40 @@ namespace SimpleCustomRoles.RoleInfo
                     RoleAppearance = RoleTypeId.ClassD,
                     Damager = new Damager()
                     {
-                        DamageReceivedDict = new Dictionary<DamageType, Damager.SubDamager>()
+                        DamageReceivedDict = new Dictionary<DamageType, ValueSetter>()
                         {
                             {
-                                DamageType.Revolver, new Damager.SubDamager()
+                                DamageType.Revolver, new ValueSetter()
                                 {
-                                    Damage = 120,
-                                    IsSet = true,
-                                    IsAddition = false
+                                    Value = 120,
+                                    SetType = MathOption.Set
                                 }
                             },
                             {
-                                DamageType.Jailbird, new Damager.SubDamager()
+                                DamageType.Jailbird, new ValueSetter()
                                 {
-                                    Damage = 1200,
-                                    IsSet = false,
-                                    IsAddition = true
+                                    Value = 1200,
+                                    SetType = MathOption.Add
                                 }
                             }
-                        }
+                        },
+                        DamageSentDict = new Dictionary<DamageType, ValueSetter>()
+                        {
+                            {
+                                DamageType.ParticleDisruptor, new ValueSetter()
+                                {
+                                    Value = 120,
+                                    SetType = MathOption.Multiply
+                                }
+                            },
+                            {
+                                DamageType.Com15, new ValueSetter()
+                                {
+                                    Value = 1200,
+                                    SetType = MathOption.Add
+                                }
+                            }
+                        },
                     },
                     DeadBy = new DeadBy()
                     {
@@ -136,7 +180,10 @@ namespace SimpleCustomRoles.RoleInfo
                     CanChargeJailBird = true,
                     Candy = new CandyStuff()
                     {
-                        CandiesToGive = new List<InventorySystem.Items.Usables.Scp330.CandyKindID>(),
+                        CandiesToGive = new List<InventorySystem.Items.Usables.Scp330.CandyKindID>()
+                        {
+                            InventorySystem.Items.Usables.Scp330.CandyKindID.Pink
+                        },
                         GlobalCanDropCandy = true,
                         CanTakeCandy = true,
                         GlobalCanEatCandy = true,
@@ -160,14 +207,34 @@ namespace SimpleCustomRoles.RoleInfo
                         },
 
                     },
-                    CanEscape = false,
-                    ColorHex = "#ffffff",
-                    RoleAfterEscape = RoleTypeId.None,
+                    CanTrigger096 = true,
                     Scale = new V3()
                     {
                         X = 1,
                         Y = 1,
                         Z = 1
+                    },
+                    FriendlyFire = new List<Advanced.FF>()
+                    {
+                        new Advanced.FF()
+                        { 
+                            RoleType = RoleTypeId.ClassD,
+                            Value = 40
+                        }
+                    },
+                    Escaping = new Advanced.Escape()
+                    {
+                        CanEscape = false,
+                        RoleAfterEscape = new Dictionary<EscapeScenario, RoleTypeId>()
+                        {
+                            { EscapeScenario.Scientist, RoleTypeId.NtfSpecialist  },
+                            { EscapeScenario.CuffedScientist, RoleTypeId.ChaosConscript  }
+                        },
+                        RoleNameAfterEscape = new Dictionary<EscapeScenario, string>()
+                        {
+                            { EscapeScenario.Scientist, "test"  },
+                            { EscapeScenario.CuffedScientist, "test2"  }
+                        }
                     }
                 },
                 Hint = new HintStuff()
@@ -177,50 +244,90 @@ namespace SimpleCustomRoles.RoleInfo
                     SpawnHint = "Do your stuff!",
                     SpawnHintDuration = 10,
                 },
-                Ammos = new Dictionary<AmmoType, ushort>()
+                Scp_Specific = new SCP_Specific()
                 {
-                    { AmmoType.Nato762, 3  }
-                },
-                DeniedUsingItems = new List<ItemType>()
-                {
-                    ItemType.Coin
-                },
-                SCP_Specific = new SCP_Specific()
-                {
-                    SCP_Specific_Role = false,
-                    SCP_049 = new SCP_Specific._049()
+                    Scp049 = new SCP_Specific._049()
                     {
                         CanRecall = true,
                         RoleAfterKilled = RoleTypeId.None,
                         RoleNameRandom = new List<string>() { "random1", "random2" },
                         RoleNameToRespawnAs = "always_role"
                     },
-                    SCP_0492 = new SCP_Specific._0492()
+                    Scp0492 = new SCP_Specific._0492()
                     {
                         CanConsumeCorpse = true,
                         CanSpawnIfNoCustom094 = false,
                         ChanceForSpawn = 0
                     },
-                    SCP_096 = new SCP_Specific._096()
+                    Scp096 = new SCP_Specific._096()
                     {
-                        CanTrigger096 = true
+                        DoorToNotPryOn = new List<DoorType>()
+                        { 
+                            DoorType.Scp096,
+                        },
+                        Enraging = new ValueSetter()
+                        {
+                            SetType = MathOption.Add,
+                            Value = 100
+                        },
+                        CanCharge = false,
+                        CanPry = true,
+                        CanTryingNotToCry = true,
+                    },
+                    Scp173 = new SCP_Specific._173()
+                    { 
+                        CanPlaceTantrum = true,
+                        CanUseBreakneckSpeed = true,
+                    },
+                    Scp079 = new SCP_Specific._079()
+                    { 
+                        ChangingCameraCost = new SCP_Specific._079.PowerCostSet()
+                        { 
+                            SetType = MathOption.Set,
+                            AuxiliaryPowerCost = 0,
+                        },
+                        GainingXP = new List<SCP_Specific._079.GainXP>()
+                        { 
+                            new SCP_Specific._079.GainXP()
+                            { 
+                                IsAllowed = true,
+                                SetType = MathOption.Set,
+                                XPAmount = 32,
+                                HudTranslation = PlayerRoles.PlayableScps.Scp079.Scp079HudTranslation.PingLocation,
+                                RoleType = RoleTypeId.None
+                            }
+                        }
                     }
                 },
                 DisplayRoleName = "TEMPORARY",
-                CannotDropItems = new List<ItemType>()
-                { 
-                    ItemType.Coin
-                },
                 SpawnWaveSpecific = new SpawnWaveSpecific() 
                 { 
                     MinimumTeamMemberRequired = 3,
                     SkipMinimumCheck = true,
                     Team = Respawning.SpawnableTeamType.ChaosInsurgency
                 },
-                UsedAfterDeath = false,
-                CustomItemIds = new List<uint>(),
-                HealthModifiers = new HealthMod(),
-                HealthReplacer = new HealthReplace(),
+                Health = new HealthClass()
+                { 
+                    Health = new ValueSetter()
+                    { 
+                        SetType = MathOption.Add,
+                        Value = 30
+                    },
+                    Ahp = new ValueSetter()
+                    {
+                        SetType = MathOption.Set,
+                        Value = 10
+                    },
+                    HumeShield = new ValueSetter()
+                    {
+                        SetType = MathOption.Multiply,
+                        Value = 2
+                    },
+                },
+                EventCaller = new EventCaller()
+                { 
+                    
+                },
                 ReplaceFromTeam = Team.ClassD,
             };
 

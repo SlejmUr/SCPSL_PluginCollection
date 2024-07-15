@@ -18,48 +18,39 @@ namespace SimpleCustomRoles.Handler
             if (args.Player == null)
                 return;
 
-            //  this can happen tbh, grenade for example.
-            /*
-            if (args.Attacker == args.Player)
+            if (args.Attacker == null)
                 return;
-            */
-            if (!Main.Instance.PlayerCustomRole.ContainsKey(args.Player.UserId))
-                return;
+
+            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Attacker.UserId, out var attacker_role))
+            {
+                if (attacker_role.Advanced.Damager.DamageSentDict.TryGetValue(args.DamageHandler.Type, out var valueSetter))
+                {
+                    args.Amount = RoleSetter.MathWithFloat(valueSetter.SetType, args.Amount, valueSetter.Value);
+                }
+            }
 
             bool toret = Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role);
             if (!toret)
                 return;
 
-            bool HasCustomDmg = role.Advanced.Damager.DamageReceivedDict.TryGetValue(args.DamageHandler.Type, out var dmg);
-            if (HasCustomDmg)
+            if (role.Advanced.Damager.DamageReceivedDict.TryGetValue(args.DamageHandler.Type, out var dmg))
             {
-                if (dmg.IsSet)
-                {
-                    args.Amount = dmg.Damage;
-                }
-                else if (dmg.IsAddition)
-                {
-                    args.Amount += dmg.Damage;
-                }
+                args.Amount = RoleSetter.MathWithFloat(dmg.SetType, args.Amount, dmg.Value);
             }
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var damage_got))
+
+            if (attacker_role != null && !string.IsNullOrEmpty(attacker_role.EventCaller.OnDealDamage))
             {
-                if (!string.IsNullOrEmpty(damage_got.EventCaller.OnReceiveDamage))
-                {
-                    int attackerID = 0;
-                    if (args.Attacker != null)
-                        attackerID = args.Attacker.Id;
-                    // Call event
-                    Server.ExecuteCommand($"{damage_got.EventCaller.OnReceiveDamage} {args.Player.Id} {attackerID} {args.DamageHandler.Type.ToString()} {args.Amount}");
-                }
+                // Call event
+                Server.ExecuteCommand($"{attacker_role.EventCaller.OnDealDamage} {args.Attacker.Id} {args.Player.Id}  {args.DamageHandler.Type.ToString()} {args.Amount}");
             }
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Attacker.UserId, out var attacker_role))
+
+            if (!string.IsNullOrEmpty(role.EventCaller.OnReceiveDamage))
             {
-                if (!string.IsNullOrEmpty(attacker_role.EventCaller.OnDealDamage))
-                {
-                    // Call event
-                    Server.ExecuteCommand($"{attacker_role.EventCaller.OnDealDamage} {args.Attacker.Id} {args.Player.Id}  {args.DamageHandler.Type.ToString()} {args.Amount}");
-                }
+                int attackerID = 0;
+                if (args.Attacker != null)
+                    attackerID = args.Attacker.Id;
+                // Call event
+                Server.ExecuteCommand($"{role.EventCaller.OnReceiveDamage} {args.Player.Id} {attackerID} {args.DamageHandler.Type.ToString()} {args.Amount}");
             }
         }
 
@@ -73,6 +64,8 @@ namespace SimpleCustomRoles.Handler
             }
             if (args.NewTarget != null && Main.Instance.PlayerCustomRole.TryGetValue(args.NewTarget.UserId, out var role))
             {
+                if (!role.RoleCanDisplay)
+                    return;
                 Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast($"\nThis user has a special role: <color={role.RoleDisplayColorHex}>{role.DisplayRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
                 args.Player.Broadcast(broadcast, false);
             }
@@ -88,38 +81,35 @@ namespace SimpleCustomRoles.Handler
 
         public static void DroppingItem(DroppingItemEventArgs args)
         {
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            if (!Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+                return;
+            if (role.Inventory.CannotDropItems.Contains(args.Item.Type))
             {
-                if (role.Inventory.CannotDropItems.Contains(args.Item.Type))
-                {
-                    args.IsAllowed = false;
-                    return;
-                }
-
+                args.IsAllowed = false;
+                return;
             }
         }
 
         public static void UsingItem(UsingItemEventArgs args)
         {
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            if (!Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+                return;
+            if (role.Inventory.DeniedUsingItems.Contains(args.Item.Type))
             {
-                if (role.Inventory.DeniedUsingItems.Contains(args.Item.Type))
-                {
-                    args.IsAllowed = false;
-                    return;
-                }
+                args.IsAllowed = false;
+                return;
+            }
 
-                Timing.CallDelayed(3f, () => 
+            Timing.CallDelayed(3f, () =>
+            {
+                foreach (var effect in role.Effects)
                 {
-                    foreach (var effect in role.Effects)
+                    if (!effect.CanRemovedWithSCP500)
                     {
-                        if (!effect.CanRemovedwithSCP500)
-                        {
-                            Log.Debug($"(Used 500) Effect {effect.EffectType.ToString()}: IsSet? " + args.Player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration));
-                        }
+                        Log.Debug($"(Used 500) Effect {effect.EffectType.ToString()}: IsSet? " + args.Player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration));
                     }
-                });
-            }          
+                }
+            });
         }
 
         public static void Died(DiedEventArgs args)
@@ -176,14 +166,21 @@ namespace SimpleCustomRoles.Handler
 
         public static void Escaping(EscapingEventArgs args)
         {
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            if (!Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+                return;
+            args.IsAllowed = role.Advanced.Escaping.CanEscape;
+            if (!args.IsAllowed)
+                return;
+            if (role.Advanced.Escaping.RoleAfterEscape.TryGetValue(args.EscapeScenario, out var roleTypeId) && roleTypeId != PlayerRoles.RoleTypeId.None)
             {
-                if (role.Advanced.RoleAfterEscape != PlayerRoles.RoleTypeId.None)
-                {
-                    args.IsAllowed = role.Advanced.CanEscape;
-                    args.NewRole = role.Advanced.RoleAfterEscape;
-                    Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
-                }
+                args.NewRole = roleTypeId;
+                Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
+            }
+            if (role.Advanced.Escaping.RoleNameAfterEscape.TryGetValue(args.EscapeScenario, out var rolename) && !string.IsNullOrEmpty(rolename))
+            {
+                Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
+                var escapeRole = Main.Instance.EscapeRoles.Where(x => x.RoleName == rolename).FirstOrDefault();
+                RoleSetter.SetCustomInfoToPlayer(args.Player, escapeRole);
             }
         }
 
@@ -204,7 +201,7 @@ namespace SimpleCustomRoles.Handler
                 Main.Instance.PlayerCustomRole.Remove(player.UserId);
             }
 
-            foreach (var item in Main.Instance.ReSpawningRoles.Where(x=>x.SpawnWaveSpecific.Team == spawnableTeamType && x.RoleType == RoleType.InWave))
+            foreach (var item in Main.Instance.InWaveRoles.Where(x=>x.SpawnWaveSpecific.Team == spawnableTeamType && x.RoleType == CustomRoleType.InWave))
             {
 
                 if (!item.SpawnWaveSpecific.SkipMinimumCheck)
@@ -229,7 +226,7 @@ namespace SimpleCustomRoles.Handler
 
             foreach (var item in tmp)
             {
-                Main.Instance.ReSpawningRoles.Remove(item);
+                Main.Instance.InWaveRoles.Remove(item);
             }
 
             foreach (var item in Main.Instance.PlayerCustomRole)
@@ -245,25 +242,25 @@ namespace SimpleCustomRoles.Handler
 
         public static void ReloadRoles()
         {
-            Main.Instance.PlayersRolled = new List<CustomRoleInfo>();
+            Main.Instance.RegularRoles = new List<CustomRoleInfo>();
             Main.Instance.PlayerCustomRole = new Dictionary<string, CustomRoleInfo>();
-            Main.Instance.ReSpawningRoles = new List<CustomRoleInfo>();
+            Main.Instance.InWaveRoles = new List<CustomRoleInfo>();
             Main.Instance.AfterDeathRoles = new List<CustomRoleInfo>();
-            Main.Instance.ScpSpecificRoles = new List<CustomRoleInfo>();
+            Main.Instance.SPC_SpecificRoles = new List<CustomRoleInfo>();
             Main.Instance.RolesLoader.Load();
             foreach (var item in Main.Instance.RolesLoader.RoleInfos)
             {
-                if (item.RoleType == RoleType.AfterDead)
+                if (item.RoleType == CustomRoleType.AfterDead)
                 {
                     Main.Instance.AfterDeathRoles.Add(item);
                     continue;
                 }
                 for (int i = 0; i < item.SpawnAmount; i++)
                 {
-                    if (item.RoleType == RoleType.SPC_Specific)
-                        Main.Instance.ScpSpecificRoles.Add(item);
-                    if (item.RoleType == RoleType.InWave)
-                        Main.Instance.ReSpawningRoles.Add(item);
+                    if (item.RoleType == CustomRoleType.SPC_Specific)
+                        Main.Instance.SPC_SpecificRoles.Add(item);
+                    if (item.RoleType == CustomRoleType.InWave)
+                        Main.Instance.InWaveRoles.Add(item);
                 }
 
             }
@@ -272,20 +269,28 @@ namespace SimpleCustomRoles.Handler
         public static void WaitingForPlayers()
         {
             Main.Instance.PlayerCustomRole = new Dictionary<string, CustomRoleInfo>();
-            Main.Instance.PlayersRolled = new List<CustomRoleInfo>();
-            Main.Instance.ReSpawningRoles = new List<CustomRoleInfo>();
+            Main.Instance.RegularRoles = new List<CustomRoleInfo>();
+            Main.Instance.InWaveRoles = new List<CustomRoleInfo>();
             Main.Instance.AfterDeathRoles = new List<CustomRoleInfo>();
-            Main.Instance.ScpSpecificRoles = new List<CustomRoleInfo>();
+            Main.Instance.SPC_SpecificRoles = new List<CustomRoleInfo>();
+            Main.Instance.EscapeRoles = new List<CustomRoleInfo>();
             Main.Instance.RolesLoader.Load();
             if (Main.Instance.Config.Debug)
                 Log.Info("Loading custom roles!");
             foreach (var item in Main.Instance.RolesLoader.RoleInfos)
             {
-                if (item.RoleType == RoleType.AfterDead)
+                if (item.RoleType == CustomRoleType.AfterDead)
                 {
                     if (Main.Instance.Config.Debug)
                         Log.Info($"After Death Role added: " + item.RoleName);
                     Main.Instance.AfterDeathRoles.Add(item);
+                    continue;
+                }
+                if (item.RoleType == CustomRoleType.Escape)
+                {
+                    if (Main.Instance.Config.Debug)
+                        Log.Info($"Escape Role added: " + item.RoleName);
+                    Main.Instance.EscapeRoles.Add(item);
                     continue;
                 }
                 for (int i = 0; i < item.SpawnAmount; i++)
@@ -295,10 +300,10 @@ namespace SimpleCustomRoles.Handler
                     if (random <= item.SpawnChance)
                     {
                         IsSpawning = true;
-                        if (item.RoleType == RoleType.SPC_Specific)
-                            Main.Instance.ScpSpecificRoles.Add(item);
+                        if (item.RoleType == CustomRoleType.SPC_Specific)
+                            Main.Instance.SPC_SpecificRoles.Add(item);
                         else
-                            Main.Instance.PlayersRolled.Add(item);
+                            Main.Instance.RegularRoles.Add(item);
                     }
                     if (Main.Instance.Config.Debug)
                         Log.Info($"Rolled chance: {random}/{item.SpawnChance} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ")  + "spawning.");
@@ -309,11 +314,11 @@ namespace SimpleCustomRoles.Handler
 
         public static void RoundStarted()
         {
-            foreach (var item in Main.Instance.PlayersRolled)
+            foreach (var item in Main.Instance.RegularRoles)
             {
-                if (item.RoleType == RoleType.InWave)
+                if (item.RoleType == CustomRoleType.InWave)
                 {
-                    Main.Instance.ReSpawningRoles.Add(item);
+                    Main.Instance.InWaveRoles.Add(item);
                     continue;
                 }
                 Player player = null;
@@ -331,7 +336,7 @@ namespace SimpleCustomRoles.Handler
                     Log.Info("Player Selected to spawn: " + player.UserId);
                 RoleSetter.SetCustomInfoToPlayer(player, item);
             }
-            Main.Instance.PlayersRolled.Clear();
+            Main.Instance.RegularRoles.Clear();
         }
 
 

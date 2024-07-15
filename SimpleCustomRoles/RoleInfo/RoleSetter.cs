@@ -66,6 +66,7 @@ namespace SimpleCustomRoles.RoleInfo
             {
                 return;
             }
+            player.UniqueRole = customRoleInfo.RoleName;
             if (customRoleInfo.Location.UseDefault)
             {
                 if (player.Role.Type != customRoleInfo.RoleToSpawnAs)
@@ -124,24 +125,24 @@ namespace SimpleCustomRoles.RoleInfo
 
             //  Health
             player.MaxHealth = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
-            player.Health += MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
+            player.Health = MathWithFloat(customRoleInfo.Health.Health.SetType, player.Health, customRoleInfo.Health.Health.Value);
             if (player.IsScp)
             {
-                player.HumeShield = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
+                player.HumeShield = MathWithFloat(customRoleInfo.Health.HumeShield.SetType, player.HumeShield, customRoleInfo.Health.HumeShield.Value);
             }
             if (player.IsHuman)
             {
-                player.MaxArtificialHealth = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
-                player.ArtificialHealth = MathWithFloat(customRoleInfo.Health.Health.SetType, player.MaxHealth, customRoleInfo.Health.Health.Value);
+                player.MaxArtificialHealth = MathWithFloat(customRoleInfo.Health.Ahp.SetType, player.MaxArtificialHealth, customRoleInfo.Health.Ahp.Value);
+                player.ArtificialHealth = MathWithFloat(customRoleInfo.Health.Ahp.SetType, player.ArtificialHealth, customRoleInfo.Health.Ahp.Value);
             }
 
             //  Effect
             foreach (var effect in customRoleInfo.Effects)
             {
+                // this time seems good I guess.
                 Timing.CallDelayed(3f, () =>
                 {
-                    //Make it do the stuff
-                    Log.Info($"Effect {effect.EffectType.ToString()}: IsSet? " + player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration));
+                    player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration);
                 });
             }
             player.Scale = new V3(1).ConvertFromV3();
@@ -216,6 +217,11 @@ namespace SimpleCustomRoles.RoleInfo
                         door.IsOpen = true;
                     }
                 });
+            }
+
+            foreach (var item in customRoleInfo.Advanced.FriendlyFire)
+            {
+                player.SetCustomRoleFriendlyFire(customRoleInfo.RoleName, item.RoleType, item.Value);
             }
 
             Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);

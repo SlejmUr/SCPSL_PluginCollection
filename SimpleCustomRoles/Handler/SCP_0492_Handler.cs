@@ -8,7 +8,7 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
             {
-                args.IsAllowed = role.SCP_Specific.SCP_0492.CanConsumeCorpse;
+                args.IsAllowed = role.Scp_Specific.Scp0492.CanConsumeCorpse;
             }
         }
     }
