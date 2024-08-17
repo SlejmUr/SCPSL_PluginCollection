@@ -1,6 +1,4 @@
-﻿using Exiled.API.Features;
-using Exiled.Events.EventArgs.Scp330;
-using Exiled.Events.Features;
+﻿using Exiled.Events.EventArgs.Scp330;
 
 namespace SimpleCustomRoles.Handler
 {

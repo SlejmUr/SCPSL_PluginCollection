@@ -280,11 +280,6 @@ namespace SimpleCustomRoles.Handler
             Main.Instance.AfterDeathRoles = new List<CustomRoleInfo>();
             Main.Instance.SPC_SpecificRoles = new List<CustomRoleInfo>();
             Main.Instance.EscapeRoles = new List<CustomRoleInfo>();
-            if (Main.Instance.Config.IsPaused)
-            {
-                Log.Info("Custom roles are paused!");
-                return; 
-            }
             Main.Instance.RolesLoader.Load();
             if (Main.Instance.Config.Debug)
                 Log.Info("Loading custom roles!");
@@ -325,6 +320,8 @@ namespace SimpleCustomRoles.Handler
 
         public static void RoundStarted()
         {
+            if (Main.Instance.Config.IsPaused)
+                return;
             foreach (var item in Main.Instance.RegularRoles)
             {
                 if (item.RoleType == CustomRoleType.InWave)
