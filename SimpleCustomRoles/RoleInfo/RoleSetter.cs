@@ -66,6 +66,13 @@ namespace SimpleCustomRoles.RoleInfo
             {
                 return;
             }
+            /*
+            var tmp_max_health = player.MaxHealth;
+            var tmp_health = player.Health;
+            var tmp_hume = player.HumeShield;
+            var tmp_max_ahp = player.MaxArtificialHealth;
+            var tmp_ahp = player.ArtificialHealth
+            */
             player.UniqueRole = customRoleInfo.RoleName;
             if (customRoleInfo.Location.UseDefault)
             {

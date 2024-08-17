@@ -47,9 +47,10 @@ namespace SimpleCustomRoles.Commands
 
                 var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 1, out var array, false);
                 bool allplayerSuccess = false;
+                string rsp = string.Empty;
                 foreach (var item in list)
                 {
-                    allplayerSuccess = SetIdToRole(name, item.PlayerId, out response);
+                    allplayerSuccess = SetIdToRole(name, item.PlayerId, out rsp);
                     if (!allplayerSuccess)
                     {
                         break;
@@ -57,12 +58,12 @@ namespace SimpleCustomRoles.Commands
                 }
                 if (!allplayerSuccess)
                 {
-                    response = "Some player couldnt be set as a role!";
+                    response = "Some player couldnt be set as a role! Error:" + rsp;
                     return false;
                 }
                 else
                 {
-                    response = "All PlayerIds set to role!";
+                    response = "All PlayerIds set to role! Error: " + rsp;
                     return true;
                 }
             }

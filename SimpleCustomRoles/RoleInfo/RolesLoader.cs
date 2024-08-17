@@ -27,6 +27,10 @@ namespace SimpleCustomRoles.RoleInfo
                         continue;
                     if (file.Contains(".yml"))
                     {
+                        if (Main.Instance.Config.Debug)
+                        {
+                            Log.Info(file);
+                        }
                         RoleInfos.Add(Deserialize(File.ReadAllText(file)));
                     }
                 }

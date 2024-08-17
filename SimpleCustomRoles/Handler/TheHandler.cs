@@ -18,19 +18,19 @@ namespace SimpleCustomRoles.Handler
             if (args.Player == null)
                 return;
 
-            if (args.Attacker == null)
-                return;
-
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Attacker.UserId, out var attacker_role))
+            CustomRoleInfo attacker_role = null;
+            if (args.Attacker != null)
             {
-                if (attacker_role.Advanced.Damager.DamageSentDict.TryGetValue(args.DamageHandler.Type, out var valueSetter))
+                if (Main.Instance.PlayerCustomRole.TryGetValue(args.Attacker.UserId, out attacker_role))
                 {
-                    args.Amount = RoleSetter.MathWithFloat(valueSetter.SetType, args.Amount, valueSetter.Value);
+                    if (attacker_role.Advanced.Damager.DamageSentDict.TryGetValue(args.DamageHandler.Type, out var valueSetter))
+                    {
+                        args.Amount = RoleSetter.MathWithFloat(valueSetter.SetType, args.Amount, valueSetter.Value);
+                    }
                 }
             }
 
-            bool toret = Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role);
-            if (!toret)
+            if (!Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
                 return;
 
             if (role.Advanced.Damager.DamageReceivedDict.TryGetValue(args.DamageHandler.Type, out var dmg))
@@ -170,17 +170,23 @@ namespace SimpleCustomRoles.Handler
                 return;
             args.IsAllowed = role.Advanced.Escaping.CanEscape;
             if (!args.IsAllowed)
+            {
+                Log.Info("escape not allowed");
                 return;
+            }
+            Log.Info("escape now as a role: " + args.NewRole);
+            Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
             if (role.Advanced.Escaping.RoleAfterEscape.TryGetValue(args.EscapeScenario, out var roleTypeId) && roleTypeId != PlayerRoles.RoleTypeId.None)
             {
                 args.NewRole = roleTypeId;
-                Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
             }
             if (role.Advanced.Escaping.RoleNameAfterEscape.TryGetValue(args.EscapeScenario, out var rolename) && !string.IsNullOrEmpty(rolename))
             {
-                Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
-                var escapeRole = Main.Instance.EscapeRoles.Where(x => x.RoleName == rolename).FirstOrDefault();
-                RoleSetter.SetCustomInfoToPlayer(args.Player, escapeRole);
+                Timing.CallDelayed(2.5f, () =>
+                {
+                    var escapeRole = Main.Instance.EscapeRoles.Where(x => x.RoleName == rolename).FirstOrDefault();
+                    RoleSetter.SetCustomInfoToPlayer(args.Player, escapeRole);
+                });
             }
         }
 
@@ -274,6 +280,11 @@ namespace SimpleCustomRoles.Handler
             Main.Instance.AfterDeathRoles = new List<CustomRoleInfo>();
             Main.Instance.SPC_SpecificRoles = new List<CustomRoleInfo>();
             Main.Instance.EscapeRoles = new List<CustomRoleInfo>();
+            if (Main.Instance.Config.IsPaused)
+            {
+                Log.Info("Custom roles are paused!");
+                return; 
+            }
             Main.Instance.RolesLoader.Load();
             if (Main.Instance.Config.Debug)
                 Log.Info("Loading custom roles!");
