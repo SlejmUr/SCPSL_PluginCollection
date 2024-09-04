@@ -63,7 +63,7 @@ namespace SimpleCustomRoles.Commands
                 }
                 else
                 {
-                    response = "All PlayerIds set to role! Error: " + rsp;
+                    response = "All PlayerIds set to role!";
                     return true;
                 }
             }

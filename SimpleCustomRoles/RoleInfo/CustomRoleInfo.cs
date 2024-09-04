@@ -13,14 +13,17 @@ namespace SimpleCustomRoles.RoleInfo
         [Description("Role name, can be the name of the file, just be different then others. REQUIRED (DONT USE SPACE!)")]
         public string RoleName { get; set; }
 
-        [Description("Role display name for spectators")]
+        [Description("Role display name")]
         public string DisplayRoleName { get; set; } = string.Empty;
 
-        [Description("Role display color for spectators")]
+        [Description("Role display color")]
         public string RoleDisplayColorHex { get; set; } = "#ffffff";
 
-        [Description("Can the role display in spectators")]
+        [Description("Can the role display")]
         public bool RoleCanDisplay { get; set; } = true;
+
+        [Description("Can the role display in info area")]
+        public bool RoleCanDisplayInfo { get; set; } = true;
 
         [Description("REQUIRED! Role spawning chance. 0 means NEVER, min 1, max 10000 [10 000] (so 0.01 = 1, 60 = 6000 [6 000])")]
         public int SpawnChance { get; set; } = 0;
@@ -196,16 +199,16 @@ namespace SimpleCustomRoles.RoleInfo
         [Description("Player Appearance to others")]
         public RoleTypeId RoleAppearance { get; set; } = RoleTypeId.None;
 
-        [Description("Effect can be removed with SCP-500.")]
+        [Description("Enable Door Bypassing.")]
         public bool BypassModeEnabled { get; set; } = false;
 
-        [Description("Effect can be removed with SCP-500.")]
+        [Description("Able to charge the jailbird.")]
         public bool CanChargeJailBird { get; set; } = true;
 
-        [Description("Effect can be removed with SCP-500.")]
+        [Description("Open all dorrs next to spawned place.")]
         public bool OpenDoorsNextToSpawn { get; set; } = false;
 
-        [Description("Effect can be removed with SCP-500.")]
+        [Description("Can trigger 096 Raging.")]
         public bool CanTrigger096 { get; set; } = true;
 
         [Description("Escaping options.")]

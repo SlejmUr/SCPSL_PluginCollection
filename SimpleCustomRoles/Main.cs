@@ -44,6 +44,7 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Player.DroppingItem += TheHandler.DroppingItem;
             Exiled.Events.Handlers.Player.ChangingSpectatedPlayer += TheHandler.ChangingSpectatedPlayer;
             Exiled.Events.Handlers.Player.Hurting += TheHandler.Hurting;
+            Exiled.Events.Handlers.Player.ChangingRole += TheHandler.ChangingRole;
 
             Exiled.Events.Handlers.Scp049.FinishingRecall += SCP_049_Handler.FinishingRecall;
 
@@ -84,6 +85,7 @@ namespace SimpleCustomRoles
             Exiled.Events.Handlers.Player.DroppingItem -= TheHandler.DroppingItem;
             Exiled.Events.Handlers.Player.ChangingSpectatedPlayer -= TheHandler.ChangingSpectatedPlayer;
             Exiled.Events.Handlers.Player.Hurting -= TheHandler.Hurting;
+            Exiled.Events.Handlers.Player.ChangingRole -= TheHandler.ChangingRole;
 
             Exiled.Events.Handlers.Scp049.FinishingRecall -= SCP_049_Handler.FinishingRecall;
 

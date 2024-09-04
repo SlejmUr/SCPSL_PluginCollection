@@ -2,9 +2,11 @@
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
+using Exiled.Events.Features;
 using MEC;
 using Respawning;
 using SimpleCustomRoles.RoleInfo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,6 +15,22 @@ namespace SimpleCustomRoles.Handler
 {
     public class TheHandler
     {
+        public static void ChangingRole(ChangingRoleEventArgs args)
+        {
+            if (Main.Instance.PlayerCustomRole.ContainsKey(args.Player.UserId))
+            {
+                if (!string.IsNullOrEmpty(args.Player.CustomInfo) && args.Player.CustomInfo.Contains("\nRole: "))
+                {
+                    string[] strings = args.Player.CustomInfo.Split(new[] { "\nRole: " }, StringSplitOptions.None);
+                    if (strings.Length == 1)
+                        args.Player.CustomInfo = string.Empty;
+                    else
+                        args.Player.CustomInfo = string.Join("", strings.Take(strings.Length - 1));
+                }
+                Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
+            }
+        }
+
         public static void Hurting(HurtingEventArgs args)
         {
             if (args.Player == null)
@@ -116,6 +134,11 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var died_player_role))
             {
+                if (args.Player.CustomInfo.Contains("\nRole: "))
+                {
+                    string[] strings = args.Player.CustomInfo.Split(new[] { "\nRole: " }, StringSplitOptions.None);
+                    args.Player.CustomInfo = string.Join("", strings.Take(strings.Length - 1));
+                }
                 if (!string.IsNullOrEmpty(died_player_role.EventCaller.OnDied))
                 {
                     int attackerID = 0;

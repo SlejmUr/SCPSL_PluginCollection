@@ -1,6 +1,7 @@
 ﻿using Exiled.API.Extensions;
 using Exiled.API.Features;
 using MEC;
+using System;
 using System.Linq;
 
 namespace SimpleCustomRoles.RoleInfo
@@ -229,6 +230,32 @@ namespace SimpleCustomRoles.RoleInfo
             foreach (var item in customRoleInfo.Advanced.FriendlyFire)
             {
                 player.SetCustomRoleFriendlyFire(customRoleInfo.RoleName, item.RoleType, item.Value);
+            }
+
+            if (customRoleInfo.RoleCanDisplayInfo)
+            {
+                if (string.IsNullOrEmpty(player.CustomInfo))
+                {
+                    player.CustomInfo = $"\nRole: {customRoleInfo.DisplayRoleName}";
+                    player.InfoArea = PlayerInfoArea.Badge | PlayerInfoArea.Nickname | PlayerInfoArea.Role | PlayerInfoArea.CustomInfo | PlayerInfoArea.UnitName;
+                }
+                else if (player.CustomInfo.Contains("\nRole: "))
+                {
+                    string[] strings = player.CustomInfo.Split(new[] { "\nRole: " }, StringSplitOptions.None);
+                    if (strings.Length == 1)
+                        player.CustomInfo = string.Empty;
+                    else
+                        player.CustomInfo = string.Join("", strings.Take(strings.Length - 1));
+                    player.CustomInfo += $"\nRole: {customRoleInfo.DisplayRoleName}";
+                    player.InfoArea = PlayerInfoArea.Badge | PlayerInfoArea.Nickname | PlayerInfoArea.Role | PlayerInfoArea.CustomInfo | PlayerInfoArea.UnitName;
+                }
+            }
+            
+
+            if (!string.IsNullOrEmpty(customRoleInfo.EventCaller.OnSpawned))
+            {
+                // Call event
+                Server.ExecuteCommand($"{customRoleInfo.EventCaller.OnSpawned} {player.Id} {customRoleInfo.RoleName}");
             }
 
             Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);
