@@ -22,9 +22,6 @@ namespace SimpleCustomRoles.RoleInfo
         [Description("Can the role display")]
         public bool RoleCanDisplay { get; set; } = true;
 
-        [Description("Can the role display in info area")]
-        public bool RoleCanDisplayInfo { get; set; } = true;
-
         [Description("REQUIRED! Role spawning chance. 0 means NEVER, min 1, max 10000 [10 000] (so 0.01 = 1, 60 = 6000 [6 000])")]
         public int SpawnChance { get; set; } = 0;
 

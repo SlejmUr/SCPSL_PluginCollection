@@ -19,14 +19,6 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.PlayerCustomRole.ContainsKey(args.Player.UserId))
             {
-                if (!string.IsNullOrEmpty(args.Player.CustomInfo) && args.Player.CustomInfo.Contains("\nRole: "))
-                {
-                    string[] strings = args.Player.CustomInfo.Split(new[] { "\nRole: " }, StringSplitOptions.None);
-                    if (strings.Length == 1)
-                        args.Player.CustomInfo = string.Empty;
-                    else
-                        args.Player.CustomInfo = string.Join("", strings.Take(strings.Length - 1));
-                }
                 Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
             }
         }
@@ -134,11 +126,6 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var died_player_role))
             {
-                if (args.Player.CustomInfo.Contains("\nRole: "))
-                {
-                    string[] strings = args.Player.CustomInfo.Split(new[] { "\nRole: " }, StringSplitOptions.None);
-                    args.Player.CustomInfo = string.Join("", strings.Take(strings.Length - 1));
-                }
                 if (!string.IsNullOrEmpty(died_player_role.EventCaller.OnDied))
                 {
                     int attackerID = 0;
