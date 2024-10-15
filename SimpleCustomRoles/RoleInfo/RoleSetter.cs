@@ -243,5 +243,19 @@ namespace SimpleCustomRoles.RoleInfo
             if (Main.Instance.Config.Debug)
                 Log.Info("SetCustomInfoToPlayer: " + player.UserId + " Role: " + customRoleInfo.RoleName + " Success");
         }
+
+        public static void UnSetCustomInfoToPlayer(Player player)
+        {
+            if (!Main.Instance.PlayerCustomRole.ContainsKey(player.UserId))
+            {
+                return;
+            }
+            player.UniqueRole = string.Empty;
+            player.IsBypassModeEnabled = false;
+            player.Scale = new V3(1).ConvertFromV3();
+            player.Role.Set(player.Role.Type, Exiled.API.Enums.SpawnReason.LateJoin, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
+            Main.Instance.PlayerCustomRole.Remove(player.UserId);
+        }
+
     }
 }
