@@ -8,111 +8,110 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.ObjectGraphVisitors;
 using YamlDotNet.Core.Events;
 
-namespace SimpleCustomRoles
+namespace SimpleCustomRoles;
+
+public class CommentGatheringTypeInspector : TypeInspectorSkeleton
 {
-    public class CommentGatheringTypeInspector : TypeInspectorSkeleton
+    private readonly ITypeInspector innerTypeDescriptor;
+
+    public CommentGatheringTypeInspector(ITypeInspector innerTypeDescriptor)
     {
-        private readonly ITypeInspector innerTypeDescriptor;
-
-        public CommentGatheringTypeInspector(ITypeInspector innerTypeDescriptor)
+        if (innerTypeDescriptor == null)
         {
-            if (innerTypeDescriptor == null)
-            {
-                throw new ArgumentNullException("innerTypeDescriptor");
-            }
-
-            this.innerTypeDescriptor = innerTypeDescriptor;
+            throw new ArgumentNullException("innerTypeDescriptor");
         }
 
-        public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object container)
+        this.innerTypeDescriptor = innerTypeDescriptor;
+    }
+
+    public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object container)
+    {
+        return innerTypeDescriptor
+            .GetProperties(type, container)
+            .Select(d => new CommentsPropertyDescriptor(d));
+    }
+
+    private sealed class CommentsPropertyDescriptor : IPropertyDescriptor
+    {
+        private readonly IPropertyDescriptor baseDescriptor;
+
+        public CommentsPropertyDescriptor(IPropertyDescriptor baseDescriptor)
         {
-            return innerTypeDescriptor
-                .GetProperties(type, container)
-                .Select(d => new CommentsPropertyDescriptor(d));
+            this.baseDescriptor = baseDescriptor;
+            Name = baseDescriptor.Name;
         }
 
-        private sealed class CommentsPropertyDescriptor : IPropertyDescriptor
+        public string Name { get; set; }
+
+        public Type Type { get { return baseDescriptor.Type; } }
+
+        public Type TypeOverride
         {
-            private readonly IPropertyDescriptor baseDescriptor;
+            get { return baseDescriptor.TypeOverride; }
+            set { baseDescriptor.TypeOverride = value; }
+        }
 
-            public CommentsPropertyDescriptor(IPropertyDescriptor baseDescriptor)
-            {
-                this.baseDescriptor = baseDescriptor;
-                Name = baseDescriptor.Name;
-            }
+        public int Order { get; set; }
 
-            public string Name { get; set; }
+        public ScalarStyle ScalarStyle
+        {
+            get { return baseDescriptor.ScalarStyle; }
+            set { baseDescriptor.ScalarStyle = value; }
+        }
 
-            public Type Type { get { return baseDescriptor.Type; } }
+        public bool CanWrite { get { return baseDescriptor.CanWrite; } }
 
-            public Type TypeOverride
-            {
-                get { return baseDescriptor.TypeOverride; }
-                set { baseDescriptor.TypeOverride = value; }
-            }
+        public void Write(object target, object value)
+        {
+            baseDescriptor.Write(target, value);
+        }
 
-            public int Order { get; set; }
+        public T GetCustomAttribute<T>() where T : Attribute
+        {
+            return baseDescriptor.GetCustomAttribute<T>();
+        }
 
-            public ScalarStyle ScalarStyle
-            {
-                get { return baseDescriptor.ScalarStyle; }
-                set { baseDescriptor.ScalarStyle = value; }
-            }
-
-            public bool CanWrite { get { return baseDescriptor.CanWrite; } }
-
-            public void Write(object target, object value)
-            {
-                baseDescriptor.Write(target, value);
-            }
-
-            public T GetCustomAttribute<T>() where T : Attribute
-            {
-                return baseDescriptor.GetCustomAttribute<T>();
-            }
-
-            public IObjectDescriptor Read(object target)
-            {
-                var description = baseDescriptor.GetCustomAttribute<DescriptionAttribute>();
-                return description != null
-                    ? new CommentsObjectDescriptor(baseDescriptor.Read(target), description.Description)
-                    : baseDescriptor.Read(target);
-            }
+        public IObjectDescriptor Read(object target)
+        {
+            var description = baseDescriptor.GetCustomAttribute<DescriptionAttribute>();
+            return description != null
+                ? new CommentsObjectDescriptor(baseDescriptor.Read(target), description.Description)
+                : baseDescriptor.Read(target);
         }
     }
-    public sealed class CommentsObjectDescriptor : IObjectDescriptor
+}
+public sealed class CommentsObjectDescriptor : IObjectDescriptor
+{
+    private readonly IObjectDescriptor innerDescriptor;
+
+    public CommentsObjectDescriptor(IObjectDescriptor innerDescriptor, string comment)
     {
-        private readonly IObjectDescriptor innerDescriptor;
-
-        public CommentsObjectDescriptor(IObjectDescriptor innerDescriptor, string comment)
-        {
-            this.innerDescriptor = innerDescriptor;
-            this.Comment = comment;
-        }
-
-        public string Comment { get; private set; }
-
-        public object Value { get { return innerDescriptor.Value; } }
-        public Type Type { get { return innerDescriptor.Type; } }
-        public Type StaticType { get { return innerDescriptor.StaticType; } }
-        public ScalarStyle ScalarStyle { get { return innerDescriptor.ScalarStyle; } }
+        this.innerDescriptor = innerDescriptor;
+        this.Comment = comment;
     }
-    public class CommentsObjectGraphVisitor : ChainedObjectGraphVisitor
+
+    public string Comment { get; private set; }
+
+    public object Value { get { return innerDescriptor.Value; } }
+    public Type Type { get { return innerDescriptor.Type; } }
+    public Type StaticType { get { return innerDescriptor.StaticType; } }
+    public ScalarStyle ScalarStyle { get { return innerDescriptor.ScalarStyle; } }
+}
+public class CommentsObjectGraphVisitor : ChainedObjectGraphVisitor
+{
+    public CommentsObjectGraphVisitor(IObjectGraphVisitor<IEmitter> nextVisitor)
+        : base(nextVisitor)
     {
-        public CommentsObjectGraphVisitor(IObjectGraphVisitor<IEmitter> nextVisitor)
-            : base(nextVisitor)
+    }
+
+    public override bool EnterMapping(IPropertyDescriptor key, IObjectDescriptor value, IEmitter context)
+    {
+        var commentsDescriptor = value as CommentsObjectDescriptor;
+        if (commentsDescriptor != null && commentsDescriptor.Comment != null)
         {
+            context.Emit(new Comment(commentsDescriptor.Comment, false));
         }
 
-        public override bool EnterMapping(IPropertyDescriptor key, IObjectDescriptor value, IEmitter context)
-        {
-            var commentsDescriptor = value as CommentsObjectDescriptor;
-            if (commentsDescriptor != null && commentsDescriptor.Comment != null)
-            {
-                context.Emit(new Comment(commentsDescriptor.Comment, false));
-            }
-
-            return base.EnterMapping(key, value, context);
-        }
+        return base.EnterMapping(key, value, context);
     }
 }

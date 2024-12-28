@@ -174,6 +174,21 @@ namespace SimpleCustomRoles.Handler
             }
         }
 
+        public static void Dying(DyingEventArgs ev)
+        {
+            if (Main.Instance.PlayerCustomRole.TryGetValue(ev.Player.UserId, out var dying_player_role))
+            {
+                if (!string.IsNullOrEmpty(dying_player_role.EventCaller.OnDying))
+                {
+                    int attackerID = 0;
+                    if (ev.Attacker != null)
+                        attackerID = ev.Attacker.Id;
+                    // Call event
+                    Server.ExecuteCommand($"{dying_player_role.EventCaller.OnDying} {ev.Player.Id} {attackerID} {ev.DamageHandler.Type.ToString()}");
+                }
+            }
+        }
+
         public static void Escaping(EscapingEventArgs args)
         {
             if (!Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))

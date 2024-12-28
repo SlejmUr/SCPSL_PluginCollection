@@ -13,6 +13,7 @@
 		<Copyright>SlejmUr</Copyright>
 		<IsPackable>false</IsPackable>
 		<DebugType>none</DebugType>
+		<LangVersion>11</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
