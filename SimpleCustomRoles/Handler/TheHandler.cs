@@ -5,6 +5,7 @@ using Exiled.Events.EventArgs.Player;
 using Exiled.Events.Features;
 using MEC;
 using Respawning;
+using Respawning.Waves;
 using SimpleCustomRoles.RoleInfo;
 using System;
 using System.Collections.Generic;
@@ -78,14 +79,6 @@ namespace SimpleCustomRoles.Handler
                     return;
                 Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast($"\nThis user has a special role: <color={role.RoleDisplayColorHex}>{role.DisplayRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
                 args.Player.Broadcast(broadcast, false);
-            }
-        }
-
-        public static void ChargingJailbird(ChargingJailbirdEventArgs args)
-        {
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
-            {
-                args.IsAllowed = role.Advanced.CanChargeJailBird;
             }
         }
 
@@ -215,7 +208,7 @@ namespace SimpleCustomRoles.Handler
             }
         }
 
-        public static void RespawnManager_ServerOnRespawned(SpawnableTeamType spawnableTeamType, List<ReferenceHub> players)
+        public static void RespawnManager_ServerOnRespawned(SpawnableWaveBase wave, List<ReferenceHub> players)
         {
             if (players.Count == 0)
                 return;
@@ -232,7 +225,7 @@ namespace SimpleCustomRoles.Handler
                 Main.Instance.PlayerCustomRole.Remove(player.UserId);
             }
 
-            foreach (var item in Main.Instance.InWaveRoles.Where(x=>x.SpawnWaveSpecific.Team == spawnableTeamType && x.RoleType == CustomRoleType.InWave))
+            foreach (var item in Main.Instance.InWaveRoles.Where(x=>x.SpawnWaveSpecific.Faction == wave.TargetFaction && x.RoleType == CustomRoleType.InWave))
             {
 
                 if (!item.SpawnWaveSpecific.SkipMinimumCheck)
@@ -266,7 +259,7 @@ namespace SimpleCustomRoles.Handler
                 if (!string.IsNullOrEmpty(item.Value.EventCaller.OnSpawnWave))
                 {
                     // Call event
-                    Server.ExecuteCommand($"{item.Value.EventCaller.OnSpawnWave} {player.Id} {item.Value.RoleName} {spawnableTeamType.ToString()} {players.Count}");
+                    Server.ExecuteCommand($"{item.Value.EventCaller.OnSpawnWave} {player.Id} {item.Value.RoleName} {wave.TargetFaction.ToString()} {players.Count}");
                 }
             }
         }

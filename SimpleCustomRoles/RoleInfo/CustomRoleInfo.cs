@@ -77,8 +77,8 @@ public enum CustomRoleType
 }
 public class SpawnWaveSpecific
 {
-    [Description("Spawning Team Type.")]
-    public SpawnableTeamType Team { get; set; } = SpawnableTeamType.None;
+    [Description("Spawning Faction Type.")]
+    public Faction Faction { get; set; } = Faction.Unclassified;
 
     [Description("Minimum Team Member Required to spawn this class.")]
     public int MinimumTeamMemberRequired { get; set; } = 0;
@@ -198,9 +198,6 @@ public class Advanced
 
     [Description("Enable Door Bypassing.")]
     public bool BypassModeEnabled { get; set; } = false;
-
-    [Description("Able to charge the jailbird.")]
-    public bool CanChargeJailBird { get; set; } = true;
 
     [Description("Open all dorrs next to spawned place.")]
     public bool OpenDoorsNextToSpawn { get; set; } = false;

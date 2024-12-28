@@ -56,13 +56,11 @@ internal class Main : Plugin<Config>
         Exiled.Events.Handlers.Scp173.PlacingTantrum += SCP_173_Handler.PlacingTantrum;
         Exiled.Events.Handlers.Scp173.UsingBreakneckSpeeds += SCP_173_Handler.UsingBreakneckSpeeds;
 
-        Exiled.Events.Handlers.Item.ChargingJailbird += TheHandler.ChargingJailbird;
-
         Exiled.Events.Handlers.Scp330.InteractingScp330 += SCP_330_Handler.InteractingScp330;
         Exiled.Events.Handlers.Scp330.EatingScp330 += SCP_330_Handler.EatingScp330;
         Exiled.Events.Handlers.Scp330.DroppingScp330 += SCP_330_Handler.DroppingScp330;
 
-        RespawnManager.ServerOnRespawned += TheHandler.RespawnManager_ServerOnRespawned;
+        WaveManager.OnWaveSpawned += TheHandler.RespawnManager_ServerOnRespawned;
 
         base.OnEnabled();
     }
@@ -93,15 +91,13 @@ internal class Main : Plugin<Config>
         Exiled.Events.Handlers.Scp096.StartPryingGate -= SCP_096_Handler.StartPryingGate;
 
         Exiled.Events.Handlers.Scp173.PlacingTantrum -= SCP_173_Handler.PlacingTantrum;
-        Exiled.Events.Handlers.Scp173.UsingBreakneckSpeeds -= SCP_173_Handler.UsingBreakneckSpeeds;
-
-        Exiled.Events.Handlers.Item.ChargingJailbird -= TheHandler.ChargingJailbird;
+        Exiled.Events.Handlers.Scp173.UsingBreakneckSpeeds -= SCP_173_Handler.UsingBreakneckSpeeds;;
 
         Exiled.Events.Handlers.Scp330.InteractingScp330 -= SCP_330_Handler.InteractingScp330;
         Exiled.Events.Handlers.Scp330.EatingScp330 -= SCP_330_Handler.EatingScp330;
         Exiled.Events.Handlers.Scp330.DroppingScp330 -= SCP_330_Handler.DroppingScp330;
 
-        RespawnManager.ServerOnRespawned -= TheHandler.RespawnManager_ServerOnRespawned;
+        WaveManager.OnWaveSpawned -= TheHandler.RespawnManager_ServerOnRespawned;
 
         RolesLoader.Dispose();
         RolesLoader = null;

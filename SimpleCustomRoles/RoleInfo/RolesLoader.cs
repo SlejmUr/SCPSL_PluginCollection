@@ -181,7 +181,6 @@ public class RolesLoader
                 },
                 OpenDoorsNextToSpawn = false,
                 BypassModeEnabled = false,
-                CanChargeJailBird = true,
                 Candy = new CandyStuff()
                 {
                     CandiesToGive = new List<InventorySystem.Items.Usables.Scp330.CandyKindID>()
@@ -308,7 +307,7 @@ public class RolesLoader
             { 
                 MinimumTeamMemberRequired = 3,
                 SkipMinimumCheck = true,
-                Team = Respawning.SpawnableTeamType.ChaosInsurgency
+                Faction = Faction.FoundationEnemy
             },
             Health = new HealthClass()
             { 
