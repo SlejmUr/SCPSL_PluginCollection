@@ -20,11 +20,11 @@ health:
     setType: Add
 effects:
 - canRemovedWithSCP500: false
-  effectType: MovementBoost
+  effectTypeName: MovementBoost
   duration: 0
   intensity: 80
 - canRemovedWithSCP500: false
-  effectType: SinkHole
+  effectTypeName: SinkHole
   duration: 0
   intensity: 1
 inventory:
@@ -38,12 +38,11 @@ inventory:
   - GunA7
   - GunE11SR
   ammos:
-    Nato9: 100
-    Nato556: 100
-    Ammo12Gauge: 20
-    Nato762: 100
-    Ammo44Cal: 20
-    Nato9: 100
+    Ammo9x19: 100
+    Ammo556x45: 100
+    Ammo12gauge: 20
+    Ammo762x39: 100
+    Ammo44cal: 20
 scpSpecific:
   scp0492:
     canSpawnIfNoCustom094: true
