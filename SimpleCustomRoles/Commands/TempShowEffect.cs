@@ -1,9 +1,7 @@
 ﻿using CommandSystem;
-using Exiled.API.Extensions;
-using Exiled.API.Features;
+using LabApi.Features.Wrappers;
 using RemoteAdmin;
-using System;
-using System.Linq;
+using SimpleCustomRoles.Helpers;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -13,7 +11,7 @@ public class TempShowEffect : ICommand
 {
     public string Command => "showeffects";
 
-    public string[] Aliases => new string[] { "showeffects", "geteffects", "scr_ef" };
+    public string[] Aliases => ["showeffects", "geteffects", "scr_ef"];
 
     public string Description => "Show your current Effects";
 
@@ -32,7 +30,7 @@ public class TempShowEffect : ICommand
             response = "Your effects: \n";
             foreach (var effect in player.ActiveEffects)
             {
-                string effectName = EffectTypeExtension.GetEffectType(effect).ToString();
+                string effectName = EffectHelper.GetEffectNameFromType(player, effect).ToString();
                 response += effectName + $" (d: {effect.Duration} i:{effect.Intensity})" + "\n";
             }
             return true;

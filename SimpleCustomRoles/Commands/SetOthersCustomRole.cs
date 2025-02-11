@@ -1,8 +1,6 @@
 ﻿using CommandSystem;
-using Exiled.API.Features;
+using LabApi.Features.Wrappers;
 using SimpleCustomRoles.RoleInfo;
-using System;
-using System.Linq;
 using Utils;
 
 namespace SimpleCustomRoles.Commands;
@@ -12,7 +10,7 @@ public class SetOthersCustomRole : ICommand
 {
     public string Command => "setoscr";
 
-    public string[] Aliases => new string[] { "setotherssimplecustomrole" };
+    public string[] Aliases => ["setotherssimplecustomrole"];
 
     public string Description => "Set others custom role with a given roleName\n Usage: setoscr RoleName PlayerId.\nTo set others back use '.' as a name";
 
@@ -39,7 +37,7 @@ public class SetOthersCustomRole : ICommand
         }
         string name = args[0];
 
-        var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 1, out var array, false);
+        var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 1, out _, false);
         bool allplayerSuccess = false;
         string rsp = string.Empty;
         foreach (var item in list)
@@ -64,18 +62,18 @@ public class SetOthersCustomRole : ICommand
 
     public bool SetIdToRole(string rolename, int playerId, out string response)
     {
-        var player = Player.List.Where(x => x.Id == playerId).FirstOrDefault();
+        var player = Player.List.Where(x => x.PlayerId == playerId).FirstOrDefault();
         if (player == null)
         {
             response = "Must be a Player!";
             return false;
         }
         // Set roles back.
-        Log.Info(rolename + " " + (rolename[0] == '.') + " " + (rolename == "."));
+        CL.Info(rolename + " " + (rolename[0] == '.') + " " + (rolename == "."));
         if (rolename == ".")
         {
             RoleSetter.UnSetCustomInfoToPlayer(player);
-            response = $"You unset {player.Id}!";
+            response = $"You unset {player.PlayerId}!";
             return true;
         }
         else
@@ -87,7 +85,7 @@ public class SetOthersCustomRole : ICommand
                 return false;
             }
             RoleSetter.SetFromCMD(player, role);
-            response = $"You set {player.Id} as a role: {rolename}[{role.DisplayRoleName}]!";
+            response = $"You set {player.PlayerId} as a role: {rolename}[{role.DisplayRoleName}]!";
             return true;
         }
         

@@ -13,7 +13,7 @@
 		<Copyright>SlejmUr</Copyright>
 		<IsPackable>false</IsPackable>
 		<DebugType>none</DebugType>
-		<LangVersion>11</LangVersion>
+		<LangVersion>12</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -21,46 +21,45 @@
 		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="TheYML.yml" />
-	  <None Remove="TheYML_NoComments.yml" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Content Include="TheYML.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="TheYML_NoComments.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ExMod.Exiled" Version="9.1.1" />
+		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" ExcludeAssets="runtime" ReferenceOutputAssembly="false" Private="true" />
+	  <Reference Include="Assembly-CSharp" Publicize="true" Private="false" />
+	  <Reference Include="LabApi" Publicize="true" Private="false" />
+	  <Reference Include="Assembly-CSharp-firstpass" Publicize="true" Private="false" />
+	  <Reference Include="Mirror" Publicize="true" Private="false" />
+	  <Reference Include="Mirror.Components" Private="false" />
+	  <Reference Include="UnityEngine" Private="false" />
+	  <Reference Include="UnityEngine.CoreModule" Private="false" />
+	  <Reference Include="Pooling" Private="false" />
+	  <Reference Include="YamlDotNet" Private="false" />
+	  <Reference Include="CommandSystem.Core" Publicize="true" Private="false" />
 	</ItemGroup>
 
+	<Import Project="ReferencePaths.props.user" />
+	<PropertyGroup>
+		<AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
+	</PropertyGroup>
+	
 	<ItemGroup>
-	  <Reference Include="Assembly-CSharp-firstpass">
-	    <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="Mirror">
-	    <HintPath>..\References\Mirror.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="Mirror.Components">
-	    <HintPath>..\References\Mirror.Components.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="UnityEngine">
-	    <HintPath>..\References\UnityEngine.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="UnityEngine.CoreModule">
-	    <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
+	  <Using Include="LabApi.Features.Console.Logger">
+	    <Alias>CL</Alias>
+	  </Using>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="ExampleRoles\" />
 	</ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
 ﻿using CommandSystem;
-using System;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -8,7 +7,7 @@ public class PauseCustomRole : ICommand
 {
     public string Command => "pausescr";
 
-    public string[] Aliases => new string[] { "pausecustomrole" };
+    public string[] Aliases => ["pausecustomrole"];
 
     public string Description => "Pause or resume custom roles";
 

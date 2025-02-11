@@ -1,9 +1,8 @@
-﻿using Exiled.API.Enums;
-using InventorySystem.Items.Usables.Scp330;
+﻿using InventorySystem.Items.Usables.Scp330;
+using MapGeneration;
 using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp079;
-using Respawning;
-using System.Collections.Generic;
+using SimpleCustomRoles.Helpers;
 using System.ComponentModel;
 
 namespace SimpleCustomRoles.RoleInfo;
@@ -41,31 +40,31 @@ public class CustomRoleInfo
     public Team ReplaceFromTeam { get; set; } = Team.Dead;
 
     [Description("WAVE!")]
-    public SpawnWaveSpecific SpawnWaveSpecific { get; set; } = new SpawnWaveSpecific();
+    public SpawnWaveSpecific SpawnWaveSpecific { get; set; } = new();
 
     [Description("Location, declare where to spawn.")]
-    public Location Location { get; set; } = new Location();
+    public Location Location { get; set; } = new();
 
     [Description("Set Inventory Releated Actions !!IT WILL REPLACE AND CLEAR THE INVENTORY OF THE ALREADY REPLACED CLASS!!")]
-    public Inventory Inventory { get; set; } = new Inventory();
+    public Inventory Inventory { get; set; } = new();
 
     [Description("Set Effects to the player")]
-    public List<Effect> Effects { get; set; } = new List<Effect>();
+    public List<Effect> Effects { get; set; } = [];
 
     [Description("Modify health, ahp, hume")]
-    public HealthClass Health { get; set; } = new HealthClass();
+    public HealthClass Health { get; set; } = new();
 
     [Description("Using hint, broadcast")]
-    public HintStuff Hint { get; set; } = new HintStuff();
+    public HintStuff Hint { get; set; } = new();
 
     [Description("Advanced configurations.")]
-    public Advanced Advanced { get; set; } = new Advanced();
+    public Advanced Advanced { get; set; } = new();
 
     [Description("SCP Specific actions.")]
-    public SCP_Specific Scp_Specific { get; set; } = new SCP_Specific();
+    public SCP_Specific Scp_Specific { get; set; } = new();
 
     [Description("Making a Console command with some premade values. Good for ScriptedEvents")]
-    public EventCaller EventCaller { get; set; } = new EventCaller();
+    public EventCaller EventCaller { get; set; } = new();
 }
 public enum CustomRoleType
 {
@@ -89,36 +88,36 @@ public class SpawnWaveSpecific
 public class Inventory
 {
     [Description("Items to spawn in.")]
-    public List<ItemType> InventoryItems { get; set; } = new List<ItemType>();
+    public List<ItemType> InventoryItems { get; set; } = [];
 
     [Description("Denied using items list")]
-    public List<ItemType> DeniedUsingItems { get; set; } = new List<ItemType>();
+    public List<ItemType> DeniedUsingItems { get; set; } = [];
 
     [Description("Cannot drop items list.")]
-    public List<ItemType> CannotDropItems { get; set; } = new List<ItemType>();
+    public List<ItemType> CannotDropItems { get; set; } = [];
 
     [Description("Ammos and amount of it.")]
-    public Dictionary<AmmoType, ushort> Ammos { get; set; } = new Dictionary<AmmoType, ushort>();
+    public Dictionary<ItemType, ushort> Ammos { get; set; } = [];
 
     [Description("IF you use custom item, you can declare the IDS's here.")]
-    public List<uint> CustomItemIds { get; set; } = new List<uint>();
+    public List<uint> CustomItemIds { get; set; } = [];
 }
 public class HintStuff
 {
     [Description("Suggestion: Say that what the user spawned as. Can use something like <color=#ededb4><b>TEMP</b></color>\\n\\tFav role")]
-    public string SpawnBroadcast { get; set; } = "";
+    public string SpawnBroadcast { get; set; } = string.Empty;
 
     [Description("Suggestion: Set as 15, so when you spawned most of the UI is gonna get obscured. After 10 or 8 second it will be removed/hidden.")]
     public ushort SpawnBroadcastDuration { get; set; } = 0;
 
     [Description("Suggestion: Any hints to display.")]
-    public string SpawnHint { get; set; } = "";
+    public string SpawnHint { get; set; } = string.Empty;
 
     [Description("Suggestion: Set as 15, so when you spawned most of the UI is gonna get obscured. After 10 or 8 second it will be removed/hidden.")]
     public float SpawnHintDuration { get; set; } = 0;
 
     [Description("Broadcast to All users.")]
-    public string SpawnBroadcastToAll { get; set; } = "";
+    public string SpawnBroadcastToAll { get; set; } = string.Empty;
 
     [Description("Suggestion: Set as 15, so when you spawned most of the UI is gonna get obscured. After 10 or 8 second it will be removed/hidden.")]
     public ushort SpawnBroadcastToAllDuration { get; set; } = 0;
@@ -135,13 +134,13 @@ public class HealthClass
 {
 
     [Description("Health Value edit.")]
-    public ValueSetter Health { get; set; } = new ValueSetter();
+    public ValueSetter Health { get; set; } = new();
 
     [Description("AHP Value edit. (Used if human class)")]
-    public ValueSetter Ahp { get; set; } = new ValueSetter();
+    public ValueSetter Ahp { get; set; } = new();
 
     [Description("HumeShield Value edit. (Used if SCP class)")]
-    public ValueSetter HumeShield { get; set; } = new ValueSetter();
+    public ValueSetter HumeShield { get; set; } = new();
 }
 public class Location
 {
@@ -152,17 +151,17 @@ public class Location
     [Description("Prioritize where you spawn from below set values. See LocationSpawnPrioritys.txt")]
     public LocationSpawnPriority LocationSpawnPriority { get; set; } = LocationSpawnPriority.FullRandom;
 
-    [Description("Zone List to Spawn in. Check ZoneTypes.txt")]
-    public List<ZoneType> SpawnZones { get; set; }
+    [Description("Zone List to Spawn in. Check RoomName.txt")]
+    public List<FacilityZone> SpawnZones { get; set; }
 
-    [Description("Room Types to Spawn in. Check RoomTypes.txt")]
-    public List<RoomType> SpawnRooms { get; set; }
+    [Description("Room Types to Spawn in. Check RoomName.txt")]
+    public List<RoomName> SpawnRooms { get; set; }
 
     [Description("Exact Position with Vector3.")]
-    public V3 ExactPosition { get; set; } = new V3();
+    public V3 ExactPosition { get; set; } = new();
 
     [Description("Offset by all Spawn Position (Except when Default is True).")]
-    public V3 OffsetPosition { get; set; } = new V3();
+    public V3 OffsetPosition { get; set; } = new();
 }
 public enum LocationSpawnPriority
 {
@@ -179,7 +178,7 @@ public class Effect
     public bool CanRemovedWithSCP500 { get; set; } = true;
 
     [Description("Effect Type to add into the user. Check EffectTypes.txt")]
-    public EffectType EffectType { get; set; }
+    public string EffectTypeName { get; set; }
 
     [Description("Duration how long the effect should last.")]
     public float Duration { get; set; }
@@ -206,36 +205,36 @@ public class Advanced
     public bool CanTrigger096 { get; set; } = true;
 
     [Description("Escaping options.")]
-    public Escape Escaping { get; set; } = new Escape();
+    public EscapeClass Escaping { get; set; } = new();
 
     [Description("TODO.")]
-    public DeadBy DeadBy { get; set; } = new DeadBy();
+    public DeadBy DeadBy { get; set; } = new();
 
     [Description("Candy releated actions.")]
-    public CandyStuff Candy { get; set; } = new CandyStuff();
+    public CandyStuff Candy { get; set; } = new();
 
     [Description("Damager for Receiving and Sending damaga values.")]
-    public Damager Damager { get; set; } = new Damager();
+    public Damager Damager { get; set; } = new();
 
     [Description("Friendly Fire to each Role.")]
-    public List<FF> FriendlyFire { get; set; } = new List<FF>();
+    public List<FF> FriendlyFire { get; set; } = [];
     public class FF
     {
         public RoleTypeId RoleType { get; set; } = RoleTypeId.None;
         public float Value { get; set; } = 0;
     }
 
-    public class Escape
+    public class EscapeClass
     {
 
         [Description("Can the player escape.")]
         public bool CanEscape { get; set; } = true;
 
         [Description("Role Gathered after Escaping with the Scenario.")]
-        public Dictionary<EscapeScenario, RoleTypeId> RoleAfterEscape = new Dictionary<EscapeScenario, RoleTypeId>();
+        public Dictionary<Escape.EscapeScenarioType, RoleTypeId> RoleAfterEscape = [];
 
         [Description("Custom Role after Escaping with the Scenario.")]
-        public Dictionary<EscapeScenario, string> RoleNameAfterEscape = new Dictionary<EscapeScenario, string>();
+        public Dictionary<Escape.EscapeScenarioType, string> RoleNameAfterEscape = [];
     }
 }
 public class RoleSetAfter
@@ -243,7 +242,7 @@ public class RoleSetAfter
     //  RoleType must be set to AfterDead!
     public RoleTypeId RoleAfterKilled { get; set; } = RoleTypeId.None;
     public string RoleNameToRespawnAs { get; set; } = string.Empty;
-    public List<string> RoleNameRandom { get; set; } = new List<string>();
+    public List<string> RoleNameRandom { get; set; } = [];
 }
 public class DeadBy : RoleSetAfter
 {
@@ -255,7 +254,7 @@ public class CandyStuff
 {
 
     [Description("Candies to give to the player when spawned. Check CandyKindIDs.txt")]
-    public List<CandyKindID> CandiesToGive { get; set; } = new List<CandyKindID>();
+    public List<CandyKindID> CandiesToGive { get; set; } = [];
 
     [Description("Can the user Take candies from the bowl.")]
     public bool CanTakeCandy { get; set; } = true;
@@ -273,7 +272,7 @@ public class CandyStuff
     public bool ShowCandyLeft { get; set; } = false;
 
     [Description("Special candy properties.")]
-    public Dictionary<CandyKindID, CandySpecific> SpecialCandy { get; set; } = new Dictionary<CandyKindID, CandySpecific>();
+    public Dictionary<CandyKindID, CandySpecific> SpecialCandy { get; set; } = [];
     public class CandySpecific
     {
 
@@ -288,19 +287,19 @@ public class SCP_Specific
 {
 
     [Description("SCP-049 Options.")]
-    public _049 Scp049 { get; set; } = new _049();
+    public _049 Scp049 { get; set; } = new();
 
     [Description("SCP-049-2 Options.")]
-    public _0492 Scp0492 { get; set; } = new _0492();
+    public _0492 Scp0492 { get; set; } = new();
 
     [Description("Experimental SCP-079 Options.")]
-    public _079 Scp079 { get; set; } = new _079();
+    public _079 Scp079 { get; set; } = new();
 
     [Description("SCP-069 Options.")]
-    public _096 Scp096 { get; set; } = new _096();
+    public _096 Scp096 { get; set; } = new();
 
     [Description("SCP-173 Options.")]
-    public _173 Scp173 { get; set; } = new _173();
+    public _173 Scp173 { get; set; } = new();
     public class _049 : RoleSetAfter
     {
 
@@ -319,7 +318,7 @@ public class SCP_Specific
     {
 
         [Description("Set Enraging.")]
-        public ValueSetter Enraging { get; set; } = new ValueSetter();
+        public ValueSetter Enraging { get; set; } = new();
 
         [Description("Can 096 Charge.")]
         public bool CanCharge { get; set; } = true;
@@ -331,7 +330,7 @@ public class SCP_Specific
         public bool CanPry { get; set; } = true;
 
         [Description("List of Doors to 096 cannot be Pryed on.")]
-        public List<DoorType> DoorToNotPryOn { get; set; } = new List<DoorType>();
+        public List<string> DoorToNotPryOn { get; set; } = [];
     }
 
     public class _173
@@ -366,21 +365,33 @@ public class SCP_Specific
         }
 
         [Description("Changing Camera Cost.")]
-        public PowerCostSet ChangingCameraCost { get; set; } = new PowerCostSet();
+        public PowerCostSet ChangingCameraCost { get; set; } = new();
 
 
         [Description("Gaining XP Releated actions.")]
-        public List<GainXP> GainingXP { get; set; } = new List<GainXP>();
+        public List<GainXP> GainingXP { get; set; } = [];
     }
 }
 
 public class Damager
 {
     [Description("Damage Dictionary that Player Received.")]
-    public Dictionary<DamageType, ValueSetter> DamageReceivedDict { get; set; } = new Dictionary<DamageType, ValueSetter>();
+    public Dictionary<DamageMaker, ValueSetter> DamageReceivedDict { get; set; } = [];
 
     [Description("Damage Dictionary that Player Sent/Dealt.")]
-    public Dictionary<DamageType, ValueSetter> DamageSentDict { get; set; } = new Dictionary<DamageType, ValueSetter>();
+    public Dictionary<DamageMaker, ValueSetter> DamageSentDict { get; set; } = [];
+
+    public class DamageMaker
+    {
+        [Description("Type of the damage.")]
+        public DamageHelper.DamageType DamageType { get; set; } = DamageHelper.DamageType.None;
+
+        [Description("The SubType if exists.")]
+        public DamageHelper.SubType DamageSubType { get; set; } = DamageHelper.SubType.None;
+
+        [Description("The SubType type if exists.")]
+        public object subType { get; set; }
+    }
 }
 
 public enum MathOption

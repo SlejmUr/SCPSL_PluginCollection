@@ -1,7 +1,5 @@
 ﻿using CommandSystem;
-using Exiled.API.Features;
-using System;
-using System.Linq;
+using LabApi.Features.Wrappers;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -10,7 +8,7 @@ public class ShowCurCustomRole : ICommand
 {
     public string Command => "scrcur";
 
-    public string[] Aliases => new string[] { "simplecustomrolecurrently", "scr_current", "scr_match" };
+    public string[] Aliases => ["simplecustomrolecurrently", "scr_current", "scr_match"];
 
     public string Description => "List currently what player is which role.";
 
@@ -34,7 +32,7 @@ public class ShowCurCustomRole : ICommand
             {
                 var player = Player.List.Where(x => x.UserId == role.Key).FirstOrDefault();
                 if (player != null)
-                    response += $"{role.Value.RoleName} [{role.Value.DisplayRoleName}]: [Id]{player.Id} [Name]{player.DisplayNickname}\n";
+                    response += $"{role.Value.RoleName} [{role.Value.DisplayRoleName}]: [Id]{player.PlayerId} [Name]{player.Nickname}\n";
             }
         }
 

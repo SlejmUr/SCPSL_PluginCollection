@@ -1,9 +1,7 @@
 ﻿using CommandSystem;
-using Exiled.API.Features;
+using LabApi.Features.Wrappers;
 using RemoteAdmin;
 using SimpleCustomRoles.RoleInfo;
-using System;
-using System.Linq;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -12,7 +10,7 @@ public class SetMyCustomRole : ICommand
 {
     public string Command => "setscr";
 
-    public string[] Aliases => new string[] { "setsimplecustomrole" };
+    public string[] Aliases => ["setsimplecustomrole"];
 
     public string Description => "Set your custom role with a given roleName";
 

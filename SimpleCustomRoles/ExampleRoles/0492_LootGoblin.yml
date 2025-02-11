@@ -1,0 +1,55 @@
+roleName: 0492_LootGoblin
+displayRoleName: 049-2 Loot Goblin
+roleDisplayColorHex: '#ff0000'
+spawnChance: 10000
+spawnAmount: 1
+roleType: SPC_Specific
+roleToSpawnAs: Scp0492
+roleToReplace: Scp0492
+hint:
+  spawnBroadcast: <size=40>You got a <color=#fc0335>mythically rare</color> role!</size>\n <color=#ff0000><b>SCP-049-2 - Loot Goblin</b></color>!\n<size=30>A bag full of loot has made you much louder, but your horde gives you strength!</size>
+  spawnBroadcastDuration: 15
+  spawnHint: You have an immense amount of Hume Shield and movement speed but significantly lower maximum hitpoints, a smaller size, loud footsteps and you drop a horde of treasure when you die.
+  spawnHintDuration: 15
+health:
+  health:
+    value: 150
+    setType: Subtract
+  humeShield:
+    value: 400
+    setType: Add
+effects:
+- canRemovedWithSCP500: false
+  effectType: MovementBoost
+  duration: 0
+  intensity: 80
+- canRemovedWithSCP500: false
+  effectType: SinkHole
+  duration: 0
+  intensity: 1
+inventory:
+  inventoryItems:
+  - SCP500
+  - AntiSCP207
+  - Adrenaline
+  - Coin
+  - MicroHID
+  - SCP207
+  - GunA7
+  - GunE11SR
+  ammos:
+    Nato9: 100
+    Nato556: 100
+    Ammo12Gauge: 20
+    Nato762: 100
+    Ammo44Cal: 20
+    Nato9: 100
+scpSpecific:
+  scp0492:
+    canSpawnIfNoCustom094: true
+    chanceForSpawn: 150 #100
+advanced:
+  scale:
+    x: 0.50
+    y: 0.50
+    z: 0.50

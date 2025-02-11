@@ -1,0 +1,51 @@
+roleName: ClassD_Electrified
+displayRoleName: Electrified
+roleDisplayColorHex: 'orange'
+spawnChance: 200 #800
+spawnAmount: 1
+roleToSpawnAs: ClassD
+roleToReplace: ClassD
+hint:
+  spawnBroadcast: <size=40>You got a <color=#9f21ff>rare</color> role!</size>\n <color=orange><b>Class D - Electrified</b></color>!\n<size=30>You've been tased for insubordination so many times, you developed an immunity.</size>
+  spawnBroadcastDuration: 15
+  spawnHint: You're completely immune to electrical damage effects including from Teslas, Micro and the Particle Disruptor.
+  spawnHintDuration: 15
+advanced:
+  damager:
+    damageReceivedDict:
+      ?
+        damageType: Universal
+        damageSubType: UniversalSubType
+        subType: Tesla
+      : value: 0
+        setType: Set
+      ?
+        damageType: MicroHid
+        damageSubType: MicroHidFiringMode
+        subType: PrimaryFire
+      : value: 0
+        setType: Set
+      ?
+        damageType: MicroHid
+        damageSubType: MicroHidFiringMode
+        subType: ChargeFire
+      : value: 0
+        setType: Set
+      ?
+        damageType: MicroHid
+        damageSubType: MicroHidFiringMode
+        subType: BrokenFire
+      : value: 0
+        setType: Set
+      ?
+        damageType: Disruptor
+        damageSubType: Disruptor_FiringState
+        subType: FiringRapid
+      : value: 0
+        setType: Set
+      ?
+        damageType: Disruptor
+        damageSubType: Disruptor_FiringState
+        subType: FiringSingle
+      : value: 0
+        setType: Set

@@ -1,9 +1,7 @@
 ﻿using CommandSystem;
-using Exiled.API.Features;
+using LabApi.Features.Wrappers;
 using RemoteAdmin;
 using SimpleCustomRoles.RoleInfo;
-using System;
-using System.Linq;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -13,7 +11,7 @@ public class OptOutCustomRole : ICommand
 {
     public string Command => "optoutscr";
 
-    public string[] Aliases => new string[] { "optoutscr" };
+    public string[] Aliases => ["optoutscr"];
 
     public string Description => "Opting out from current Custom Role";
 

@@ -1,52 +1,57 @@
-﻿using Exiled.Events.EventArgs.Scp330;
+﻿
 
-namespace SimpleCustomRoles.Handler
+using LabApi.Events.Arguments.PlayerEvents;
+using LabApi.Features.Wrappers;
+
+namespace SimpleCustomRoles.Handler;
+
+/*
+internal class SCP_330_Handler
 {
-    internal class SCP_330_Handler
+    public static void DroppingScp330(PlayerDroppingItemEventArgs args)
     {
-        public static void DroppingScp330(DroppingScp330EventArgs args)
+        if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
         {
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            args.IsAllowed = role.Advanced.Candy.GlobalCanDropCandy;
+            if (args.Item is not Scp330Item item)
+                return;
+            if (role.Advanced.Candy.SpecialCandy.TryGetValue(item.Base.ty, out var specific))
             {
-                args.IsAllowed = role.Advanced.Candy.GlobalCanDropCandy;
-
-                if (role.Advanced.Candy.SpecialCandy.TryGetValue(args.Candy, out var specific))
-                {
-                    args.IsAllowed = specific.CanEatCandy;
-                }
+                args.IsAllowed = specific.CanEatCandy;
             }
         }
+    }
 
-        public static void EatingScp330(EatingScp330EventArgs args)
+    public static void EatingScp330(EatingScp330EventArgs args)
+    {
+        if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
         {
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
-            {
-                args.IsAllowed = role.Advanced.Candy.GlobalCanEatCandy;
+            args.IsAllowed = role.Advanced.Candy.GlobalCanEatCandy;
 
-                if (role.Advanced.Candy.SpecialCandy.TryGetValue(args.Candy.Kind, out var specific))
-                {
-                    args.IsAllowed = specific.CanEatCandy;
-                }
+            if (role.Advanced.Candy.SpecialCandy.TryGetValue(args.Candy.Kind, out var specific))
+            {
+                args.IsAllowed = specific.CanEatCandy;
             }
         }
+    }
 
-        public static void InteractingScp330(InteractingScp330EventArgs args)
+    public static void InteractingScp330(InteractingScp330EventArgs args)
+    {
+        if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
         {
-            if (Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
+            if (args.IsAllowed)
             {
-                if (args.IsAllowed)
-                {
-                    args.IsAllowed = role.Advanced.Candy.CanTakeCandy;
-                    if (!args.IsAllowed)
-                        return;
-                }
+                args.IsAllowed = role.Advanced.Candy.CanTakeCandy;
+                if (!args.IsAllowed)
+                    return;
+            }
 
-                args.ShouldSever = args.UsageCount >= role.Advanced.Candy.MaxTakeCandy;
-                if (args.IsAllowed && !args.ShouldSever && role.Advanced.Candy.ShowCandyLeft)
-                {
-                    args.Player.ShowHint($"You can take {(role.Advanced.Candy.MaxTakeCandy - args.UsageCount - 1)} more candy", 2);
-                }
+            args.ShouldSever = args.UsageCount >= role.Advanced.Candy.MaxTakeCandy;
+            if (args.IsAllowed && !args.ShouldSever && role.Advanced.Candy.ShowCandyLeft)
+            {
+                args.Player.ShowHint($"You can take {(role.Advanced.Candy.MaxTakeCandy - args.UsageCount - 1)} more candy", 2);
             }
         }
     }
 }
+*/
