@@ -151,11 +151,14 @@ public class Location
     [Description("Prioritize where you spawn from below set values. See LocationSpawnPrioritys.txt")]
     public LocationSpawnPriority LocationSpawnPriority { get; set; } = LocationSpawnPriority.FullRandom;
 
-    [Description("Zone List to Spawn in. Check RoomName.txt")]
+    [Description("Zone List to Spawn in. Check FacilityZone.txt")]
     public List<FacilityZone> SpawnZones { get; set; }
 
     [Description("Room Types to Spawn in. Check RoomName.txt")]
     public List<RoomName> SpawnRooms { get; set; }
+
+    [Description("Room Types to Exlude when Spawn in. (Used with SpawnZone) Check RoomName.txt")]
+    public List<RoomName> ExludeSpawnRooms { get; set; }
 
     [Description("Exact Position with Vector3.")]
     public V3 ExactPosition { get; set; } = new();

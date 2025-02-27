@@ -4,6 +4,7 @@ using LabApi.Loader.Features.Plugins;
 using Respawning;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.SSS;
 
 namespace SimpleCustomRoles;
 
@@ -31,7 +32,7 @@ internal class Main : Plugin<Config>
         Instance = this;
         HelperTxts.WriteAll();
         RolesLoader = new RolesLoader();
-
+        Logic.Init();
         ServerEvents.WaitingForPlayers += CrateAndInit_Handler.WaitingForPlayers;
         ServerEvents.RoundRestarted += CrateAndInit_Handler.RoundStarted;
 
@@ -99,7 +100,7 @@ internal class Main : Plugin<Config>
         */
 
         WaveManager.OnWaveSpawned -= TheHandler.RespawnManager_ServerOnRespawned;
-
+        Logic.UnInit();
         RolesLoader.Dispose();
         RolesLoader = null;
         Instance = null;

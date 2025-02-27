@@ -2,6 +2,7 @@
 using LabApi.Features.Wrappers;
 using MEC;
 using SimpleCustomRoles.Helpers;
+using SimpleCustomRoles.SSS;
 
 namespace SimpleCustomRoles.RoleInfo;
 
@@ -76,7 +77,7 @@ public class RoleSetter
                 case LocationSpawnPriority.SpawnZone:
                     if (customRoleInfo.Location.SpawnZones.Count > 0)
                     {
-                        var tp = Room.Get(customRoleInfo.Location.SpawnZones.RandomItem()).ToList().RandomItem();
+                        var tp = Room.Get(customRoleInfo.Location.SpawnZones.RandomItem()).Where(x => !customRoleInfo.Location.ExludeSpawnRooms.Contains(x.Name)).ToList().RandomItem();
                         player.Position = tp.AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3();
                     }
                     break;
@@ -228,6 +229,11 @@ public class RoleSetter
             Server.RunCommand($"{customRoleInfo.EventCaller.OnSpawned} {player.PlayerId} {customRoleInfo.RoleName}");
         }
 
+        Timing.CallDelayed(3f, () =>
+        {
+            Logic.SetToCustomRole(player);
+        });
+
         Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);
 
         if (Main.Instance.Config.Debug)
@@ -244,6 +250,10 @@ public class RoleSetter
         player.IsBypassEnabled = false;
         ScaleHelper.SetScale(player, new V3(1).ConvertFromV3());
         player.SetRole(player.Role, PlayerRoles.RoleChangeReason.LateJoin, PlayerRoles.RoleSpawnFlags.All);
+        Timing.CallDelayed(3f, () =>
+        {
+            Logic.UnSet(player);
+        });
         Main.Instance.PlayerCustomRole.Remove(player.UserId);
     }
 

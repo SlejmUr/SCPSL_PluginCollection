@@ -117,7 +117,8 @@ public class RolesLoader
                 UseDefault = false,
                 LocationSpawnPriority = LocationSpawnPriority.SpawnZone,
                 SpawnRooms = [RoomName.EzOfficeStoried, RoomName.EzEvacShelter, RoomName.HczArmory],
-                SpawnZones = [FacilityZone.Entrance]
+                SpawnZones = [FacilityZone.Entrance],
+                ExludeSpawnRooms = [RoomName.Pocket]
             },
             Advanced = new()
             {
