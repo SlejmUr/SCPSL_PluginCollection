@@ -340,6 +340,7 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.Config.IsPaused)
                 return;
+            Round.IsLocked = true;
             foreach (var item in Main.Instance.RegularRoles)
             {
                 if (item.RoleType == CustomRoleType.InWave)
@@ -363,6 +364,10 @@ namespace SimpleCustomRoles.Handler
                 RoleSetter.SetCustomInfoToPlayer(player, item);
             }
             Main.Instance.RegularRoles.Clear();
+            Timing.CallDelayed(5, () => 
+            { 
+                Round.IsLocked = false; 
+            });
         }
 
 

@@ -1,6 +1,8 @@
 ﻿using Exiled.API.Extensions;
 using Exiled.API.Features;
 using MEC;
+using SimpleCustomRoles.SSS;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SimpleCustomRoles.RoleInfo;
@@ -58,6 +60,9 @@ public class RoleSetter
         }
         SetCustomInfoToPlayer(player, customRoleInfo);
     }
+
+    static Dictionary<string, string> UserIdToOldCustomInfo = [];
+
     public static void SetCustomInfoToPlayer(Player player, CustomRoleInfo customRoleInfo)
     {
         if (Main.Instance.Config.Debug)
@@ -90,14 +95,14 @@ public class RoleSetter
                 case LocationSpawnPriority.SpawnZone:
                     if (customRoleInfo.Location.SpawnZones.Count > 0)
                     {
-                        var tp = Room.List.Where(x => customRoleInfo.Location.SpawnZones.Contains(x.Zone)).GetRandomValue();
+                        var tp = Room.Get(customRoleInfo.Location.SpawnZones.RandomItem()).Where(x => !customRoleInfo.Location.ExludeSpawnRooms.Contains(x.Type)).ToList().RandomItem();
                         player.Teleport(tp.AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3());
                     }
                     break;
                 case LocationSpawnPriority.SpawnRoom:
                     if (customRoleInfo.Location.SpawnRooms.Count > 0)
                     {
-                        var tp = Room.List.Where(x => customRoleInfo.Location.SpawnRooms.Contains(x.Type)).GetRandomValue();
+                        var tp = Room.Get(x => customRoleInfo.Location.SpawnRooms.Contains(x.Type)).GetRandomValue();
                         player.Teleport(tp.AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3());
                     }
                     break;
@@ -236,6 +241,14 @@ public class RoleSetter
             // Call event
             Server.ExecuteCommand($"{customRoleInfo.EventCaller.OnSpawned} {player.Id} {customRoleInfo.RoleName}");
         }
+        UserIdToOldCustomInfo.Add(player.UserId, player.CustomInfo);
+        if (customRoleInfo.RoleCanDisplay)
+            player.CustomInfo += $"{customRoleInfo.DisplayRoleName}";
+
+        Timing.CallDelayed(3f, () =>
+        {
+            Logic.SetToCustomRole(player);
+        });
 
         Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);
 
@@ -253,6 +266,15 @@ public class RoleSetter
         player.IsBypassModeEnabled = false;
         player.Scale = new V3(1).ConvertFromV3();
         player.Role.Set(player.Role.Type, Exiled.API.Enums.SpawnReason.LateJoin, PlayerRoles.RoleSpawnFlags.All);
+
+        player.CustomInfo = UserIdToOldCustomInfo[player.UserId];
+        UserIdToOldCustomInfo.Remove(player.UserId);
+
+        Timing.CallDelayed(3f, () =>
+        {
+            Logic.UnSet(player);
+        });
+
         Main.Instance.PlayerCustomRole.Remove(player.UserId);
     }
 

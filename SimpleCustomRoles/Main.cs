@@ -2,6 +2,7 @@
 using Respawning;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.SSS;
 using System;
 using System.Collections.Generic;
 
@@ -30,6 +31,7 @@ internal class Main : Plugin<Config>
         Instance = this;
         HelperTxts.WriteAll();
         RolesLoader = new RolesLoader();
+        Logic.Init();
 
         Exiled.Events.Handlers.Server.WaitingForPlayers += TheHandler.WaitingForPlayers;
         Exiled.Events.Handlers.Server.RoundStarted += TheHandler.RoundStarted;
@@ -99,6 +101,7 @@ internal class Main : Plugin<Config>
 
         WaveManager.OnWaveSpawned -= TheHandler.RespawnManager_ServerOnRespawned;
 
+        Logic.UnInit();
         RolesLoader.Dispose();
         RolesLoader = null;
         Instance = null;

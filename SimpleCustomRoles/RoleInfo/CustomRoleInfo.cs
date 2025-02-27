@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Enums;
 using InventorySystem.Items.Usables.Scp330;
+using MapGeneration;
 using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp079;
 using Respawning;
@@ -157,6 +158,9 @@ public class Location
 
     [Description("Room Types to Spawn in. Check RoomTypes.txt")]
     public List<RoomType> SpawnRooms { get; set; }
+
+    [Description("Room Types to Exlude when Spawn in. (Used with SpawnZone) Check RoomType.txt")]
+    public List<RoomType> ExludeSpawnRooms { get; set; }
 
     [Description("Exact Position with Vector3.")]
     public V3 ExactPosition { get; set; } = new V3();

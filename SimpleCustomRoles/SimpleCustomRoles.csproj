@@ -13,7 +13,7 @@
 		<Copyright>SlejmUr</Copyright>
 		<IsPackable>false</IsPackable>
 		<DebugType>none</DebugType>
-		<LangVersion>11</LangVersion>
+		<LangVersion>12</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ExMod.Exiled" Version="9.1.1" />
+	  <PackageReference Include="ExMod.Exiled" Version="9.5.1" />
 	</ItemGroup>
 
 	<ItemGroup>
