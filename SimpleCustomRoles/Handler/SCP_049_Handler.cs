@@ -35,7 +35,7 @@ namespace SimpleCustomRoles.Handler
                             return;
                         Timing.CallDelayed(0.2f, () =>
                         {
-                            RoleSetter.SetCustomInfoToPlayer(args.Target, customRoleInfo);
+                            RoleSetter.SetFromCMD(args.Target, customRoleInfo);
                         });
                         return;
                     }
@@ -46,7 +46,7 @@ namespace SimpleCustomRoles.Handler
                             return;
                         Timing.CallDelayed(0.2f, () =>
                         {
-                            RoleSetter.SetCustomInfoToPlayer(args.Target, customRoleInfo);
+                            RoleSetter.SetFromCMD(args.Target, customRoleInfo);
                         });
                         return;
                     }
@@ -65,7 +65,7 @@ namespace SimpleCustomRoles.Handler
                     Log.Info("Role selected to revive");
                     Timing.CallDelayed(0.2f, () =>
                     {
-                        RoleSetter.SetCustomInfoToPlayer(args.Target, role);
+                        RoleSetter.SetFromCMD(args.Target, role);
                     });
                     Main.Instance.SPC_SpecificRoles.Remove(role);
                 }

@@ -53,11 +53,7 @@ public class RoleSetter
 
     public static void SetFromCMD(Player player, CustomRoleInfo customRoleInfo)
     {
-        if (Main.Instance.PlayerCustomRole.ContainsKey(player.UserId))
-        {
-            Log.Debug("Player removed " + player.UserId);
-            Main.Instance.PlayerCustomRole.Remove(player.UserId);
-        }
+        UnSetCustomInfoToPlayer(player);
         SetCustomInfoToPlayer(player, customRoleInfo);
     }
 
@@ -241,14 +237,14 @@ public class RoleSetter
             // Call event
             Server.ExecuteCommand($"{customRoleInfo.EventCaller.OnSpawned} {player.Id} {customRoleInfo.RoleName}");
         }
-        UserIdToOldCustomInfo.Add(player.UserId, player.CustomInfo);
+        if (UserIdToOldCustomInfo.ContainsKey(player.UserId))
+            UserIdToOldCustomInfo.Remove(player.UserId);
+        string custominfo = player.CustomInfo;
+        if (string.IsNullOrEmpty(custominfo))
+            custominfo = string.Empty;
+        UserIdToOldCustomInfo.Add(player.UserId, custominfo);
         if (customRoleInfo.RoleCanDisplay)
             player.CustomInfo += $"{customRoleInfo.DisplayRoleName}";
-
-        Timing.CallDelayed(3f, () =>
-        {
-            Logic.SetToCustomRole(player);
-        });
 
         Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);
 
@@ -265,15 +261,15 @@ public class RoleSetter
         player.UniqueRole = string.Empty;
         player.IsBypassModeEnabled = false;
         player.Scale = new V3(1).ConvertFromV3();
+
         player.Role.Set(player.Role.Type, Exiled.API.Enums.SpawnReason.LateJoin, PlayerRoles.RoleSpawnFlags.All);
+        player.ChangeAppearance(player.Role.Type);
 
-        player.CustomInfo = UserIdToOldCustomInfo[player.UserId];
+        var custominfo = UserIdToOldCustomInfo[player.UserId];
+        if (string.IsNullOrEmpty(custominfo))
+            custominfo = string.Empty;
+        player.CustomInfo = custominfo;
         UserIdToOldCustomInfo.Remove(player.UserId);
-
-        Timing.CallDelayed(3f, () =>
-        {
-            Logic.UnSet(player);
-        });
 
         Main.Instance.PlayerCustomRole.Remove(player.UserId);
     }

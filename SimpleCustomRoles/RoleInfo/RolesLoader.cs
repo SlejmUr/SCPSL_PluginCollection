@@ -128,7 +128,8 @@ public class RolesLoader
                 SpawnZones = new List<ZoneType>()
                 {
                     ZoneType.Entrance
-                }
+                },
+                ExludeSpawnRooms = [RoomType.EzCollapsedTunnel]
             },
             Advanced = new Advanced()
             {

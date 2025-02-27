@@ -131,6 +131,7 @@ namespace SimpleCustomRoles.Handler
             Main.Instance.PlayerCustomRole.Remove(args.Player.UserId);
             args.Player.Scale = new Vector3(1, 1, 1);
             args.Player.Position += new Vector3(0, 1, 0);
+            args.Player.CustomInfo = string.Empty; // temp!!
             if (args.Attacker == null)
                 return;
             if (Main.Instance.PlayerCustomRole.TryGetValue(args.Attacker.UserId, out var role))
@@ -340,7 +341,13 @@ namespace SimpleCustomRoles.Handler
         {
             if (Main.Instance.Config.IsPaused)
                 return;
-            Round.IsLocked = true;
+            bool do_lock = false;
+            if (!Round.IsLocked)
+            {
+                Round.IsLocked = true;
+                do_lock = true;
+            }
+                
             foreach (var item in Main.Instance.RegularRoles)
             {
                 if (item.RoleType == CustomRoleType.InWave)
@@ -364,10 +371,11 @@ namespace SimpleCustomRoles.Handler
                 RoleSetter.SetCustomInfoToPlayer(player, item);
             }
             Main.Instance.RegularRoles.Clear();
-            Timing.CallDelayed(5, () => 
-            { 
-                Round.IsLocked = false; 
-            });
+            if (do_lock)
+                Timing.CallDelayed(5, () => 
+                { 
+                    Round.IsLocked = false; 
+                });
         }
 
 
