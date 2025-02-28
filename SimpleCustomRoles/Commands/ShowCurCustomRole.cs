@@ -10,7 +10,7 @@ public class ShowCurCustomRole : ICommand
 {
     public string Command => "scrcur";
 
-    public string[] Aliases => new string[] { "simplecustomrolecurrently", "scr_current", "scr_match" };
+    public string[] Aliases => ["simplecustomrolecurrently", "scr_current", "scr_match"];
 
     public string Description => "List currently what player is which role.";
 

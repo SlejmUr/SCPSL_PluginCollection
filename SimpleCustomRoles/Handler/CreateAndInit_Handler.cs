@@ -1,0 +1,179 @@
+﻿using Exiled.API.Extensions;
+using Exiled.API.Features;
+using MEC;
+using Respawning.Waves;
+using SimpleCustomRoles.RoleInfo;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SimpleCustomRoles.Handler;
+
+internal class CreateAndInit_Handler
+{
+    public static void RespawnManager_ServerOnRespawned(SpawnableWaveBase wave, List<ReferenceHub> players)
+    {
+        if (players.Count == 0)
+            return;
+        // create a tmp list to store set roles (to later clear)
+        List<CustomRoleInfo> tmp = [];
+
+        // reset every player if had custom roles.
+        foreach (var item in players)
+        {
+            var player = Player.List.FirstOrDefault(x => x.ReferenceHub == item);
+            if (player == null)
+                continue;
+            RoleSetter.UnSetCustomInfoToPlayer(player);
+        }
+
+        foreach (var item in Main.Instance.InWaveRoles.Where(x => x.SpawnWaveSpecific.Faction == wave.TargetFaction && x.RoleType == CustomRoleType.InWave))
+        {
+            // miminum check
+            if (!item.SpawnWaveSpecific.SkipMinimumCheck && item.SpawnWaveSpecific.MinimumTeamMemberRequired > players.Count)
+                continue;
+
+            var referenceHub = players.Where(x => x.roleManager.CurrentRole.RoleTypeId == item.RoleToReplace).GetRandomValue();
+
+            var player = Player.List.FirstOrDefault(x => x.ReferenceHub == referenceHub);
+            if (player == null)
+                continue;
+            if (Main.Instance.Config.Debug)
+                Log.Info("Player choosen: " + player.UserId);
+            // set the player as a role
+            RoleSetter.SetFromCMD(player, item);
+            tmp.Add(item);
+        }
+        // remove
+        foreach (var item in tmp)
+        {
+            Main.Instance.InWaveRoles.Remove(item);
+        }
+
+        // execute onwave event calls.
+        foreach (var item in Main.Instance.PlayerCustomRole)
+        {
+            var player = Player.List.Where(x => x.RawUserId == item.Key).FirstOrDefault();
+            if (!string.IsNullOrEmpty(item.Value.EventCaller.OnSpawnWave))
+            {
+                // Call event
+                Server.ExecuteCommand($"{item.Value.EventCaller.OnSpawnWave} {player.Id} {item.Value.RoleName} {wave.TargetFaction} {players.Count}");
+            }
+        }
+    }
+
+    public static void ReloadRoles()
+    {
+        Main.Instance.RegularRoles = [];
+        Main.Instance.PlayerCustomRole = [];
+        Main.Instance.InWaveRoles = [];
+        Main.Instance.AfterDeathRoles = [];
+        Main.Instance.SPC_SpecificRoles = [];
+        Main.Instance.RolesLoader.Load();
+        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
+        {
+            if (item.RoleType == CustomRoleType.AfterDead)
+            {
+                Main.Instance.AfterDeathRoles.Add(item);
+                continue;
+            }
+            for (int i = 0; i < item.SpawnAmount; i++)
+            {
+                if (item.RoleType == CustomRoleType.SPC_Specific)
+                    Main.Instance.SPC_SpecificRoles.Add(item);
+                if (item.RoleType == CustomRoleType.InWave)
+                    Main.Instance.InWaveRoles.Add(item);
+            }
+        }
+    }
+
+    public static void WaitingForPlayers()
+    {
+        Main.Instance.PlayerCustomRole = [];
+        Main.Instance.RegularRoles = [];
+        Main.Instance.InWaveRoles = [];
+        Main.Instance.AfterDeathRoles = [];
+        Main.Instance.SPC_SpecificRoles = [];
+        Main.Instance.EscapeRoles = [];
+        Main.Instance.RolesLoader.Load();
+        if (Main.Instance.Config.Debug)
+            Log.Info("Loading custom roles!");
+        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
+        {
+            if (item.RoleType == CustomRoleType.AfterDead)
+            {
+                if (Main.Instance.Config.Debug)
+                    Log.Info($"After Death Role added: " + item.RoleName);
+                Main.Instance.AfterDeathRoles.Add(item);
+                continue;
+            }
+            if (item.RoleType == CustomRoleType.Escape)
+            {
+                if (Main.Instance.Config.Debug)
+                    Log.Info($"Escape Role added: " + item.RoleName);
+                Main.Instance.EscapeRoles.Add(item);
+                continue;
+            }
+            for (int i = 0; i < item.SpawnAmount; i++)
+            {
+                bool IsSpawning = false;
+                var random = RandomGenerator.GetInt16(1, 10000, true);
+                if (random <= item.SpawnChance)
+                {
+                    IsSpawning = true;
+                    if (item.RoleType == CustomRoleType.SPC_Specific)
+                        Main.Instance.SPC_SpecificRoles.Add(item);
+                    else
+                        Main.Instance.RegularRoles.Add(item);
+                }
+                if (Main.Instance.Config.Debug)
+                    Log.Info($"Rolled chance: {random}/{item.SpawnChance} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ") + "spawning.");
+            }
+        }
+        Log.Info("Loading custom roles finished!");
+    }
+
+    public static void RoundStarted()
+    {
+        if (Main.Instance.Config.IsPaused)
+            return;
+
+        // Round lock for cerain roles.
+        bool do_lock = false;
+        if (!Round.IsLocked)
+        {
+            Round.IsLocked = true;
+            do_lock = true;
+        }
+
+        foreach (var item in Main.Instance.RegularRoles)
+        {
+            if (item.RoleType == CustomRoleType.InWave)
+            {
+                Main.Instance.InWaveRoles.Add(item);
+                continue;
+            }
+            Player player = null;
+            if (item.RoleToReplace == PlayerRoles.RoleTypeId.None && item.ReplaceFromTeam != PlayerRoles.Team.Dead)
+            {
+                player = Player.List.Where(x => x.Role.Team == item.ReplaceFromTeam).GetRandomValue();
+            }
+            else
+            {
+                player = Player.List.Where(x => x.Role == item.RoleToReplace).GetRandomValue();
+            }
+            if (player == null)
+                continue;
+            if (Main.Instance.Config.Debug)
+                Log.Info("Player Selected to spawn: " + player.UserId);
+            RoleSetter.SetCustomInfoToPlayer(player, item);
+        }
+        Main.Instance.RegularRoles.Clear();
+
+        // if locked by us remove the lock
+        if (do_lock)
+            Timing.CallDelayed(5, () =>
+            {
+                Round.IsLocked = false;
+            });
+    }
+}

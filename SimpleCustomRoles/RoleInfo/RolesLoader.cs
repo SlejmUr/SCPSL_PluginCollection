@@ -16,7 +16,7 @@ public class RolesLoader
 
     public void Load()
     {
-        RoleInfos = new List<CustomRoleInfo>();
+        RoleInfos = [];
         if (Directory.Exists(Dir))
         {
             File.WriteAllText(Dir + "/Template.yml.d", HelperTxts.TheYML_PRE_Comment + "\n" + Serialize(CreateTemplate()));
@@ -40,7 +40,7 @@ public class RolesLoader
             Directory.CreateDirectory(Dir);
             File.WriteAllText(Dir + "/Template.yml.d", Serialize(CreateTemplate()));
         }
-        Main.Instance.RolesLoader.RoleInfos = Main.Instance.RolesLoader.RoleInfos.OrderBy(x=>x.SpawnChance).ToList();
+        Main.Instance.RolesLoader.RoleInfos = [.. Main.Instance.RolesLoader.RoleInfos.OrderBy(x=>x.SpawnChance)];
     }
 
     public void Dispose()
@@ -72,7 +72,7 @@ public class RolesLoader
 
     public CustomRoleInfo CreateTemplate()
     {
-        return new CustomRoleInfo()
+        return new()
         {
             RoleName = "Temp",
             RoleDisplayColorHex = "#ffffff",
@@ -81,72 +81,72 @@ public class RolesLoader
             SpawnChance = 0,
             RoleToSpawnAs = RoleTypeId.Scientist,
             RoleToReplace = RoleTypeId.ClassD,
-            Inventory = new Inventory()
+            Inventory = new()
             {
-                InventoryItems = new List<ItemType>()
-                {
+                InventoryItems =
+                [
                      ItemType.KeycardScientist, ItemType.Medkit, ItemType.Adrenaline, ItemType.Coin
-                },
+                ],
                 Ammos = new Dictionary<AmmoType, ushort>()
                 {
                     { AmmoType.Nato762, 3  }
                 },
-                DeniedUsingItems = new List<ItemType>()
-                {
+                DeniedUsingItems =
+                [
                     ItemType.Coin
-                },
-                CannotDropItems = new List<ItemType>()
-                {
+                ],
+                CannotDropItems =
+                [
                     ItemType.Coin
-                },
-                CustomItemIds = new List<uint>()
+                ],
+                CustomItemIds = []
             },
-            Effects = new List<Effect>()
-            {
-                 new Effect()
+            Effects =
+            [
+                 new()
                  {
                      EffectType = EffectType.DamageReduction,
                      Duration = 100,
                      Intensity = 3
                  },
-                 new Effect()
+                 new()
                  {
                      CanRemovedWithSCP500 = false,
                      EffectType = EffectType.MovementBoost,
                      Duration = 433,
                      Intensity = 12
                  }
-            },
+            ],
             Location = new Location()
             {
                 UseDefault = false,
                 LocationSpawnPriority = LocationSpawnPriority.SpawnZone,
-                SpawnRooms = new List<RoomType>()
-                {
+                SpawnRooms =
+                [
                     RoomType.EzCafeteria, RoomType.EzVent, RoomType.HczArmory
-                },
-                SpawnZones = new List<ZoneType>()
-                {
+                ],
+                SpawnZones =
+                [
                     ZoneType.Entrance
-                },
+                ],
                 ExludeSpawnRooms = [RoomType.EzCollapsedTunnel]
             },
-            Advanced = new Advanced()
+            Advanced = new()
             {
                 RoleAppearance = RoleTypeId.ClassD,
-                Damager = new Damager()
+                Damager = new()
                 {
                     DamageReceivedDict = new Dictionary<DamageType, ValueSetter>()
                     {
                         {
-                            DamageType.Revolver, new ValueSetter()
+                            DamageType.Revolver, new()
                             {
                                 Value = 120,
                                 SetType = MathOption.Set
                             }
                         },
                         {
-                            DamageType.Jailbird, new ValueSetter()
+                            DamageType.Jailbird, new()
                             {
                                 Value = 1200,
                                 SetType = MathOption.Add
@@ -156,14 +156,14 @@ public class RolesLoader
                     DamageSentDict = new Dictionary<DamageType, ValueSetter>()
                     {
                         {
-                            DamageType.ParticleDisruptor, new ValueSetter()
+                            DamageType.ParticleDisruptor, new()
                             {
                                 Value = 120,
                                 SetType = MathOption.Multiply
                             }
                         },
                         {
-                            DamageType.Com15, new ValueSetter()
+                            DamageType.Com15, new()
                             {
                                 Value = 1200,
                                 SetType = MathOption.Add
@@ -171,23 +171,23 @@ public class RolesLoader
                         }
                     },
                 },
-                DeadBy = new DeadBy()
+                DeadBy = new()
                 {
                     IsConfigurated = false,
                     KillerRole = RoleTypeId.None,
                     KillerTeam = Team.OtherAlive,
                     RoleAfterKilled = RoleTypeId.None,
-                    RoleNameRandom = new List<string>(),
+                    RoleNameRandom = [],
                     RoleNameToRespawnAs = "yeeet"
                 },
                 OpenDoorsNextToSpawn = false,
                 BypassModeEnabled = false,
-                Candy = new CandyStuff()
+                Candy = new()
                 {
-                    CandiesToGive = new List<InventorySystem.Items.Usables.Scp330.CandyKindID>()
-                    {
+                    CandiesToGive =
+                    [
                         InventorySystem.Items.Usables.Scp330.CandyKindID.Pink
-                    },
+                    ],
                     GlobalCanDropCandy = true,
                     CanTakeCandy = true,
                     GlobalCanEatCandy = true,
@@ -195,14 +195,14 @@ public class RolesLoader
                     SpecialCandy = new Dictionary<InventorySystem.Items.Usables.Scp330.CandyKindID, CandyStuff.CandySpecific>()
                     {
                         {
-                            InventorySystem.Items.Usables.Scp330.CandyKindID.Pink, new CandyStuff.CandySpecific()
+                            InventorySystem.Items.Usables.Scp330.CandyKindID.Pink, new()
                             {
                                 CanDropCandy = true,
                                 CanEatCandy = false
                             }
                         },
                         {
-                            InventorySystem.Items.Usables.Scp330.CandyKindID.Red, new CandyStuff.CandySpecific()
+                            InventorySystem.Items.Usables.Scp330.CandyKindID.Red, new()
                             {
                                 CanDropCandy = false,
                                 CanEatCandy = true
@@ -212,64 +212,64 @@ public class RolesLoader
 
                 },
                 CanTrigger096 = true,
-                Scale = new V3()
+                Scale = new()
                 {
                     X = 1,
                     Y = 1,
                     Z = 1
                 },
-                FriendlyFire = new List<Advanced.FF>()
-                {
-                    new Advanced.FF()
+                FriendlyFire =
+                [
+                    new()
                     { 
                         RoleType = RoleTypeId.ClassD,
                         Value = 40
                     }
-                },
-                Escaping = new Advanced.Escape()
+                ],
+                Escaping = new()
                 {
                     CanEscape = false,
-                    RoleAfterEscape = new Dictionary<EscapeScenario, RoleTypeId>()
+                    RoleAfterEscape = new()
                     {
                         { EscapeScenario.Scientist, RoleTypeId.NtfSpecialist  },
                         { EscapeScenario.CuffedScientist, RoleTypeId.ChaosConscript  }
                     },
-                    RoleNameAfterEscape = new Dictionary<EscapeScenario, string>()
+                    RoleNameAfterEscape = new()
                     {
                         { EscapeScenario.Scientist, "test"  },
                         { EscapeScenario.CuffedScientist, "test2"  }
                     }
                 }
             },
-            Hint = new HintStuff()
+            Hint = new()
             {
                 SpawnBroadcast = "You spawned as TEMP",
                 SpawnBroadcastDuration = 10,
                 SpawnHint = "Do your stuff!",
                 SpawnHintDuration = 10,
             },
-            Scp_Specific = new SCP_Specific()
+            Scp_Specific = new()
             {
-                Scp049 = new SCP_Specific._049()
+                Scp049 = new()
                 {
                     CanRecall = true,
                     RoleAfterKilled = RoleTypeId.None,
-                    RoleNameRandom = new List<string>() { "random1", "random2" },
+                    RoleNameRandom = ["random1", "random2"],
                     RoleNameToRespawnAs = "always_role"
                 },
-                Scp0492 = new SCP_Specific._0492()
+                Scp0492 = new()
                 {
                     CanConsumeCorpse = true,
                     CanSpawnIfNoCustom094 = false,
                     ChanceForSpawn = 0
                 },
-                Scp096 = new SCP_Specific._096()
+                Scp096 = new()
                 {
-                    DoorToNotPryOn = new List<DoorType>()
-                    { 
+                    DoorToNotPryOn =
+                    [
                         DoorType.Scp096,
-                    },
-                    Enraging = new ValueSetter()
+                    ],
+                    Enraging = new()
                     {
                         SetType = MathOption.Add,
                         Value = 100
@@ -278,21 +278,21 @@ public class RolesLoader
                     CanPry = true,
                     CanTryingNotToCry = true,
                 },
-                Scp173 = new SCP_Specific._173()
+                Scp173 = new()
                 { 
                     CanPlaceTantrum = true,
                     CanUseBreakneckSpeed = true,
                 },
-                Scp079 = new SCP_Specific._079()
+                Scp079 = new()
                 { 
-                    ChangingCameraCost = new SCP_Specific._079.PowerCostSet()
+                    ChangingCameraCost = new()
                     { 
                         SetType = MathOption.Set,
                         AuxiliaryPowerCost = 0,
                     },
-                    GainingXP = new List<SCP_Specific._079.GainXP>()
-                    { 
-                        new SCP_Specific._079.GainXP()
+                    GainingXP =
+                    [
+                        new()
                         { 
                             IsAllowed = true,
                             SetType = MathOption.Set,
@@ -300,35 +300,35 @@ public class RolesLoader
                             HudTranslation = PlayerRoles.PlayableScps.Scp079.Scp079HudTranslation.PingLocation,
                             RoleType = RoleTypeId.None
                         }
-                    }
+                    ]
                 }
             },
             DisplayRoleName = "TEMPORARY",
-            SpawnWaveSpecific = new SpawnWaveSpecific() 
+            SpawnWaveSpecific = new() 
             { 
                 MinimumTeamMemberRequired = 3,
                 SkipMinimumCheck = true,
                 Faction = Faction.FoundationEnemy
             },
-            Health = new HealthClass()
+            Health = new()
             { 
-                Health = new ValueSetter()
+                Health = new()
                 { 
                     SetType = MathOption.Add,
                     Value = 30
                 },
-                Ahp = new ValueSetter()
+                Ahp = new()
                 {
                     SetType = MathOption.Set,
                     Value = 10
                 },
-                HumeShield = new ValueSetter()
+                HumeShield = new()
                 {
                     SetType = MathOption.Multiply,
                     Value = 2
                 },
             },
-            EventCaller = new EventCaller()
+            EventCaller = new()
             { 
                 
             },

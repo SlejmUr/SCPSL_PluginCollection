@@ -1,7 +1,6 @@
 ﻿using Exiled.API.Extensions;
 using Exiled.API.Features;
 using MEC;
-using SimpleCustomRoles.SSS;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,50 +10,37 @@ public class RoleSetter
 {
     public static float MathWithFloat(MathOption mathOption, float inFloat, float myValue)
     {
-        switch (mathOption)
+        return mathOption switch
         {
-            case MathOption.None:
-                return inFloat;
-            case MathOption.Set:
-                return myValue;
-            case MathOption.Add:
-                return inFloat + myValue;
-            case MathOption.Subtract:
-                return inFloat - myValue;
-            case MathOption.Multiply:
-                return inFloat * myValue;
-            case MathOption.Divide:
-                return inFloat / myValue;
-            default:
-                return inFloat;
-        }
+            MathOption.None => inFloat,
+            MathOption.Set => myValue,
+            MathOption.Add => inFloat + myValue,
+            MathOption.Subtract => inFloat - myValue,
+            MathOption.Multiply => inFloat * myValue,
+            MathOption.Divide => inFloat / myValue,
+            _ => inFloat,
+        };
     }
 
     public static int MathWithInt(MathOption mathOption, int inInt, int myValue)
     {
-        switch (mathOption)
+        return mathOption switch
         {
-            case MathOption.None:
-                return inInt;
-            case MathOption.Set:
-                return myValue;
-            case MathOption.Add:
-                return inInt + myValue;
-            case MathOption.Subtract:
-                return inInt - myValue;
-            case MathOption.Multiply:
-                return inInt * myValue;
-            case MathOption.Divide:
-                return inInt / myValue;
-            default:
-                return inInt;
-        }
+            MathOption.None => inInt,
+            MathOption.Set => myValue,
+            MathOption.Add => inInt + myValue,
+            MathOption.Subtract => inInt - myValue,
+            MathOption.Multiply => inInt * myValue,
+            MathOption.Divide => inInt / myValue,
+            _ => inInt,
+        };
     }
 
     public static void SetFromCMD(Player player, CustomRoleInfo customRoleInfo)
     {
         UnSetCustomInfoToPlayer(player);
-        SetCustomInfoToPlayer(player, customRoleInfo);
+        Timing.CallDelayed(0.5f, ()=> { SetCustomInfoToPlayer(player, customRoleInfo); });
+
     }
 
     static Dictionary<string, string> UserIdToOldCustomInfo = [];
@@ -153,7 +139,7 @@ public class RoleSetter
                 player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration);
             });
         }
-        player.Scale = new V3(1).ConvertFromV3();
+        player.Scale = UnityEngine.Vector3.one;
         //  Scale
         if (customRoleInfo.Advanced.Scale.ConvertFromV3() != new V3().ConvertFromV3())
         {
@@ -167,14 +153,14 @@ public class RoleSetter
         if (customRoleInfo.Hint.SpawnBroadcast != string.Empty && customRoleInfo.Hint.SpawnHint != string.Empty)
         {
             alreadyhaveinfo = true;
-            Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast(customRoleInfo.Hint.SpawnBroadcast, customRoleInfo.Hint.SpawnBroadcastDuration);
+            Exiled.API.Features.Broadcast broadcast = new(customRoleInfo.Hint.SpawnBroadcast, customRoleInfo.Hint.SpawnBroadcastDuration);
             player.Broadcast(broadcast, true);
             player.ShowHint(customRoleInfo.Hint.SpawnHint, customRoleInfo.Hint.SpawnHintDuration);
 
         }
         if (customRoleInfo.Hint.SpawnBroadcast != string.Empty && !alreadyhaveinfo)
         {
-            Exiled.API.Features.Broadcast broadcast = new Exiled.API.Features.Broadcast(customRoleInfo.Hint.SpawnBroadcast, customRoleInfo.Hint.SpawnBroadcastDuration);
+            Exiled.API.Features.Broadcast broadcast = new(customRoleInfo.Hint.SpawnBroadcast, customRoleInfo.Hint.SpawnBroadcastDuration);
             player.Broadcast(broadcast, true);
         }
         if (customRoleInfo.Hint.SpawnHint != string.Empty)
@@ -239,10 +225,13 @@ public class RoleSetter
         }
         if (UserIdToOldCustomInfo.ContainsKey(player.UserId))
             UserIdToOldCustomInfo.Remove(player.UserId);
-        string custominfo = player.CustomInfo;
-        if (string.IsNullOrEmpty(custominfo))
-            custominfo = string.Empty;
+
+        string custominfo = string.Empty;
+        if (!string.IsNullOrEmpty(player.CustomInfo))
+            custominfo = player.CustomInfo;
+
         UserIdToOldCustomInfo.Add(player.UserId, custominfo);
+
         if (customRoleInfo.RoleCanDisplay)
             player.CustomInfo += $"{customRoleInfo.DisplayRoleName}";
 
@@ -252,23 +241,27 @@ public class RoleSetter
             Log.Info("SetCustomInfoToPlayer: " + player.UserId + " Role: " + customRoleInfo.RoleName + " Success");
     }
 
-    public static void UnSetCustomInfoToPlayer(Player player)
+    public static void UnSetCustomInfoToPlayer(Player player, bool DontResetRole = false)
     {
         if (!Main.Instance.PlayerCustomRole.ContainsKey(player.UserId))
-        {
             return;
-        }
+
         player.UniqueRole = string.Empty;
         player.IsBypassModeEnabled = false;
-        player.Scale = new V3(1).ConvertFromV3();
-
-        player.Role.Set(player.Role.Type, Exiled.API.Enums.SpawnReason.LateJoin, PlayerRoles.RoleSpawnFlags.All);
-        player.ChangeAppearance(player.Role.Type);
-
-        var custominfo = UserIdToOldCustomInfo[player.UserId];
-        if (string.IsNullOrEmpty(custominfo))
-            custominfo = string.Empty;
-        player.CustomInfo = custominfo;
+        player.Scale = UnityEngine.Vector3.one;
+        if (!DontResetRole)
+        {
+            player.Role.Set(player.Role.Type, Exiled.API.Enums.SpawnReason.LateJoin, PlayerRoles.RoleSpawnFlags.All);
+            player.ChangeAppearance(player.Role.Type);
+        }
+        if (!UserIdToOldCustomInfo.TryGetValue(player.UserId, out string custominfo))
+            player.CustomInfo = string.Empty;
+        else
+        {
+            if (string.IsNullOrEmpty(custominfo))
+                custominfo = string.Empty;
+            player.CustomInfo = custominfo;
+        }
         UserIdToOldCustomInfo.Remove(player.UserId);
 
         Main.Instance.PlayerCustomRole.Remove(player.UserId);

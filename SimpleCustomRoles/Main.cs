@@ -16,7 +16,7 @@ internal class Main : Plugin<Config>
     public override string Author => "SlejmUr";
     public override string Name => "SimpleCustomRoles";
     public override string Prefix => "SimpleCustomRoles";
-    public override Version Version => new Version(0,3, 1);
+    public override Version Version => new(0,3, 1);
     #endregion
 
     public RolesLoader RolesLoader;
@@ -33,8 +33,8 @@ internal class Main : Plugin<Config>
         RolesLoader = new RolesLoader();
         Logic.Init();
 
-        Exiled.Events.Handlers.Server.WaitingForPlayers += TheHandler.WaitingForPlayers;
-        Exiled.Events.Handlers.Server.RoundStarted += TheHandler.RoundStarted;
+        Exiled.Events.Handlers.Server.WaitingForPlayers += CreateAndInit_Handler.WaitingForPlayers;
+        Exiled.Events.Handlers.Server.RoundStarted += CreateAndInit_Handler.RoundStarted;
 
         Exiled.Events.Handlers.Player.Escaping += TheHandler.Escaping;
         Exiled.Events.Handlers.Player.Died += TheHandler.Died;
@@ -62,7 +62,7 @@ internal class Main : Plugin<Config>
         Exiled.Events.Handlers.Scp330.EatingScp330 += SCP_330_Handler.EatingScp330;
         Exiled.Events.Handlers.Scp330.DroppingScp330 += SCP_330_Handler.DroppingScp330;
 
-        WaveManager.OnWaveSpawned += TheHandler.RespawnManager_ServerOnRespawned;
+        WaveManager.OnWaveSpawned += CreateAndInit_Handler.RespawnManager_ServerOnRespawned;
 
         base.OnEnabled();
     }
@@ -70,8 +70,8 @@ internal class Main : Plugin<Config>
     public override void OnDisabled()
     {
 
-        Exiled.Events.Handlers.Server.WaitingForPlayers -= TheHandler.WaitingForPlayers;
-        Exiled.Events.Handlers.Server.RoundStarted -= TheHandler.RoundStarted;
+        Exiled.Events.Handlers.Server.WaitingForPlayers -= CreateAndInit_Handler.WaitingForPlayers;
+        Exiled.Events.Handlers.Server.RoundStarted -= CreateAndInit_Handler.RoundStarted;
 
         Exiled.Events.Handlers.Player.Escaping -= TheHandler.Escaping;
         Exiled.Events.Handlers.Player.Died -= TheHandler.Died;
@@ -99,7 +99,7 @@ internal class Main : Plugin<Config>
         Exiled.Events.Handlers.Scp330.EatingScp330 -= SCP_330_Handler.EatingScp330;
         Exiled.Events.Handlers.Scp330.DroppingScp330 -= SCP_330_Handler.DroppingScp330;
 
-        WaveManager.OnWaveSpawned -= TheHandler.RespawnManager_ServerOnRespawned;
+        WaveManager.OnWaveSpawned -= CreateAndInit_Handler.RespawnManager_ServerOnRespawned;
 
         Logic.UnInit();
         RolesLoader.Dispose();

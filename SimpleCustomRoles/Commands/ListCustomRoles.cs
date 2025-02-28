@@ -8,7 +8,7 @@ public class ListCustomRoles : ICommand
 {
     public string Command => "listscr";
 
-    public string[] Aliases => new string[] { "listsimplecustomrole" };
+    public string[] Aliases => ["listsimplecustomrole"];
 
     public string Description => "List the Custom Role Names";
     public bool SanitizeResponse => true;

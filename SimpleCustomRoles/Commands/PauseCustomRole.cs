@@ -8,7 +8,7 @@ public class PauseCustomRole : ICommand
 {
     public string Command => "pausescr";
 
-    public string[] Aliases => new string[] { "pausecustomrole" };
+    public string[] Aliases => ["pausecustomrole"];
 
     public string Description => "Pause or resume custom roles";
 
@@ -32,7 +32,6 @@ public class PauseCustomRole : ICommand
                 response = "Custom Roles spawn are now resumed";
                 return true;
             }
-            
         }
         else
         {

@@ -10,19 +10,9 @@ using YamlDotNet.Core.Events;
 
 namespace SimpleCustomRoles;
 
-public class CommentGatheringTypeInspector : TypeInspectorSkeleton
+public class CommentGatheringTypeInspector(ITypeInspector innerTypeDescriptor) : TypeInspectorSkeleton
 {
-    private readonly ITypeInspector innerTypeDescriptor;
-
-    public CommentGatheringTypeInspector(ITypeInspector innerTypeDescriptor)
-    {
-        if (innerTypeDescriptor == null)
-        {
-            throw new ArgumentNullException("innerTypeDescriptor");
-        }
-
-        this.innerTypeDescriptor = innerTypeDescriptor;
-    }
+    private readonly ITypeInspector innerTypeDescriptor = innerTypeDescriptor ?? throw new ArgumentNullException("innerTypeDescriptor");
 
     public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object container)
     {
@@ -31,17 +21,11 @@ public class CommentGatheringTypeInspector : TypeInspectorSkeleton
             .Select(d => new CommentsPropertyDescriptor(d));
     }
 
-    private sealed class CommentsPropertyDescriptor : IPropertyDescriptor
+    private sealed class CommentsPropertyDescriptor(IPropertyDescriptor baseDescriptor) : IPropertyDescriptor
     {
-        private readonly IPropertyDescriptor baseDescriptor;
+        private readonly IPropertyDescriptor baseDescriptor = baseDescriptor;
 
-        public CommentsPropertyDescriptor(IPropertyDescriptor baseDescriptor)
-        {
-            this.baseDescriptor = baseDescriptor;
-            Name = baseDescriptor.Name;
-        }
-
-        public string Name { get; set; }
+        public string Name { get; set; } = baseDescriptor.Name;
 
         public Type Type { get { return baseDescriptor.Type; } }
 
@@ -80,34 +64,22 @@ public class CommentGatheringTypeInspector : TypeInspectorSkeleton
         }
     }
 }
-public sealed class CommentsObjectDescriptor : IObjectDescriptor
+public sealed class CommentsObjectDescriptor(IObjectDescriptor innerDescriptor, string comment) : IObjectDescriptor
 {
-    private readonly IObjectDescriptor innerDescriptor;
+    private readonly IObjectDescriptor innerDescriptor = innerDescriptor;
 
-    public CommentsObjectDescriptor(IObjectDescriptor innerDescriptor, string comment)
-    {
-        this.innerDescriptor = innerDescriptor;
-        this.Comment = comment;
-    }
-
-    public string Comment { get; private set; }
+    public string Comment { get; private set; } = comment;
 
     public object Value { get { return innerDescriptor.Value; } }
     public Type Type { get { return innerDescriptor.Type; } }
     public Type StaticType { get { return innerDescriptor.StaticType; } }
     public ScalarStyle ScalarStyle { get { return innerDescriptor.ScalarStyle; } }
 }
-public class CommentsObjectGraphVisitor : ChainedObjectGraphVisitor
+public class CommentsObjectGraphVisitor(IObjectGraphVisitor<IEmitter> nextVisitor) : ChainedObjectGraphVisitor(nextVisitor)
 {
-    public CommentsObjectGraphVisitor(IObjectGraphVisitor<IEmitter> nextVisitor)
-        : base(nextVisitor)
-    {
-    }
-
     public override bool EnterMapping(IPropertyDescriptor key, IObjectDescriptor value, IEmitter context)
     {
-        var commentsDescriptor = value as CommentsObjectDescriptor;
-        if (commentsDescriptor != null && commentsDescriptor.Comment != null)
+        if (value is CommentsObjectDescriptor commentsDescriptor && commentsDescriptor.Comment != null)
         {
             context.Emit(new Comment(commentsDescriptor.Comment, false));
         }

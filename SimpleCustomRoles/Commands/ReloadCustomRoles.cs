@@ -9,7 +9,7 @@ public class ReloadCustomRoles : ICommand
 {
     public string Command => "reloadscr";
 
-    public string[] Aliases => new string[] { "reloadsimplecustomrole" };
+    public string[] Aliases => ["reloadsimplecustomrole"];
 
     public string Description => "Reload the Custom Role Names";
 
@@ -22,7 +22,7 @@ public class ReloadCustomRoles : ICommand
             response = "You dont have permission!";
             return false;
         }
-        TheHandler.ReloadRoles();
+        CreateAndInit_Handler.ReloadRoles();
         response = "Roles Reloaded!";
         return true;
     }

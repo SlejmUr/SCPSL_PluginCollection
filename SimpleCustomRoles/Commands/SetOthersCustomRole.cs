@@ -12,7 +12,7 @@ public class SetOthersCustomRole : ICommand
 {
     public string Command => "setoscr";
 
-    public string[] Aliases => new string[] { "setotherssimplecustomrole" };
+    public string[] Aliases => ["setotherssimplecustomrole"];
 
     public string Description => "Set others custom role with a given roleName\n Usage: setoscr RoleName PlayerId.\nTo set others back use '.' as a name";
 
@@ -39,7 +39,7 @@ public class SetOthersCustomRole : ICommand
         }
         string name = args[0];
 
-        var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 1, out var array, false);
+        var list = RAUtils.ProcessPlayerIdOrNamesList(arguments, 1, out _, false);
         bool allplayerSuccess = false;
         string rsp = string.Empty;
         foreach (var item in list)
@@ -64,7 +64,7 @@ public class SetOthersCustomRole : ICommand
 
     public bool SetIdToRole(string rolename, int playerId, out string response)
     {
-        var player = Player.List.Where(x => x.Id == playerId).FirstOrDefault();
+        var player = Player.List.FirstOrDefault(x => x.Id == playerId);
         if (player == null)
         {
             response = "Must be a Player!";
@@ -80,7 +80,7 @@ public class SetOthersCustomRole : ICommand
         }
         else
         {
-            var role = Main.Instance.RolesLoader.RoleInfos.Where(x => x.RoleName == rolename).FirstOrDefault();
+            var role = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == rolename);
             if (role == null)
             {
                 response = $"Role with name {rolename} not exist!";
