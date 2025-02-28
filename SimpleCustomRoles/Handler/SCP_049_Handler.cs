@@ -30,23 +30,31 @@ public class SCP_049_Handler
             {
                 if (!string.IsNullOrEmpty(role.Scp_Specific.Scp049.RoleNameToRespawnAs))
                 {
-                    CustomRoleInfo customRoleInfo = Main.Instance.AfterDeathRoles.Where(x => x.RoleName == role.Scp_Specific.Scp049.RoleNameToRespawnAs).FirstOrDefault();
+                    CustomRoleInfo customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == role.Scp_Specific.Scp049.RoleNameToRespawnAs);
                     if (customRoleInfo == null)
                         return;
                     Timing.CallDelayed(0.2f, () =>
                     {
                         RoleSetter.SetFromCMD(args.Target, customRoleInfo);
+                        Timing.CallDelayed(1f, () =>
+                        {
+                            args.Target.Teleport(args.Player);
+                        });
                     });
                     return;
                 }
                 else if (role.Scp_Specific.Scp049.RoleNameRandom.Count != 0)
                 {
-                    CustomRoleInfo customRoleInfo = Main.Instance.AfterDeathRoles.Where(x => x.RoleName == role.Scp_Specific.Scp049.RoleNameRandom.RandomItem()).FirstOrDefault();
+                    CustomRoleInfo customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == role.Scp_Specific.Scp049.RoleNameRandom.RandomItem());
                     if (customRoleInfo == null)
                         return;
                     Timing.CallDelayed(0.2f, () =>
                     {
                         RoleSetter.SetFromCMD(args.Target, customRoleInfo);
+                        Timing.CallDelayed(1f, () =>
+                        {
+                            args.Target.Teleport(args.Player);
+                        });
                     });
                     return;
                 }
@@ -66,6 +74,10 @@ public class SCP_049_Handler
                 Timing.CallDelayed(0.2f, () =>
                 {
                     RoleSetter.SetFromCMD(args.Target, role);
+                    Timing.CallDelayed(1f, () =>
+                    {
+                        args.Target.Teleport(args.Player);
+                    });
                 });
                 Main.Instance.SPC_SpecificRoles.Remove(role);
             }

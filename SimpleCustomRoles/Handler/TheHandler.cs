@@ -147,13 +147,15 @@ public class TheHandler
     public static void Dying(DyingEventArgs ev)
     {
         // return if no custom role or does not have dying event
-        if (!Main.Instance.PlayerCustomRole.TryGetValue(ev.Player.UserId, out var dying_player_role) && 
-            !string.IsNullOrEmpty(dying_player_role.EventCaller.OnDying))
+        if (!Main.Instance.PlayerCustomRole.TryGetValue(ev.Player.UserId, out var dying_player_role))
+            return;
+        if (string.IsNullOrEmpty(dying_player_role.EventCaller.OnDying))
             return;
         // set attackerid 0 if null otherwise id.
         int attackerID = ev.Attacker == null ? 0 : ev.Attacker.Id;
         // Call event
-        Server.ExecuteCommand($"{dying_player_role.EventCaller.OnDying} {ev.Player.Id} {attackerID} {ev.DamageHandler.Type}");
+        Log.Info($"{dying_player_role.EventCaller.OnDying} {ev.Player.Id} {attackerID} {ev.DamageHandler.Type}");
+        Server.ExecuteCommand($"{dying_player_role.EventCaller.OnDying} {ev.Player.Id}  {attackerID} {ev.DamageHandler.Type}");
     }
 
     public static void Escaping(EscapingEventArgs args)

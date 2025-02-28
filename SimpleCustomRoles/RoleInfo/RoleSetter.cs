@@ -95,7 +95,7 @@ public class RoleSetter
                     }
                     break;
                 case LocationSpawnPriority.FullRandom:
-                    player.Teleport(Room.List.GetRandomValue().AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3());
+                    player.Teleport(Room.List.Where(x => !customRoleInfo.Location.ExludeSpawnRooms.Contains(x.Type)).GetRandomValue().AdjustRoomPosition() + customRoleInfo.Location.OffsetPosition.ConvertFromV3());
                     break;
                 default:
                     break;
