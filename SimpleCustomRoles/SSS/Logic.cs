@@ -1,4 +1,5 @@
 ﻿using Hints;
+using System.Linq;
 using UserSettings.ServerSpecific;
 
 namespace SimpleCustomRoles.SSS;
@@ -15,7 +16,9 @@ internal class Logic
             new SSGroupHeader("Simple Custom Roles"),
             showRolekb = new SSKeybindSetting(null, "Show my Role Info Again", UnityEngine.KeyCode.L)
         ];
-        ServerSpecificSettingsSync.DefinedSettings = Settings;
+        var old = ServerSpecificSettingsSync.DefinedSettings.ToList();
+        old.AddRange(Settings);
+        ServerSpecificSettingsSync.DefinedSettings = old.ToArray();
         ServerSpecificSettingsSync.ServerOnSettingValueReceived += ServerOnSettingValueReceived;
         ServerSpecificSettingsSync.SendToAll();
     }
