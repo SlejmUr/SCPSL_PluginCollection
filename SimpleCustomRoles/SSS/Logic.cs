@@ -1,4 +1,5 @@
 ﻿using Hints;
+using System.Collections.Generic;
 using System.Linq;
 using UserSettings.ServerSpecific;
 
@@ -16,9 +17,13 @@ internal class Logic
             new SSGroupHeader("Simple Custom Roles"),
             showRolekb = new SSKeybindSetting(null, "Show my Role Info Again", UnityEngine.KeyCode.L)
         ];
-        var old = ServerSpecificSettingsSync.DefinedSettings.ToList();
-        old.AddRange(Settings);
-        ServerSpecificSettingsSync.DefinedSettings = old.ToArray();
+        List<ServerSpecificSettingBase> settingBases = [];
+        if (ServerSpecificSettingsSync.DefinedSettings != null)
+        {
+            settingBases = ServerSpecificSettingsSync.DefinedSettings.ToList();
+        }
+        settingBases.AddRange(Settings);
+        ServerSpecificSettingsSync.DefinedSettings = settingBases.ToArray();
         ServerSpecificSettingsSync.ServerOnSettingValueReceived += ServerOnSettingValueReceived;
         ServerSpecificSettingsSync.SendToAll();
     }
