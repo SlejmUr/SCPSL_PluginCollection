@@ -1,4 +1,5 @@
-﻿using Hints;
+﻿using Exiled.API.Features;
+using Hints;
 using System.Collections.Generic;
 using System.Linq;
 using UserSettings.ServerSpecific;
