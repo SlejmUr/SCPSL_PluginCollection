@@ -1,5 +1,4 @@
 ﻿using Hints;
-using LabApi.Features.Wrappers;
 using UserSettings.ServerSpecific;
 
 namespace SimpleCustomRoles.SSS;
@@ -16,47 +15,42 @@ internal class Logic
             new SSGroupHeader("Simple Custom Roles"),
             showRolekb = new SSKeybindSetting(null,"Show my Role Info Again", UnityEngine.KeyCode.L)
         ];
+        List<ServerSpecificSettingBase> settingBases = [];
+        if (ServerSpecificSettingsSync.DefinedSettings != null)
+        {
+            settingBases = ServerSpecificSettingsSync.DefinedSettings.ToList();
+        }
+        settingBases.AddRange(Settings);
+        ServerSpecificSettingsSync.DefinedSettings = settingBases.ToArray();
         ServerSpecificSettingsSync.ServerOnSettingValueReceived += ServerOnSettingValueReceived;
+        ServerSpecificSettingsSync.SendToAll();
     }
 
     public static void UnInit()
     {
+        ServerSpecificSettingsSync.DefinedSettings = [];
         ServerSpecificSettingsSync.ServerOnSettingValueReceived -= ServerOnSettingValueReceived;
+        ServerSpecificSettingsSync.SendToAll();
     }
-
-    public static void SetToCustomRole(Player player)
-    {
-        var tmp_old = ServerSpecificSettingsSync.DefinedSettings.ToList();
-        ServerSpecificSettingsSync.DefinedSettings =
-        [
-            ..tmp_old,
-            ..Settings
-        ];
-        ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub);
-    }
-
-    public static void UnSet(Player player)
-    {
-        var tmp_old = ServerSpecificSettingsSync.DefinedSettings.ToList();
-        tmp_old.RemoveAll(x => Settings.Contains(x));
-        ServerSpecificSettingsSync.DefinedSettings = tmp_old.ToArray();
-        ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub);
-    }
-
+   
     private static void ServerOnSettingValueReceived(ReferenceHub hub, ServerSpecificSettingBase @base)
     {
         if (!Main.Instance.PlayerCustomRole.TryGetValue(hub.authManager.UserId, out var customRoleInfo))
             return;
 
-        if (string.IsNullOrEmpty(customRoleInfo.Hint.SpawnHint)) // role does not have any spawning hints
-            return;
-
         if (@base is SSKeybindSetting { SyncIsPressed : true } keybindSetting && keybindSetting.SettingId == showRolekb.SettingId)
         {
-            hub.hints.Show(new TextHint(customRoleInfo.Hint.SpawnHint,
-            [
-                new StringHintParameter(customRoleInfo.Hint.SpawnHint)
-            ], null, customRoleInfo.Hint.SpawnHintDuration));
+            if (!string.IsNullOrEmpty(customRoleInfo.Hint.SpawnHint)) // role does not have any spawning hints
+            {
+                hub.hints.Show(new TextHint(customRoleInfo.Hint.SpawnHint,
+                [
+                    new StringHintParameter(customRoleInfo.Hint.SpawnHint)
+                ], null, customRoleInfo.Hint.SpawnHintDuration));
+            }
+            if (!string.IsNullOrEmpty(customRoleInfo.Hint.SpawnBroadcast)) // role does not have any broadcast hints
+            {
+                Broadcast.Singleton.TargetAddElement(hub.connectionToClient, customRoleInfo.Hint.SpawnBroadcast, customRoleInfo.Hint.SpawnBroadcastDuration, Broadcast.BroadcastFlags.Normal);
+            }
         }
             
     }

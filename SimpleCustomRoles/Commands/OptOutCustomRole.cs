@@ -19,20 +19,19 @@ public class OptOutCustomRole : ICommand
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (sender is PlayerCommandSender pcs)
+        if (sender is not PlayerCommandSender pcs)
         {
-            var player = Player.List.Where(x => x.UserId == pcs.SenderId).FirstOrDefault();
-            if (player == null)
-            {
-                response = "Must be coming from Player!";
-                return false;
-            }
-            RoleSetter.UnSetCustomInfoToPlayer(player);
-            response = "Sucessfully opted out from Custom Roles";
-            return true;
-
+            response = "Must be coming from Player!";
+            return false;
         }
-        response = "Must be coming from Player!";
-        return false;
+        var player = Player.List.Where(x => x.UserId == pcs.SenderId).FirstOrDefault();
+        if (player == null)
+        {
+            response = "Must be coming from Player!";
+            return false;
+        }
+        RoleSetter.UnSetCustomInfoToPlayer(player);
+        response = "Sucessfully opted out from Custom Roles";
+        return true;
     }
 }

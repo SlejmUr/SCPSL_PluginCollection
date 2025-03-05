@@ -69,7 +69,7 @@ public class SetOthersCustomRole : ICommand
             return false;
         }
         // Set roles back.
-        CL.Info(rolename + " " + (rolename[0] == '.') + " " + (rolename == "."));
+        //CL.Info(rolename + " " + (rolename[0] == '.') + " " + (rolename == "."));
         if (rolename == ".")
         {
             RoleSetter.UnSetCustomInfoToPlayer(player);
@@ -78,8 +78,8 @@ public class SetOthersCustomRole : ICommand
         }
         else
         {
-            var role = Main.Instance.RolesLoader.RoleInfos.Where(x => x.RoleName == rolename).FirstOrDefault();
-            if (role == null)
+            var role = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == rolename);
+            if (role == default)
             {
                 response = $"Role with name {rolename} not exist!";
                 return false;
