@@ -1,16 +1,16 @@
 ﻿using MEC;
-using Exiled.API.Features;
 using UnityEngine;
 using DavaCustomItems.Configs;
 using DavaCustomItems.Components;
 using TLight = Exiled.API.Features.Toys.Light;
+using Exiled.API.Interfaces;
 
 namespace DavaCustomItems.Managers;
 
 public static class LightManager
 {
     static Dictionary<int, TLight> Lights = [];
-    static Dictionary<Player, CoroutineHandle> PlayerToFollower = [];
+    static Dictionary<IPosition, CoroutineHandle> PositionToFollower = [];
 
     public static int MakeLight(Vector3 Position, LightConfig lightConfig)
     {
@@ -22,12 +22,10 @@ public static class LightManager
         ligth.SpotAngle = lightConfig.SpotAngle;
         ligth.InnerSpotAngle = lightConfig.InnerSpotAngle;
         ligth.ShadowStrength = lightConfig.ShadowStrength;
-        //ligth.Color = lightConfig.Color;
         ligth.LightShape = lightConfig.LightShape;
         ligth.LightType = lightConfig.LightType;
         ligth.ShadowType = lightConfig.ShadowType;
         ligth.MovementSmoothing = lightConfig.MovementSmoothing;
-        //ligth.Scale = lightConfig.Scale;
         int id = Lights.Count;
         id++;
         var lcomponent = ligth.GameObject.AddComponent<LightConfigComponent>();
@@ -37,14 +35,6 @@ public static class LightManager
         return id;
 
     }
-    
-    public static void LightFollowPlayer(int LightId, Player player)
-    {
-        StopFollowPlayer(player);
-        if (Lights.ContainsKey(LightId))
-            PlayerToFollower.Add(player, Timing.RunCoroutine(LightMove(LightId, player)));
-    }
-
     public static bool IsLightExists(int LightId)
     {
         return Lights.ContainsKey(LightId);
@@ -57,6 +47,7 @@ public static class LightManager
             return;
         light.Destroy();
         Lights.Remove(LightId);
+
     }
 
     public static void HideLight(int LightId)
@@ -73,13 +64,39 @@ public static class LightManager
         light.Spawn();
     }
 
-    public static void StopFollowPlayer(Player player)
+    public static int MakeLightAndFollow(IPosition position, LightConfig lightConfig)
     {
-        if (!PlayerToFollower.TryGetValue(player, out CoroutineHandle coroutineHandle))
+        int id = MakeLight(position.Position, lightConfig);
+        if (id == -1)
+            return id;
+        LightFollow(id, position);
+        return id;
+    }
+
+    public static void LightFollow(int LightId, IPosition position)
+    {
+        StopFollow(position);
+        if (Lights.ContainsKey(LightId))
+            PositionToFollower.Add(position, Timing.RunCoroutine(LightMove(LightId, position)));
+    }
+    
+
+    public static void StopFollow(IPosition position)
+    {
+        if (!PositionToFollower.TryGetValue(position, out CoroutineHandle coroutineHandle))
             return;
-        PlayerToFollower.Remove(player);
+        PositionToFollower.Remove(position);
         Timing.KillCoroutines(coroutineHandle);
         
+    }
+
+    public static void StopFollowAndStartNew(IPosition oldFollower, IPosition newFollower, ref int LightId, LightConfig lightConfig, bool makeNewIfNotExists = true)
+    {
+        StopFollow(oldFollower);
+        if (!Lights.ContainsKey(LightId) && makeNewIfNotExists)
+            LightId = MakeLight(newFollower.Position, lightConfig);
+        if (Lights.ContainsKey(LightId))
+            LightFollow(LightId, newFollower);
     }
 
     public static void SetNewLightPos(int LightId, Vector3 pos)
@@ -89,13 +106,12 @@ public static class LightManager
         light.Position = pos;
     }
 
-    private static IEnumerator<float> LightMove(int LightId, Player player)
+    private static IEnumerator<float> LightMove(int LightId, IPosition position)
     {
         yield return 0;
-        while (Lights.ContainsKey(LightId) && PlayerToFollower.ContainsKey(player))
+        while (Lights.ContainsKey(LightId) && PositionToFollower.ContainsKey(position))
         {
-            TLight light = Lights[LightId];
-            light.Position = player.Position;
+            Lights[LightId].Position = position.Position;
             yield return 0;
         }
         yield break;

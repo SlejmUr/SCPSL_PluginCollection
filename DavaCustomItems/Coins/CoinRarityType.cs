@@ -2,11 +2,12 @@
 
 public enum CoinRarityType
 {
+    TEST = -1,
     None,
-    Common,
-    Regular,
-    Rare,
-    Legendary,
-    WorstOfThemAll,
-    OnlyNegative
+    SuperUnluckyCoin,
+    UnluckyCoin,
+    NormalCoin,
+    RareCoin,
+    LegendaryCoin,
+
 }

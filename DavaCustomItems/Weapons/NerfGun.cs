@@ -18,8 +18,8 @@ public class NerfGun : CustomWeapon
     public override SpawnProperties SpawnProperties { get; set; } = new()
     { 
         Limit = 1,
-        LockerSpawnPoints = new()
-        {
+        LockerSpawnPoints =
+        [
             new LockerSpawnPoint()
             {
                 Chance = 0.15f,
@@ -27,7 +27,7 @@ public class NerfGun : CustomWeapon
                 UseChamber = true,
                 Zone = Exiled.API.Enums.ZoneType.HeavyContainment,
             }
-        }
+        ]
     };
 
     public override void ShowPickedUpMessage(Player player)

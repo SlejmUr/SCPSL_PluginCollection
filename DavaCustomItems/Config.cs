@@ -1,7 +1,6 @@
 ﻿using DavaCustomItems.Coins;
 using DavaCustomItems.Configs;
 using Exiled.API.Interfaces;
-using UnityEngine;
 
 namespace DavaCustomItems;
 
@@ -17,11 +16,9 @@ public sealed class Config : IConfig
             {
                 ShouldFollowPlayer = true,
                 ShouldMakeLight = true,
-                Color = Color.red,
-                Intensity = 50,
-                MovementSmoothing = 50,
+                Color = new(1, 0.5f, 0, 1),
+                Intensity = 40,
                 Range = 10,
-                Scale = Vector3.one,
             }
         }
     };
@@ -29,21 +26,38 @@ public sealed class Config : IConfig
     public Dictionary<CoinRarityType /* Rarity */, CoinConfig /* Coin Config */> CoinRarityConfigs { get; set; } = new()
     {
         { 
-            CoinRarityType.Legendary,
+            CoinRarityType.LegendaryCoin,
             new()
             {
                 Id = 500,
                 Name = "Legendary Coin",
-                Description = "Legendary Coin now give you much better loot and chance and stuff"
+                Description = "Legendary Coin now give you much better loot and chance and stuff",
+                ExtraConfig = new()
+                {
+                    CoinBrakeChance = 0.01f,
+                }
             }
         },
         {
-            CoinRarityType.OnlyNegative,
+            CoinRarityType.SuperUnluckyCoin,
             new()
             {
                 Id = 501,
                 Name = "Negative Coin",
                 Description = "This make it the only bad happens."
+            }
+        },
+        {
+            CoinRarityType.TEST,
+            new()
+            {
+                Id = 499,
+                Name = "TEST Coin",
+                Description = "TEST.",
+                ExtraConfig = new()
+                {
+                    MaxFlipping = 10
+                }
             }
         }
     };

@@ -21,7 +21,7 @@ public sealed class Main : Plugin<Config>
         if (!Config.IsEnabled)
             return;
         Instance = this;
-
+        CoinAction.Init();
         foreach (var item in Config.CoinRarityConfigs)
         {
             BaseCustomCoin coin = new()
@@ -29,7 +29,8 @@ public sealed class Main : Plugin<Config>
                 Id = item.Value.Id,
                 Description = item.Value.Description,
                 Name = item.Value.Name,
-                Rarity = item.Key
+                Rarity = item.Key,
+                ExtraConfig = item.Value.ExtraConfig,
             };
             coin.TryRegister();
         }

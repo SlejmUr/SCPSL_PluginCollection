@@ -1,6 +1,4 @@
-﻿using DavaCustomItems.Coins;
-
-namespace DavaCustomItems.Configs;
+﻿namespace DavaCustomItems.Configs;
 
 public sealed class CoinConfig
 {
@@ -8,4 +6,5 @@ public sealed class CoinConfig
     public uint Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
+    public CoinExtraConfig ExtraConfig { get; set; } = new();
 }

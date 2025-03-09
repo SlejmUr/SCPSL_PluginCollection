@@ -19,8 +19,12 @@ public class BaseCustomCoin : CustomItem
     public override ItemType Type { get; set; } = ItemType.Coin;
     public CoinRarityType Rarity { get; set; } = CoinRarityType.None;
 
-    public int LightId;
     public LightConfig LightConfig { get; set; } = new();
+    public CoinExtraConfig ExtraConfig { get; set; } = new();
+
+    private int LightId;
+    private int FlippedNumber;
+
     public override void Init()
     {
         base.Init();
@@ -58,9 +62,7 @@ public class BaseCustomCoin : CustomItem
         {
             if (LightConfig.ShouldFollowPlayer)
             {
-                if (!LightManager.IsLightExists(LightId))
-                    LightId = LightManager.MakeLight(ev.Player.Position, LightConfig);
-                LightManager.LightFollowPlayer(LightId, ev.Player);
+                LightId = LightManager.MakeLightAndFollow(ev.Player, LightConfig);
             }
         }
     }
@@ -69,13 +71,7 @@ public class BaseCustomCoin : CustomItem
     {
         if (!this.Check(ev.Pickup))
             return;
-        if (!LightManager.IsLightExists(LightId))
-            LightId = LightManager.MakeLight(ev.Pickup.Position, LightConfig);
-        LightManager.StopFollowPlayer(ev.Player);
-        Timing.CallDelayed(1f, () => 
-        {
-            LightManager.SetNewLightPos(LightId, ev.Pickup.Position);
-        });
+        LightManager.StopFollowAndStartNew(ev.Player, ev.Pickup, ref LightId, LightConfig, true);
     }
 
     public override void OnPickingUp(PickingUpItemEventArgs ev)
@@ -93,6 +89,39 @@ public class BaseCustomCoin : CustomItem
 
     public void CoinFlipping(FlippingCoinEventArgs ev)
     {
-        CoinFlipActions.RunActions(ev.Player, ev.IsTails, Rarity);
+        System.Random random = new System.Random();
+        int randomNumber = random.Next(1, 101); // 1-100% chance between good and bad
+        bool isTails = false;
+
+        if (Rarity == CoinRarityType.SuperUnluckyCoin && randomNumber < 50)
+        {
+            isTails = true;
+        }
+        if (Rarity == CoinRarityType.UnluckyCoin && randomNumber < 50) // will replace 50 with a config variable
+        {
+            isTails = true;
+        }
+        if (Rarity == CoinRarityType.NormalCoin && randomNumber < 50)
+        {
+            isTails = true;
+        }
+        if (Rarity == CoinRarityType.RareCoin && randomNumber < 50)
+        {
+            isTails = true;
+        }
+        if (Rarity == CoinRarityType.LegendaryCoin && randomNumber < 50)
+        {
+            isTails = true;
+        }
+        // We return what the thing is to make sure it is synced. (ie: Player dont see Tails and we set as Heads)
+        ev.IsTails = isTails; 
+        CoinFlipActions.RunActions(ev.Player, isTails, Rarity, ExtraConfig);
+        FlippedNumber++;
+        // TODO: Do this actually more and better logic.
+        if (ExtraConfig.MaxFlipping == FlippedNumber)
+        {
+            Timing.CallDelayed(0.1f, () => ev.Player.RemoveItem(ev.Item));
+        }
+
     }
 }

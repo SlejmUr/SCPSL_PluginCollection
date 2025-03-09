@@ -25,6 +25,9 @@
 			<HintPath>..\References\Mirror.Components.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="Pooling">
+		  <HintPath>..\..\AllRef\14_ref\Pooling.dll</HintPath>
+		</Reference>
 		<Reference Include="UnityEngine">
 			<HintPath>..\References\UnityEngine.dll</HintPath>
 			<Private>False</Private>
@@ -32,6 +35,9 @@
 		<Reference Include="UnityEngine.CoreModule">
 			<HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
 			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.ParticleSystemModule">
+		  <HintPath>..\..\AllRef\14_ref\UnityEngine.ParticleSystemModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	
