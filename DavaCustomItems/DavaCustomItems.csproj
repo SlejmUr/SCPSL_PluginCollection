@@ -26,7 +26,8 @@
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Pooling">
-		  <HintPath>..\..\AllRef\14_ref\Pooling.dll</HintPath>
+			<HintPath>..\References\Pooling.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine">
 			<HintPath>..\References\UnityEngine.dll</HintPath>
@@ -37,7 +38,8 @@
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.ParticleSystemModule">
-		  <HintPath>..\..\AllRef\14_ref\UnityEngine.ParticleSystemModule.dll</HintPath>
+			<HintPath>..\References\UnityEngine.ParticleSystemModule.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 	</ItemGroup>
 	

@@ -42,7 +42,7 @@ internal class CoinFlipActions
 
     static void TEST_Flip(Player player, bool IsTails, CoinExtraConfig extraConfig) // NOT YET IMPLEMENTED
     {
-        string ConfigName = extraConfig.NameAndWeight.GetRandomWeight(string.Empty);
+        string ConfigName = extraConfig.NameAndWeight.GetRandomWeight("NoAction");
         Log.Info($"ConfigName : {ConfigName}");
         var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == ConfigName);
         if (effect.ActionName != ConfigName)

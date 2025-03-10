@@ -9,7 +9,7 @@ public sealed class Main : Plugin<Config>
 {
     public static Main Instance { get; private set; }
     #region Plugin Info
-    public override string Author => "SlejmUr";
+    public override string Author => "SlejmUr,Falout01";
     public override string Name => "CustomItems";
     public override string Prefix => "CustomItems";
     public override Version Version => new(0, 1);
