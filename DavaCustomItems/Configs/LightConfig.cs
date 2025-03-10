@@ -6,6 +6,7 @@ public class LightConfig
 {
     public bool ShouldFollowPlayer { get; set; }
     public bool ShouldMakeLight { get; set; }
+    public bool IsRainbow { get; set; }
     //public bool ShouldHideInitially { get; set; }
     public float Intensity { get; set; }
     public float Range { get; set; }

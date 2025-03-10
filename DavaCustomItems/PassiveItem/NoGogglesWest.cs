@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Features;
 using Exiled.API.Features.Attributes;
+using Exiled.API.Features.Items;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
@@ -35,28 +36,39 @@ public class NoGogglesWest : CustomArmor
     {
         if (Owner == null)
             return;
+        Log.Info($"who: {who} target: {target} owner: {Owner}");
         if (Owner.ReferenceHub != target)
             return;
         Timing.CallDelayed(1, () =>
         {
-            var fpc = Owner.Role.Base as FpcStandardRoleBase;
-            if (fpc && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
+            var fpc = Owner.Role.Base as IFpcRole;
+            if (fpc != null && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
             {
                 var emi = particle.emission;
                 emi.enabled = false;
             }
+            else
+            {
+                Log.Info("emission idk?");
+            }
         });
     }
 
-    public override void OnPickingUp(PickingUpItemEventArgs ev)
+    public override void OnAcquired(Player player, Item item, bool displayMessage)
     {
-        Owner = ev.Player;
+        Owner = player;
+        Log.Info("OnAcquired owner set!");
     }
 
     public override void OnDroppingItem(DroppingItemEventArgs ev)
     {
-        var fpc = Owner.Role.Base as FpcStandardRoleBase;
-        if (fpc && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
+        if (ev.Player != Owner)
+            return;
+        if (!Check(ev.Item))
+            return;
+        var fpc = Owner.Role.Base as IFpcRole;
+        Log.Info("aaaa " + fpc);
+        if (fpc != null && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
         {
             var emi = particle.emission;
             emi.enabled = true;

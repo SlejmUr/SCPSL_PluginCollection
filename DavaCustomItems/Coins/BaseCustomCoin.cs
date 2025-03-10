@@ -1,9 +1,13 @@
 ﻿using DavaCustomItems.Configs;
 using DavaCustomItems.Managers;
+using Exiled.API.Features;
 using Exiled.API.Features.Attributes;
+using Exiled.API.Features.Items;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
+using InventorySystem;
+using InventorySystem.Items.Coin;
 using MEC;
 
 namespace DavaCustomItems.Coins;
@@ -39,7 +43,7 @@ public class BaseCustomCoin : CustomItem
         base.SubscribeEvents();
         Exiled.Events.Handlers.Player.ChangedItem += ChangedItem;
         Exiled.Events.Handlers.Player.DroppedItem += DroppedItem;
-        Exiled.Events.Handlers.Player.FlippingCoin += CoinFlipping;
+        Coin.OnFlipped += Coin_OnFlipped;
     }
 
     public override void UnsubscribeEvents()
@@ -47,8 +51,7 @@ public class BaseCustomCoin : CustomItem
         base.UnsubscribeEvents();
         Exiled.Events.Handlers.Player.ChangedItem -= ChangedItem;
         Exiled.Events.Handlers.Player.DroppedItem -= DroppedItem;
-        Exiled.Events.Handlers.Player.FlippingCoin -= CoinFlipping;
-
+        Coin.OnFlipped -= Coin_OnFlipped;
     }
 
     public void ChangedItem(ChangedItemEventArgs ev)
@@ -87,41 +90,26 @@ public class BaseCustomCoin : CustomItem
         LightManager.RemoveLight(LightId);
     }
 
-    public void CoinFlipping(FlippingCoinEventArgs ev)
+    private void Coin_OnFlipped(ushort serial, bool isTails)
     {
-        System.Random random = new System.Random();
-        int randomNumber = random.Next(1, 101); // 1-100% chance between good and bad
-        bool isTails = false;
-
-        if (Rarity == CoinRarityType.SuperUnluckyCoin && randomNumber < 50)
-        {
-            isTails = true;
-        }
-        if (Rarity == CoinRarityType.UnluckyCoin && randomNumber < 50) // will replace 50 with a config variable
-        {
-            isTails = true;
-        }
-        if (Rarity == CoinRarityType.NormalCoin && randomNumber < 50)
-        {
-            isTails = true;
-        }
-        if (Rarity == CoinRarityType.RareCoin && randomNumber < 50)
-        {
-            isTails = true;
-        }
-        if (Rarity == CoinRarityType.LegendaryCoin && randomNumber < 50)
-        {
-            isTails = true;
-        }
-        // We return what the thing is to make sure it is synced. (ie: Player dont see Tails and we set as Heads)
-        ev.IsTails = isTails; 
-        CoinFlipActions.RunActions(ev.Player, isTails, Rarity, ExtraConfig);
+        var item = Item.Get(serial);
+        var owner = item.Owner;
+        var configKV = ExtraConfig.NameAndWeight.GetRandomWeight(kv => kv.Key.Value == isTails, new("NoAction", true));
+        Log.Info($"ConfigName : {configKV.Key}");
+        var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == configKV.Key);
+        if (effect.ActionName == default)
+            return; // ?
+        effect.RunAction(owner, ExtraConfig, configKV.Key);
         FlippedNumber++;
-        // TODO: Do this actually more and better logic.
         if (ExtraConfig.MaxFlipping == FlippedNumber)
         {
-            Timing.CallDelayed(0.1f, () => ev.Player.RemoveItem(ev.Item));
+            Timing.CallDelayed(0.1f, () => owner.RemoveItem(item));
+            return;
         }
-
+        if (RNGManager.RNG.NextDouble() < ExtraConfig.CoinBrakeChance)
+        {
+            Timing.CallDelayed(0.1f, () => owner.RemoveItem(item));
+            owner.ShowHint("Your coin broke!", 5);
+        }
     }
 }

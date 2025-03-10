@@ -20,6 +20,17 @@ public sealed class Config : IConfig
                 Intensity = 40,
                 Range = 10,
             }
+        },
+        {
+            "TEST Coin",
+            new()
+            {   
+                ShouldFollowPlayer = true,
+                ShouldMakeLight = true,
+                IsRainbow = true,
+                Intensity = 10,
+                Range = 5
+            }
         }
     };
 
@@ -57,6 +68,19 @@ public sealed class Config : IConfig
                 ExtraConfig = new()
                 {
                     MaxFlipping = 10
+                }
+            }
+        },
+        {
+            CoinRarityType.NormalCoin,
+            new()
+            {
+                Id = 5002,
+                Name = "Normal Coin",
+                Description = "todo",
+                ExtraConfig = new()
+                {
+
                 }
             }
         }

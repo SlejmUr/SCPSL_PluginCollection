@@ -8,25 +8,29 @@ public sealed class CoinExtraConfig
     public int MaxFlipping { get; set; } = 3;
 
     // TODO: Make separate from tails and heads, <(string ActionName, bool IsTails), int> ?
-    public Dictionary<string, int> NameAndWeight { get; set; } = new()
+    public Dictionary<KeyValuePair<string, bool>, int> NameAndWeight { get; set; } = new()
     {
         // Some events not implemented yet. 
-        { "GiveItem", 25 },
-        { "GivePositiveEffect", 15 },
-        { "GiveNegativeEffect", 15 },
-        { "GiveMixedEffect", 15 },
-        { "MoreHealth", 10 },
-        { "LoseHealth", 10 },
-        { "ThrowableSpawn", 10 },
-        { "MedicalKit", 40 },
-        { "ExecuteCommand", 1 },
-        { "ExecuteServerCommand", 1 },
-        { "ShufflePlayers", 1 },
-        { "GreatGamble", 1 },
-        { "LoseItems", 1 },
-        { "TpToSCP", 1 },
-        { "TpToRandomPlayer", 1 },
-        { "NoAction", 100 }
+        { new("GiveItem", true), 25 },
+        { new("GivePositiveEffect", true), 15 },
+        //{ new("GiveNegativeEffect", false), 15 },
+        //{ new("GiveMixedEffect", true), 15 },
+        //{ new("GiveMixedEffect", false), 15 },
+        //{ new("MoreHealth", true), 10 },
+        //{ new("LoseHealth", false), 10 },
+        { new("ThrowableSpawn", true), 10 },
+        //{ new("MedicalKit", true), 40 },
+        //{ new("ExecuteCommand", true), 1 },
+        //{ new("ExecuteServerCommand", true), 1 },
+        { new("ShufflePlayers", true), 1 },
+        { new("GreatGamble", true), 1 },
+        //{ new("LoseItems", false), 1 },
+        //{ new("TpToSCP", true), 1 }
+        //{ new("TpToRandomPlayer", true), 1 },
+        { new("ImmenseFortitude", true), 10 },
+        { new("TrueRessurection", true), 10 },
+        { new("Necromancy", true), 10 },
+        { new("NoAction", true), 1 }
     };
 
     public Dictionary<string, string> NameToHint { get; set; } = new()
