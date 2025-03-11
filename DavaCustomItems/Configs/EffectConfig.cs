@@ -20,10 +20,10 @@ public sealed class EffectConfig
         Intensity = 1;
     }
 
-    public EffectConfig(EffectType effectType, float duration, byte intensity)
+    public EffectConfig(EffectType effectType, byte intensity, float duration)
     {
         EffectType = effectType;
-        Duration = duration;
         Intensity = intensity;
+        Duration = duration;
     }
 }

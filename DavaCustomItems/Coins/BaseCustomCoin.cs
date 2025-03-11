@@ -6,7 +6,6 @@ using Exiled.API.Features.Items;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
-using InventorySystem;
 using InventorySystem.Items.Coin;
 using MEC;
 
@@ -54,19 +53,22 @@ public class BaseCustomCoin : CustomItem
         Coin.OnFlipped -= Coin_OnFlipped;
     }
 
+    public override void OnAcquired(Player player, Item item, bool displayMessage)
+    {
+        if (!this.Check(item))
+            return;
+        LightId = LightManager.MakeLight(player.Position, LightConfig, false);
+    }
+
     public void ChangedItem(ChangedItemEventArgs ev)
     {
         if (this.Check(ev.OldItem))
         {
-            LightManager.RemoveLight(LightId);
-
+            LightManager.HideLight(LightId);
         }
-        if (this.Check(ev.Item))
+        if (this.Check(ev.Item) && LightConfig.ShouldFollowPlayer)
         {
-            if (LightConfig.ShouldFollowPlayer)
-            {
-                LightId = LightManager.MakeLightAndFollow(ev.Player, LightConfig);
-            }
+            LightManager.StartFollow(LightId, ev.Player);
         }
     }
 
@@ -74,14 +76,14 @@ public class BaseCustomCoin : CustomItem
     {
         if (!this.Check(ev.Pickup))
             return;
-        LightManager.StopFollowAndStartNew(ev.Player, ev.Pickup, ref LightId, LightConfig, true);
+        LightManager.StopFollowAndStartFollow(ev.Player, ev.Pickup);
     }
 
     public override void OnPickingUp(PickingUpItemEventArgs ev)
     {
         if (!this.Check(ev.Pickup))
             return;
-        LightManager.RemoveLight(LightId);
+        LightManager.HideLight(LightId);
     }
 
     public override void Destroy()
@@ -93,12 +95,17 @@ public class BaseCustomCoin : CustomItem
     private void Coin_OnFlipped(ushort serial, bool isTails)
     {
         var item = Item.Get(serial);
+        if (item == null) 
+            return;
+        if (!Check(item))
+            return;
         var owner = item.Owner;
         var configKV = ExtraConfig.NameAndWeight.GetRandomWeight(kv => kv.Key.Value == isTails, new("NoAction", true));
-        Log.Info($"ConfigName : {configKV.Key}");
+        Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV.Key} {serial}");
         var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == configKV.Key);
         if (effect.ActionName == default)
             return; // ?
+        Log.Info($"Running {configKV.Key} with {owner.Id} {serial}");
         effect.RunAction(owner, ExtraConfig, configKV.Key);
         FlippedNumber++;
         if (ExtraConfig.MaxFlipping == FlippedNumber)

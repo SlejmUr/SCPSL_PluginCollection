@@ -4,10 +4,9 @@ public enum CoinRarityType
 {
     TEST = -1,
     None,
-    SuperUnluckyCoin,
-    UnluckyCoin,
-    NormalCoin,
-    RareCoin,
-    LegendaryCoin,
-
+    SuperUnlucky,
+    Unlucky,
+    Normal,
+    Rare,
+    Legendary,
 }

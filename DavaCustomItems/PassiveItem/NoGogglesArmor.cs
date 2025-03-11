@@ -10,11 +10,11 @@ using PlayerRoles.FirstPersonControl;
 namespace DavaCustomItems.PassiveItem;
 
 [CustomItem(ItemType.ArmorCombat)]
-public class NoGogglesWest : CustomArmor
+public class NoGogglesArmor : CustomArmor
 {
     public override uint Id { get; set; } = 700;
-    public override string Name { get; set; } = "No Goggle West";
-    public override string Description { get; set; } = "This west makes the equipped player not seen in Goggles";
+    public override string Name { get; set; } = "No Goggle Armor";
+    public override string Description { get; set; } = "This Armor makes the equipped player not seen in Goggles";
     public override float Weight { get; set; }
     public override SpawnProperties SpawnProperties { get; set; }
 
@@ -34,6 +34,7 @@ public class NoGogglesWest : CustomArmor
 
     private void Scp1344_OnPlayerSeen(ReferenceHub who, ReferenceHub target)
     {
+        Log.Info($"Scp1344_OnPlayerSeen | who: {who} target: {target} owner: {Owner}");
         if (Owner == null)
             return;
         Log.Info($"who: {who} target: {target} owner: {Owner}");
@@ -47,17 +48,22 @@ public class NoGogglesWest : CustomArmor
                 var emi = particle.emission;
                 emi.enabled = false;
             }
-            else
-            {
-                Log.Info("emission idk?");
-            }
         });
     }
 
     public override void OnAcquired(Player player, Item item, bool displayMessage)
     {
+        base.OnAcquired(player, item, displayMessage);
         Owner = player;
-        Log.Info("OnAcquired owner set!");
+        Timing.CallDelayed(1, () =>
+        {
+            var fpc = Owner.Role.Base as IFpcRole;
+            if (fpc != null && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
+            {
+                var emi = particle.emission;
+                emi.enabled = false;
+            }
+        });
     }
 
     public override void OnDroppingItem(DroppingItemEventArgs ev)
@@ -67,7 +73,6 @@ public class NoGogglesWest : CustomArmor
         if (!Check(ev.Item))
             return;
         var fpc = Owner.Role.Base as IFpcRole;
-        Log.Info("aaaa " + fpc);
         if (fpc != null && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
         {
             var emi = particle.emission;

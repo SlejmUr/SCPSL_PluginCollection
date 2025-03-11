@@ -13,20 +13,20 @@ public sealed class CoinExtraConfig
         // Some events not implemented yet. 
         { new("GiveItem", true), 25 },
         { new("GivePositiveEffect", true), 15 },
-        //{ new("GiveNegativeEffect", false), 15 },
-        //{ new("GiveMixedEffect", true), 15 },
-        //{ new("GiveMixedEffect", false), 15 },
-        //{ new("MoreHealth", true), 10 },
-        //{ new("LoseHealth", false), 10 },
+        { new("GiveNegativeEffect", false), 15 },
+        { new("GiveMixedEffect", true), 15 },
+        { new("GiveMixedEffect", false), 15 },
+        { new("MoreHealth", true), 10 },
+        { new("LoseHealth", false), 10 },
         { new("ThrowableSpawn", true), 10 },
-        //{ new("MedicalKit", true), 40 },
+        { new("MedicalKit", true), 40 },
         //{ new("ExecuteCommand", true), 1 },
         //{ new("ExecuteServerCommand", true), 1 },
         { new("ShufflePlayers", true), 1 },
         { new("GreatGamble", true), 1 },
-        //{ new("LoseItems", false), 1 },
-        //{ new("TpToSCP", true), 1 }
-        //{ new("TpToRandomPlayer", true), 1 },
+        { new("LoseItems", false), 1 },
+        { new("TpToSCP", true), 1 },
+        { new("TpToRandomPlayer", true), 1 },
         { new("ImmenseFortitude", true), 10 },
         { new("TrueRessurection", true), 10 },
         { new("Necromancy", true), 10 },
@@ -56,6 +56,13 @@ public sealed class CoinExtraConfig
     public Dictionary<EffectConfig, int> GiveMixedEffectWeight { get; set; } = new();
 
     public Dictionary<int, int> MoreHealthWeight { get; set; } = new()
+    {
+        { 10, 10 },
+        { 30, 3 },
+        { 5, 30 },
+    };
+
+    public Dictionary<int, int> LoseHealthWeight { get; set; } = new()
     {
         { 10, 10 },
         { 30, 3 },

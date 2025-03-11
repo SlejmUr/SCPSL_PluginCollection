@@ -1,4 +1,5 @@
 ﻿using DavaCustomItems.Coins;
+using DavaCustomItems.Managers;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.CustomItems.API.Features;
@@ -21,7 +22,10 @@ public sealed class Main : Plugin<Config>
         if (!Config.IsEnabled)
             return;
         Instance = this;
+        Exiled.Events.Handlers.Server.RoundStarted += ServerSpecific.Logic.AddToUsers;
+        RainbowLightManager.Init();
         CoinAction.Init();
+        ServerSpecific.Logic.Init();
         foreach (var item in Config.CoinRarityConfigs)
         {
             BaseCustomCoin coin = new()
@@ -43,7 +47,10 @@ public sealed class Main : Plugin<Config>
     {
         if (!Config.IsEnabled)
             return;
-        Instance = this;
+        Instance = null;
+        Exiled.Events.Handlers.Server.RoundStarted -= ServerSpecific.Logic.AddToUsers;
+        RainbowLightManager.UnInit();
+        ServerSpecific.Logic.UnInit();
         CustomItem.UnregisterItems();
         base.OnDisabled();
     }

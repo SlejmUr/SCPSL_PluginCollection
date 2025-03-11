@@ -7,6 +7,10 @@
 	<LangVersion>12</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="PassiveItem\NewFile1.txt" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" ExcludeAssets="runtime" ReferenceOutputAssembly="false" Private="true" />
 		<PackageReference Include="ExMod.Exiled" Version="9.5.1" Publicize="true" />
@@ -29,6 +33,9 @@
 			<HintPath>..\References\Pooling.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+		  <HintPath>..\References\Unity.TextMeshPro.dll</HintPath>
+		</Reference>
 		<Reference Include="UnityEngine">
 			<HintPath>..\References\UnityEngine.dll</HintPath>
 			<Private>False</Private>
@@ -40,6 +47,9 @@
 		<Reference Include="UnityEngine.ParticleSystemModule">
 			<HintPath>..\References\UnityEngine.ParticleSystemModule.dll</HintPath>
 			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.PhysicsModule">
+		  <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	

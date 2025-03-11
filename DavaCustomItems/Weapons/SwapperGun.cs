@@ -1,4 +1,5 @@
-﻿using Exiled.API.Features;
+﻿using Exiled.API.Extensions;
+using Exiled.API.Features;
 using Exiled.API.Features.Attributes;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
@@ -14,7 +15,7 @@ public class SwapperGun : CustomWeapon
 {
     public override uint Id { get; set; } = 9000;
     public override string Name { get; set; } = "Swapper Gun";
-    public override string Description { get; set; } = "Swapping to the other player who shot the gun. (The gun will destroyed.)";
+    public override string Description { get; set; } = "Swapping to the other player who shot the gun. (The gun will destroyed)";
     public override float Weight { get; set; } = 1.5f;
     public override SpawnProperties SpawnProperties { get; set; } = new();
     public override ItemType Type => ItemType.GunCOM15;
@@ -25,6 +26,10 @@ public class SwapperGun : CustomWeapon
     {
         ev.Player.RemoveItem(ev.Item, true);
         if (ev.Target == null)
+            return;
+        if (!string.IsNullOrEmpty(ev.Player.UniqueRole))
+            return;
+        if (!string.IsNullOrEmpty(ev.Target.UniqueRole))
             return;
         Timing.RunCoroutine(SwapUser(ev.Player, ev.Target));
     }
@@ -40,7 +45,7 @@ public class SwapperGun : CustomWeapon
         var t_Position = to.Position;
         var p_Rotation = from.Rotation;
         var t_Rotation = to.Rotation;
-        var p_Items = from.Items.Select(x=>x.Type).ToList();
+        var p_Items = from.Items.Select(x => x.Type).ToList();
         var t_Items = to.Items.Select(x => x.Type).ToList();
         var p_Health = from.Health;
         var t_Health = to.Health;
@@ -48,8 +53,6 @@ public class SwapperGun : CustomWeapon
         var t_ComponentsInChildren = to.ComponentsInChildren; // ?
         var p_CustomInfo = from.CustomInfo;
         var t_CustomInfo = to.CustomInfo;
-        var p_CustomRoleFriendlyFireMultiplier = from.CustomRoleFriendlyFireMultiplier;
-        var t_CustomRoleFriendlyFireMultiplier = to.CustomRoleFriendlyFireMultiplier;
         var p_HumeShield = from.HumeShield;
         var t_HumeShield = to.HumeShield;
         var p_MaxArtificialHealth = from.MaxArtificialHealth;
@@ -58,22 +61,12 @@ public class SwapperGun : CustomWeapon
         var t_MaxHealth = to.MaxHealth;
         var p_Stamina = from.Stamina;
         var t_Stamina = to.Stamina;
-        var p_UniqueRole = from.UniqueRole;
-        var t_UniqueRole = to.UniqueRole;
         var p_UnitId = from.UnitId;
         var t_UnitId = to.UnitId;
-        var p_VoiceChannel = from.VoiceChannel;
-        var t_VoiceChannel = to.VoiceChannel;
-        var p_VoiceChatMuteFlags = from.VoiceChatMuteFlags;
-        var t_VoiceChatMuteFlags = to.VoiceChatMuteFlags;
-        var p_Role = from.Role.Type;
-        var t_Role = to.Role.Type;
-        // effects todo.
+        var p_Effects = from.ActiveEffects.ToList();
+        var t_Effects = to.ActiveEffects.ToList();
 
         yield return 0.1f;
-        to.Role.Set(p_Role, PlayerRoles.RoleSpawnFlags.None);
-        from.Role.Set(t_Role, PlayerRoles.RoleSpawnFlags.None);
-        yield return 0.2f;
         from.ClearInventory();
         to.ClearInventory();
         yield return 0.1f;
@@ -99,5 +92,15 @@ public class SwapperGun : CustomWeapon
         to.Health = p_Health;
         from.HumeShield = t_HumeShield;
         to.HumeShield = p_HumeShield;
+        from.UnitId = t_UnitId;
+        to.UnitId = p_UnitId;
+        foreach (var item in p_Effects)
+        {
+            to.EnableEffect(item.GetEffectType(), item.Intensity, item.Duration);
+        }
+        foreach (var item in t_Effects)
+        {
+            from.EnableEffect(item.GetEffectType(), item.Intensity, item.Duration);
+        }
     }
 }
