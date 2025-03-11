@@ -21,6 +21,15 @@ public static class RNGManager
         return return_t;
     }
 
+    public static float GetRandom(float min = float.MinValue, float max = float.MinValue)
+    {
+        double range = (double)min - (double)max;
+        double sample = RNG.NextDouble();
+        double scaled = (sample * range) + min;
+        float f = (float)scaled;
+        return f;
+    }
+
     public static T GetRandomWeight<T>(this Dictionary<T, int> dic, Func<KeyValuePair<T, int>, bool> predicate, T default_val = default)
     {
         var dic2 = dic.Where(predicate).ToDictionary(x => x.Key, x => x.Value);

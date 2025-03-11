@@ -350,10 +350,57 @@ public sealed class CoinAction
 
         Actions.Add(new CoinAction("Combustion", (player, config, actionName) =>
         {
-            
+            foreach (var p in Player.List.Where(p => p.IsAlive))
+            {
+                p.ShowHint("The coin blesses you with a grenade!", 5);
+
+                var grenade = new ExplosiveGrenade(ItemType.GrenadeHE);
+                grenade.SpawnActive(p.Position);
                 
+            }
             Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and has Exploded Everyone");
+        }));
+
+        Actions.Add(new CoinAction("awareness", (player, config, actionName) =>
+        {
+            Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and Became Omnipresent");
+            //Start a coroutine
+            // once every muinite
+            // scan all players
+            // display to user what zone they are in 
+            // repeat
+        }));
+
+        Actions.Add(new CoinAction("RocketMan", (player, config, actionName) =>
+        {
+            player.ShowHint("The coins unstable power unleashes calamity on you", 5);
+
+            for(int i = 0; i < 3; i++) // replace 3 with variable later
+            {
+                var grenade = new ExplosiveGrenade(ItemType.GrenadeHE);
+                {
+                    float randomNumber = RNGManager.GetRandom(3.0f, 5.0f);
+                    grenade.FuseTime = randomNumber;
+                } 
+                grenade.SpawnActive(player.Position);
+            }
+            for (int i = 0; i < 2; i++) // replace 2 with variable later
+            {
+                FlashGrenade flash = (FlashGrenade)FlashGrenade.Create(ItemType.GrenadeFlash);
+                
+                flash.SpawnActive(player.Position);
+                {
+                    float randomNumber = RNGManager.GetRandom(3.0f, 5.0f);
+                    flash.FuseTime = randomNumber;
+                }
+                flash.SpawnActive(player.Position);
+            }
+            for (int i = 0; i < 2; i++) // replace 2 with variable later
+            {
+                var SCP018 = new Scp018(ItemType.SCP018);
+                SCP018.SpawnActive(player.Position);
+            }
+
         }));
     }
 }
-//ADD EXPLOSION ONE
