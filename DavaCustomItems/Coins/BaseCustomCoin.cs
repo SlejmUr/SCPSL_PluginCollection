@@ -66,6 +66,10 @@ public class BaseCustomCoin : CustomItem
         {
             LightManager.HideLight(LightId);
         }
+        if (this.Check(ev.Item))
+        {
+            LightManager.ShowLight(LightId);
+        }
         if (this.Check(ev.Item) && LightConfig.ShouldFollowPlayer)
         {
             LightManager.StartFollow(LightId, ev.Player);
@@ -101,7 +105,7 @@ public class BaseCustomCoin : CustomItem
             return;
         var owner = item.Owner;
         var configKV = ExtraConfig.NameAndWeight.GetRandomWeight(kv => kv.Key.IsTails == isTails);
-        Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV} {serial}");
+        Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV.ActionName} {serial}");
 
         List<object> settings = [];
 

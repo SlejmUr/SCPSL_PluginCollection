@@ -5,6 +5,7 @@ using DavaCustomItems.Components;
 using TLight = Exiled.API.Features.Toys.Light;
 using Exiled.API.Interfaces;
 using System.Collections.ObjectModel;
+using Exiled.API.Features;
 
 namespace DavaCustomItems.Managers;
 
@@ -56,9 +57,9 @@ public static class LightManager
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
-        light.Destroy();
         Lights.Remove(LightId);
         LightRemoved?.Invoke(LightId);
+        light.Destroy();
 
     }
 
@@ -82,7 +83,9 @@ public static class LightManager
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
             return false;
-        return light.GameObject.GetComponent<LightConfigComponent>().IsSpawned;
+        bool isSpawned = light.GameObject.GetComponent<LightConfigComponent>().IsSpawned;
+        Log.Info($"IsLightShown? {isSpawned}");
+        return isSpawned;
     }
 
     // Can return null!

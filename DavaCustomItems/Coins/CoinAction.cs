@@ -119,8 +119,6 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             {
                 player.EnableEffect(EffectType.Slowness, 20, 2);
             }
-
-
         }));
 
         Actions.Add(new CoinAction("TpToRandomPlayer", (player, config, extraSettings) =>
@@ -136,7 +134,6 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 return;
             Map.TurnOffAllLights((int)extraSettings[0]); 
             player.ShowHint("You cut the lights out", 5);
-
         }));
 
         Actions.Add(new CoinAction("RandomKeycard", (player, config, extraSettings) =>
@@ -200,7 +197,6 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         {
             var grenade = new ExplosiveGrenade(ItemType.GrenadeHE);
             grenade.SpawnActive(player.Position);
-
             player.ShowHint("Oops, Watch your feet!", 5);
         }));
 
@@ -218,8 +214,6 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             {
                 accessibleRooms = Room.Get(ZoneType.Surface).ToList();
             }
-            
-
             var randomRoom = accessibleRooms[RNGManager.RNG.Next(accessibleRooms.Count)];
 
             player.Position = randomRoom.Position;
@@ -365,7 +359,6 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                     Exiled.Events.Handlers.Player.Died.Unsubscribe(died);
                 }
             }
-
             Exiled.Events.Handlers.Player.Died.Subscribe(died);
         }));
 
@@ -412,7 +405,6 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 }
 
                 Exiled.Events.Handlers.Player.Dying.Subscribe(dying);
-
             }
         }));
 
@@ -427,7 +419,6 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             player.EnableEffect(EffectType.RainbowTaste, 1, 0);
             player.EnableEffect(EffectType.Vitality, 1, 0);
             player.EnableEffect(EffectType.SilentWalk, 1, 0);
-
         }));
 
         Actions.Add(new CoinAction("CursedDrugCocktail", (player, config, extraSettings) =>
