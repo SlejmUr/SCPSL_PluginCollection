@@ -1,5 +1,6 @@
 ﻿using CommandSystem;
 using DavaCustomItems.Coins;
+using DavaCustomItems.Managers;
 using Exiled.API.Features;
 
 namespace DavaCustomItems.Commands.CoinCommands;
@@ -13,7 +14,7 @@ public class RunCoinActionsCommand : ICommand, IUsageProvider
 
     public string Description => "Run a coin actions";
 
-    public string[] Usage => ["ActionName", "PlayerId", "CoinRarity"];
+    public string[] Usage => ["ActionName", "PlayerId", "CoinRarity", "IsTails"];
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
@@ -22,9 +23,9 @@ public class RunCoinActionsCommand : ICommand, IUsageProvider
             response = "Missing permission! (PlayerManagement)";
             return false;
         }
-        if (arguments.Count != 3)
+        if (arguments.Count != 4)
         {
-            response = "Wrong argument count! Use with <ActionName> <PlayerId> <CoinRarity>";
+            response = "Wrong argument count! Use with <ActionName> <PlayerId> <CoinRarity> <IsTails>";
             return false;
         }
 
@@ -58,9 +59,23 @@ public class RunCoinActionsCommand : ICommand, IUsageProvider
             response = "Coin rarity cannot be parsed!";
             return false;
         }
-
+        bool isTails = bool.Parse(arguments.At(3));
         var config = Main.Instance.Config.CoinRarityConfigs[rarityType].ExtraConfig;
-        coinAction.RunAction(player, config, coinAction.ActionName);
+        var name_weight = config.NameAndWeight.Keys.First(x=>x.IsTails == isTails && x.ActionName == coinAction.ActionName);
+        List<object> settings = [];
+
+        // getting the extra settings var from it.
+        if (name_weight.UseWeight)
+        {
+            if (config.ExtraSettingsAndWeight.TryGetValue(name_weight.ExtraSettingsParameter, out var dict2))
+                settings = dict2.GetRandomWeight();
+        }
+        else
+        {
+            if (config.ExtraSettings.TryGetValue(name_weight.ExtraSettingsParameter, out var dict2))
+                settings = dict2;
+        }
+        coinAction.RunAction(player, config, settings);
         response = "Coin Action has been run!";
         return true;
     }

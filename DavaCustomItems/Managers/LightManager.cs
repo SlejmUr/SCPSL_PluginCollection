@@ -4,6 +4,7 @@ using DavaCustomItems.Configs;
 using DavaCustomItems.Components;
 using TLight = Exiled.API.Features.Toys.Light;
 using Exiled.API.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace DavaCustomItems.Managers;
 
@@ -14,6 +15,11 @@ public static class LightManager
 
     public static Action<int> LightRemoved;
     public static Action<int, LightConfig> LightAdded;
+
+    public static IReadOnlyList<int> GetLightIds()
+    {
+        return Lights.Keys.ToList();
+    }
 
     public static int MakeLight(Vector3 Position, LightConfig lightConfig, bool shouldSpawn = true)
     {
@@ -60,16 +66,16 @@ public static class LightManager
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
-        light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
         light.UnSpawn();
+        light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
     }
 
     public static void ShowLight(int LightId)
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
-        light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = true;
         light.Spawn();
+        light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = true;
     }
 
     public static bool IsLightShown(int LightId)

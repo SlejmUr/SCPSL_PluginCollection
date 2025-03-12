@@ -42,8 +42,7 @@ public class NoGogglesArmor : CustomArmor
             return;
         Timing.CallDelayed(1, () =>
         {
-            var fpc = Owner.Role.Base as IFpcRole;
-            if (fpc != null && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
+            if (Owner.Role.Base is IFpcRole fpc && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
             {
                 var emi = particle.emission;
                 emi.enabled = false;
@@ -57,8 +56,7 @@ public class NoGogglesArmor : CustomArmor
         Owner = player;
         Timing.CallDelayed(1, () =>
         {
-            var fpc = Owner.Role.Base as IFpcRole;
-            if (fpc != null && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
+            if (Owner.Role.Base is IFpcRole fpc && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
             {
                 var emi = particle.emission;
                 emi.enabled = false;
@@ -72,8 +70,7 @@ public class NoGogglesArmor : CustomArmor
             return;
         if (!Check(ev.Item))
             return;
-        var fpc = Owner.Role.Base as IFpcRole;
-        if (fpc != null && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
+        if (Owner.Role.Base is IFpcRole fpc && CustomPlayerEffects.Scp1344.Trackers.TryGetValue(fpc, out var particle))
         {
             var emi = particle.emission;
             emi.enabled = true;

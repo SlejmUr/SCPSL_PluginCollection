@@ -13,14 +13,7 @@ public sealed class EffectConfig
 
     }
 
-    public EffectConfig(EffectType effectType)
-    {
-        EffectType = effectType;
-        Duration = 0;
-        Intensity = 1;
-    }
-
-    public EffectConfig(EffectType effectType, byte intensity, float duration)
+    public EffectConfig(EffectType effectType, byte intensity = 1, float duration = 0f)
     {
         EffectType = effectType;
         Intensity = intensity;

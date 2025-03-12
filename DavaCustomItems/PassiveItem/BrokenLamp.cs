@@ -79,7 +79,7 @@ public class BrokenLamp : CustomItem
 
     public IEnumerator<float> WaitThenUse(Player player)
     {
-        yield return 10;
+        yield return CooldownTime;
         if (!canUse.ContainsKey(player))
             canUse.Add(player, true);
         canUse[player] = true;

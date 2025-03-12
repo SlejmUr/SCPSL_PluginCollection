@@ -1,6 +1,8 @@
 ﻿using DavaCustomItems.Coins;
 using DavaCustomItems.Configs;
+using Exiled.API.Enums;
 using Exiled.API.Interfaces;
+using InventorySystem.Items.Usables.Scp330;
 
 namespace DavaCustomItems;
 
@@ -35,6 +37,17 @@ public sealed class Config : IConfig
                     FloatAlpha = 1
                 }
             }
+        },
+        {
+            "Rare Coin",
+            new()
+            {
+                ShouldFollowPlayer = true,
+                ShouldMakeLight = true,
+                Color = UnityEngine.Color.blue,
+                Intensity = 10,
+                Range = 5,
+            }
         }
     };
 
@@ -50,27 +63,158 @@ public sealed class Config : IConfig
                 ExtraConfig = new()
                 {
                     CoinBrakeChance = 0.01f,
-                    /*
+                    MaxFlipping = 1,
                     NameAndWeight =
                     {
-                        { new("...", true),5 },
-                        { new("...", false),5 }
+                        { new( "ShufflePlayers", false, string.Empty, false), 1},
+                        { new( "ShufflePlayers", true, string.Empty, false), 1},
+                        { new( "GreatGamble", true,  string.Empty, false), 1 },
+                        { new( "GreatGamble", false,  string.Empty, false), 1 },
+                        { new( "ImmenseFortitude", true,  string.Empty, false), 1 },
+                        { new( "ImmenseFortitude", false,  string.Empty, false), 1 },
+                        { new( "TrueResurrection", true,  string.Empty, true), 1 },
+                        { new( "TrueResurrection", false,  string.Empty, true), 1 },
+                        { new( "Necromancy", false,  string.Empty, true), 1 },
+                        { new( "Necromancy", true,  string.Empty, true), 1 },
+                        { new( "DrugCocktail", false,  string.Empty, true), 1 },
+                        { new( "DrugCocktail", true,  string.Empty, true), 1 },
+                        { new( "CursedDrugCocktail", false,  string.Empty, true), 1 },
+                        { new( "CursedDrugCocktail", true,  string.Empty, true), 1 },
+                        { new( "ExperimentalItem", false,  string.Empty, true), 1 },
+                        { new( "ExperimentalItem", true,  string.Empty, true), 1 },
+                        { new( "Combustion", false,  string.Empty, true), 1 },
+                        { new( "Combustion", true,  string.Empty, true), 1 },
+                        { new( "HighAwareness", false,  string.Empty, true), 1 },
+                        { new( "HighAwareness", true,  string.Empty, true), 1 },
+                        { new( "BlessingsAbound", false, "BlessingEffects", false), 1 },
+                        { new( "BlessingsAbound", true, "BlessingEffects", false), 1 },
+                        { new( "RocketMan", false, string.Empty, false), 1 },
+                        { new( "RocketMan", true, string.Empty, false), 1 },
                     },
-                    GiveNegativeEffectWeight =
+                    ExtraSettings =
                     {
-                        {  new EffectConfig(Exiled.API.Enums.EffectType.Corroding, 20, 20), 30 }
-                    }
-                    */
+                        {
+                            "BlessingEffects", 
+                            new()
+                            { 
+                                new EffectConfig(EffectType.MovementBoost, 30),
+                                new EffectConfig(EffectType.RainbowTaste, 30),
+                                new EffectConfig(EffectType.DamageReduction, 30),
+                            } 
+                        }
+                    },
                 }
             }
         },
         {
-            CoinRarityType.SuperUnlucky,
+            CoinRarityType.Rare,
             new()
             {
                 Id = 501,
-                Name = "Negative Coin",
-                Description = "This make it the only bad happens."
+                Name = "Rare Coin",
+                Description = "RARE!!!.",
+                ExtraConfig = new()
+                {
+                    NameAndWeight =
+                    {
+                        // Good
+                        { new( "GiveItem", true, "GiveItem", false), 1 },
+                        { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
+                        { new( "MoreHealth", true, "MoreHealth", false), 1 },
+                        { new( "SourTooth", true, "SourTooth", true), 1 },
+                        { new( "MedicalKit", true, "MedicalKit", false), 1 },
+                        { new( "GiveXP", true, "GiveXP", false), 1 },
+                        { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
+                        { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
+                        
+                        // Bad
+                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
+                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
+                        { new( "LoseHealth", false, "LoseHealth", false), 1 },
+                        { new( "1hp", false, string.Empty ,false), 1 },
+                        { new( "FoodPoisoning", false, string.Empty, false), 1 },
+                        { new( "GrenadeDrop", false, string.Empty, false), 1 },
+                        { new( "LoseItems", false, string.Empty , false), 1 },
+                        { new( "TpToSCP", false, string.Empty , false), 1 },
+                        { new( "Freeze", false, string.Empty, false), 1 },
+
+                        // Mixed
+                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
+                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
+                        { new( "DisappearingAct", true, string.Empty, false), 1 },
+                        { new( "DisappearingAct", false, string.Empty, false), 1 },
+                        { new( "Gnome", true, string.Empty, false), 1 },
+                        { new( "Gnome", false, string.Empty, false), 1 },
+                        { new( "TallMan", true, string.Empty, false), 1 },
+                        { new( "TallMan", false, string.Empty, false), 1 },
+                        { new( "NormalMan", true, string.Empty, false), 1 },
+                        { new( "NormalMan", false, string.Empty, false), 1 },
+                        { new( "WideMan", true, string.Empty, false), 1 },
+                        { new( "WideMan", false, string.Empty, false), 1 },
+                        { new( "Blackout", true, "Blackout", false), 1 },
+                        { new( "Blackout", false, "Blackout", false), 1 },
+                        { new( "TpToRandomPlayer", true, string.Empty, false), 1 },
+                        { new( "TpToRandomPlayer", false, string.Empty, false), 1 },
+                    },
+                    ExtraSettings =
+                    {
+                        {
+                            "ThrowableSpawn",
+                            [ProjectileType.FragGrenade, ProjectileType.Scp018, ProjectileType.Flashbang]
+                        },
+                        {
+                            "MoreHealth",
+                            [30,45]
+                        },
+                        {
+                            "LoseHealth",
+                            [15,30]
+                        },
+                        {
+                            "MedicalKit",
+                            [ItemType.Adrenaline, ItemType.Medkit, ItemType.SCP500]
+                        },
+                        {
+                            "RandomWeapon",
+                            [ItemType.GunCrossvec, ItemType.GunAK, ItemType.GunLogicer]
+                        },
+                        {
+                            "RandomKeycard",
+                            [ItemType.KeycardO5, ItemType.KeycardChaosInsurgency, ItemType.KeycardFacilityManager]
+                        },
+                        {
+                            "Blackout",
+                            [10]
+                        },
+                        {
+                            "TpToSCP",
+                            [true]
+                        }
+                    },
+                    ExtraSettingsAndWeight =
+                    {
+                        {
+                            "SourTooth",
+                            new()
+                            {
+                                {
+                                    new()
+                                    {
+                                        CandyKindID.Red,CandyKindID.Rainbow
+                                    },
+                                    4
+                                },
+                                {
+                                    new()
+                                    {
+                                        CandyKindID.Yellow
+                                    },
+                                    14
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         {
@@ -92,7 +236,105 @@ public sealed class Config : IConfig
             {
                 Id = 5002,
                 Name = "Normal Coin",
-                Description = "todo",
+                Description = "The Basic Coin",
+                ExtraConfig = new()
+                {
+                    NameAndWeight =
+                    {
+                        // Good
+                        { new( "GiveItem", true, "GiveItem", false), 1 },
+                        { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
+                        { new( "MoreHealth", true, "MoreHealth", false), 1 },
+                        { new( "SourTooth", true, "SourTooth", true), 1 },
+                        { new( "MedicalKit", true, "MedicalKit", false), 1 },
+                        { new( "GiveXP", true, "GiveXP", false), 1 },
+                        { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
+                        { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
+                        
+                        // Bad
+                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
+                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
+                        { new( "LoseHealth", false, "LoseHealth", false), 1 },
+                        { new( "1hp", false, string.Empty ,false), 1 },
+                        { new( "FoodPoisoning", false, string.Empty, false), 1 },
+                        { new( "GrenadeDrop", false, string.Empty, false), 1 },
+                        { new( "LoseItems", false, string.Empty , false), 1 },
+                        { new( "TpToSCP", false, string.Empty , false), 1 },
+                        { new( "Freeze", false, string.Empty, false), 1 },
+
+                        // Mixed
+                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
+                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
+                        { new( "DisappearingAct", true, string.Empty, false), 1 },
+                        { new( "DisappearingAct", false, string.Empty, false), 1 },
+                        { new( "Gnome", true, string.Empty, false), 1 },
+                        { new( "Gnome", false, string.Empty, false), 1 },
+                        { new( "TallMan", true, string.Empty, false), 1 },
+                        { new( "TallMan", false, string.Empty, false), 1 },
+                        { new( "WideMan", true, string.Empty, false), 1 },
+                        { new( "WideMan", false, string.Empty, false), 1 },
+                        { new( "NormalMan", true, string.Empty, false), 1 },
+                        { new( "NormalMan", false, string.Empty, false), 1 },
+                        { new( "Blackout", true, "Blackout", false), 1 },
+                        { new( "Blackout", false, "Blackout", false), 1 },
+                        { new( "TpToRandomPlayer", true, string.Empty, false), 1 },
+                        { new( "TpToRandomPlayer", false, string.Empty, false), 1 },
+                    },
+                    ExtraSettings =
+                    {
+                        {
+                            "ThrowableSpawn",
+                            [ProjectileType.FragGrenade, ProjectileType.Scp018, ProjectileType.Flashbang]
+                        },
+                        {
+                            "MoreHealth",
+                            [15,30]
+                        },
+                        {
+                            "LoseHealth",
+                            [15,30]
+                        },
+                        {
+                            "MedicalKit",
+                            [ItemType.Adrenaline, ItemType.Medkit]
+                        },
+                        {
+                            "RandomWeapon",
+                            [ItemType.GunCOM18, ItemType.GunCrossvec, ItemType.GunRevolver]
+                        },
+                        {
+                            "RandomKeycard",
+                            [ItemType.KeycardScientist, ItemType.KeycardChaosInsurgency, ItemType.KeycardFacilityManager]
+                        },
+                        {
+                            "Blackout",
+                            [5]
+                        }
+                    },
+                    ExtraSettingsAndWeight =
+                    {
+                        {
+                            "SourTooth",
+                            new()
+                            {
+                                {
+                                    new()
+                                    {
+                                        CandyKindID.Red,CandyKindID.Rainbow
+                                    },
+                                    4
+                                },
+                                {
+                                    new()
+                                    {
+                                        CandyKindID.Yellow
+                                    },
+                                    14
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     };

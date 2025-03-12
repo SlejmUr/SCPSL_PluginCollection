@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" ExcludeAssets="runtime" ReferenceOutputAssembly="false" Private="true" />
-		<PackageReference Include="ExMod.Exiled" Version="9.5.1" Publicize="true" />
+		<PackageReference Include="ExMod.Exiled" PrivateAssets="all" ExcludeAssets="runtime" Version="9.5.1" Publicize="true" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,7 +34,8 @@
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.TextMeshPro">
-		  <HintPath>..\References\Unity.TextMeshPro.dll</HintPath>
+			<HintPath>..\References\Unity.TextMeshPro.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine">
 			<HintPath>..\References\UnityEngine.dll</HintPath>
@@ -49,7 +50,8 @@
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.PhysicsModule">
-		  <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
+			<HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 	</ItemGroup>
 	

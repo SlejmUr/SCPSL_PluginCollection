@@ -7,131 +7,259 @@ using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups.Projectiles;
-using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.Features;
+using InventorySystem.Items.Usables.Scp330;
 using MEC;
 using PlayerRoles;
 using UnityEngine;
 
 namespace DavaCustomItems.Coins;
 
-public sealed class CoinAction
+public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig, List<object>> runAction)
 {
     public static List<CoinAction> Actions { get; set; } = [];
 
-    public string ActionName = string.Empty;
-    public Action<Player /* player */, CoinExtraConfig /* config */, string /* actionName */> RunAction = null;
-
-    public CoinAction(string actionName, Action<Player, CoinExtraConfig, string> runAction)
-    {
-        ActionName = actionName;
-        RunAction = runAction;
-    }
+    public string ActionName = actionName;
+    public Action<Player /* player */, CoinExtraConfig /* config */, List<object> /* ExtraSettings */> RunAction = runAction;
 
     public static void Init()
     {
-        Actions.Add(new CoinAction("NoAction", (player, config, actionName) =>
+        Actions.Add(new CoinAction("NoAction", (player, config, extraSettings) =>
         {
 
         }));
 
-        Actions.Add(new CoinAction("GiveItem", (player, config, actionName) =>
+        Actions.Add(new CoinAction("GiveItem", (player, config, extraSettings) =>
         {
-            ItemType itemToAdd = config.GiveItemWeight.GetRandomWeight(ItemType.None);
+            if (extraSettings.IsEmpty())
+                return;
+            ItemType itemToAdd = (ItemType)extraSettings.RandomItem();
             player.AddItem(itemToAdd);
-            var hint = config.NameToHint.Get(actionName, string.Empty);
-            if (hint != string.Empty)
-                player.ShowHint(string.Format(hint, itemToAdd));
         }));
 
-        Actions.Add(new CoinAction("GivePositiveEffect", (player, config, actionName) =>
+        Actions.Add(new CoinAction("GivePositiveEffect", (player, config, extraSettings) =>
         {
-            var effectToAdd = config.GivePositiveEffectWeight.GetRandomWeight();
+            if (extraSettings.IsEmpty())
+                return;
+            EffectConfig effectToAdd = (EffectConfig)extraSettings.RandomItem();
             if (effectToAdd == null)
                 return;
             player.EnableEffect(effectToAdd.EffectType, effectToAdd.Intensity, effectToAdd.Duration, true);
-            var hint = config.NameToHint.Get(actionName, string.Empty);
-            if (hint != string.Empty)
-                player.ShowHint(string.Format(hint, effectToAdd.EffectType));
         }));
 
-        Actions.Add(new CoinAction("GiveNegativeEffect", (player, config, actionName) =>
+        Actions.Add(new CoinAction("GiveNegativeEffect", (player, config, extraSettings) =>
         {
-            var effectToAdd = config.GiveNegativeEffectWeight.GetRandomWeight();
+            if (extraSettings.IsEmpty())
+                return;
+            EffectConfig effectToAdd = (EffectConfig)extraSettings.RandomItem();
             if (effectToAdd == null)
                 return;
             player.EnableEffect(effectToAdd.EffectType, effectToAdd.Intensity, effectToAdd.Duration, true);
-            var hint = config.NameToHint.Get(actionName, string.Empty);
-            if (hint != string.Empty)
-                player.ShowHint(string.Format(hint, effectToAdd.EffectType));
         }));
 
-        Actions.Add(new CoinAction("GiveMixedEffect", (player, config, actionName) =>
+        Actions.Add(new CoinAction("GiveMixedEffect", (player, config, extraSettings) =>
         {
-            var effectToAdd = config.GiveMixedEffectWeight.GetRandomWeight();
+            if (extraSettings.IsEmpty())
+                return;
+            EffectConfig effectToAdd = (EffectConfig)extraSettings.RandomItem();
             if (effectToAdd == null)
                 return;
             player.EnableEffect(effectToAdd.EffectType, effectToAdd.Intensity, effectToAdd.Duration, true);
-            var hint = config.NameToHint.Get(actionName, string.Empty);
-            if (hint != string.Empty)
-                player.ShowHint(string.Format(hint, effectToAdd.EffectType));
         }));
 
-        Actions.Add(new CoinAction("MoreHealth", (player, config, actionName) =>
+        Actions.Add(new CoinAction("MoreHealth", (player, config, extraSettings) =>
         {
-            var healtToAdd = config.MoreHealthWeight.GetRandomWeight();
-            player.Health += healtToAdd;
+            if (extraSettings.IsEmpty())
+                return;
+            int healthToAdd = (int)extraSettings.RandomItem();
+            player.Health += healthToAdd;
             player.ShowHint("You got some health!", 5);
         }));
 
-        Actions.Add(new CoinAction("LoseHealth", (player, config, actionName) =>
+        Actions.Add(new CoinAction("LoseHealth", (player, config, extraSettings) =>
         {
-            var healtToAdd = config.LoseHealthWeight.GetRandomWeight();
-            player.Health -= healtToAdd;
+            if (extraSettings.IsEmpty())
+                return;
+            int healthToRemove = (int)extraSettings.RandomItem();
+            player.Health -= healthToRemove;
             player.ShowHint("You lost some health!", 5);
         }));
 
-        Actions.Add(new CoinAction("MedicalKit", (player, config, actionName) =>
+        Actions.Add(new CoinAction("1hp", (player, config, extraSettings) =>
         {
-            foreach (var item in config.MedicalKit)
+            player.Health = 1;
+            player.ShowHint("You Are 1HP!!", 5);
+        }));
+
+        Actions.Add(new CoinAction("MedicalKit", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            foreach (var item in extraSettings)
             {
-                var citem = Item.Create(item);
+                var citem = Item.Create((ItemType)item);
                 citem.CreatePickup(player.Position);
             }
             player.ShowHint("You received some medical kit!", 5);
         }));
 
-        Actions.Add(new CoinAction("LoseItems", (player, config, actionName) =>
+        Actions.Add(new CoinAction("LoseItems", (player, config, extraSettings) =>
         {
             player.ClearItems();
             player.ShowHint("Oops we removed all your items!", 5);
         }));
 
-        Actions.Add(new CoinAction("TpToSCP", (player, config, actionName) =>
+        Actions.Add(new CoinAction("TpToSCP", (player, config, extraSettings) => // rare = also give 1s of slowness
         {
             player.Teleport(Player.List.Where(x => x.IsScp && x.Role.Type != RoleTypeId.Scp079).GetRandomValue());
             player.ShowHint("Teleported to SCP!", 5);
+
+            if (!extraSettings.IsEmpty() && (bool)extraSettings[0])
+            {
+                player.EnableEffect(EffectType.Slowness, 20, 2);
+            }
+
+
         }));
 
-        Actions.Add(new CoinAction("TpToRandomPlayer", (player, config, actionName) =>
+        Actions.Add(new CoinAction("TpToRandomPlayer", (player, config, extraSettings) =>
         {
-            player.Teleport(Player.List.Where(x => x.IsAlive && x.Role.Type != RoleTypeId.Scp079).GetRandomValue());
+            player.Teleport(Player.List.Where(x => x.IsAlive && !x.IsScp).GetRandomValue());
             player.ShowHint("Teleported to a random user!", 5);
         }));
 
-        Actions.Add(new CoinAction("ThrowableSpawn", (player, config, actionName) =>
+
+        Actions.Add(new CoinAction("Blackout", (player, config, extraSettings) =>
         {
-            var randomItem = config.ThrowableSpawnWeight.GetRandomWeight(ProjectileType.None);
+            if (extraSettings.IsEmpty())
+                return;
+            Map.TurnOffAllLights((int)extraSettings[0]); 
+            player.ShowHint("You cut the lights out", 5);
+
+        }));
+
+        Actions.Add(new CoinAction("RandomKeycard", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            ItemType itemToAdd = (ItemType)extraSettings.RandomItem();
+            player.AddItem(itemToAdd);
+            player.ShowHint("You Got a random Keycard", 5);
+        }));
+
+        Actions.Add(new CoinAction("RandomWeapon", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            ItemType itemToAdd = (ItemType)extraSettings.RandomItem();
+            player.AddItem(itemToAdd);
+            player.ShowHint("You Got a random Weapon", 5);
+        }));
+
+        Actions.Add(new CoinAction("Freeze", (player, config, extraSettings) =>
+        {
+            player.EnableEffect(EffectType.Slowness, 100, 10);
+            player.EnableEffect(EffectType.Hypothermia, 1, 10);
+            player.ShowHint("You Were Frozen for 10 Seconds", 5);
+        }));
+
+        Actions.Add(new CoinAction("Gnome", (player, config, extraSettings) =>
+        {
+            player.Scale = new Vector3(0.5f, 0.5f, 0.5f);
+            player.ShowHint("You Have Become a Gnome", 5);
+        }));
+
+        Actions.Add(new CoinAction("TallMan", (player, config, extraSettings) =>
+        {
+            player.Scale = new Vector3(1.0f, 1.25f, 1.0f);
+            player.ShowHint("You Have Become a Tall", 5);
+        }));
+
+        Actions.Add(new CoinAction("WideMan", (player, config, extraSettings) =>
+        {
+            player.Scale = new Vector3(1.25f, 1.0f, 1.25f);
+            player.ShowHint("You Have Become a Wide", 5);
+        }));
+
+        Actions.Add(new CoinAction("NormalMan", (player, config, extraSettings) =>
+        {
+            player.Scale = Vector3.one;
+            player.ShowHint("You Have Become normal!", 5);
+        }));
+
+        Actions.Add(new CoinAction("GiveXP", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            Server.ExecuteCommand($"xps give {(int)extraSettings[0]} {player.Id}");
+            player.ShowHint("You Got 100 XP from the Coin!", 5);
+        }));
+
+        Actions.Add(new CoinAction("GrenadeDrop", (player, config, extraSettings) => // make optionable (via for loop for amount of gernades
+        {
+            var grenade = new ExplosiveGrenade(ItemType.GrenadeHE);
+            grenade.SpawnActive(player.Position);
+
+            player.ShowHint("Oops, Watch your feet!", 5);
+        }));
+
+        Actions.Add(new CoinAction("DisappearingAct", (player, config, extraSettings) =>
+        {
+            FlashGrenade flash = new() 
+            {
+                FuseTime = 1
+            };
+            flash.SpawnActive(player.Position);
+
+            var accessibleRooms = Room.List.Where(room => room.Zone != ZoneType.LightContainment).ToList();
+
+            if (Warhead.IsDetonated)  // make higher in the room 
+            {
+                accessibleRooms = Room.Get(ZoneType.Surface).ToList();
+            }
+            
+
+            var randomRoom = accessibleRooms[RNGManager.RNG.Next(accessibleRooms.Count)];
+
+            player.Position = randomRoom.Position;
+            player.ShowHint("You Disappeared! (into another room)", 5);
+
+            if (!extraSettings.IsEmpty() && (bool)extraSettings[0])
+            {
+                player.EnableEffect(EffectType.Invisible, 1, 5);
+            }
+        }));
+
+        Actions.Add(new CoinAction("FoodPoisoning", (player, config, extraSettings) => 
+        {
+            player.ShowHint("You Shit Yourself!", 3);
+            player.PlaceTantrum();
+        }));
+
+        Actions.Add(new CoinAction("SourTooth", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            player.ShowHint("You Got some VERY sour Candy!", 3);
+            player.TryAddCandy((CandyKindID)extraSettings.RandomItem());
+        }));
+
+        Actions.Add(new CoinAction("ThrowableSpawn", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            ProjectileType randomItem = (ProjectileType)extraSettings.RandomItem();
             if (randomItem == ProjectileType.None)
                 return;
             Projectile.CreateAndSpawn(randomItem, player.Position, player.Rotation, true, player);
-            var hint = config.NameToHint.Get(actionName, string.Empty);
-            if (hint != string.Empty)
-                player.ShowHint(hint);
         }));
 
-        Actions.Add(new CoinAction("ShufflePlayers", (player, config, actionName) =>
+        //Rare Coin Actions ONLY
+
+        // Legendary Coin Actions ONLY
+
+        Actions.Add(new CoinAction("ShufflePlayers", (player, config, extraSettings) => 
         {
             player.ShowHint("The coin's power grows unstable, everyone’s positions will swap.", 5);
             foreach (var p in Player.List.Where(p => p != player && p.IsAlive && p.Role.Type != RoleTypeId.Scp079))
@@ -155,7 +283,7 @@ public sealed class CoinAction
             });
         }));
 
-        Actions.Add(new CoinAction("GreatGamble", (player, config, actionName) =>
+        Actions.Add(new CoinAction("GreatGamble", (player, config, extraSettings) =>
         {
             Map.Broadcast(10, $"{player.Nickname} flipped the Legendary coin and unleashed a gambling cataclysm.");
             Map.ShowHint("A great gamble is upon us… Everyone has been gifted with a coin.", 5);
@@ -176,7 +304,7 @@ public sealed class CoinAction
         }));
 
 
-        Actions.Add(new CoinAction("ImmenseFortitude", (player, config, actionName) =>
+        Actions.Add(new CoinAction("ImmenseFortitude", (player, config, extraSettings) =>
         {
             player.MaxHealth += 150;
             player.Health += 150;
@@ -186,8 +314,7 @@ public sealed class CoinAction
 
             player.SessionVariables["ImmenseFortitude173"] = true;
 
-            CustomEventHandler<HurtingEventArgs> handler = null;
-            handler = (ev) =>
+            void handler(HurtingEventArgs ev)
             {
                 if (ev.Attacker != null && ev.Attacker.Role.Type == RoleTypeId.Scp173 && player.SessionVariables.ContainsKey("ImmenseFortitude173"))
                 {
@@ -195,30 +322,29 @@ public sealed class CoinAction
                     ev.Amount = 50;
                 }
                 Exiled.Events.Handlers.Player.Hurting.Unsubscribe(handler);
-            };
+            }
+
             Exiled.Events.Handlers.Player.Hurting.Subscribe(handler);
         }));
 
-        Actions.Add(new CoinAction("TrueResurrection", (player, config, actionName) =>
+        Actions.Add(new CoinAction("TrueResurrection", (player, config, extraSettings) =>
         {
             player.ShowHint("The coin gives you a spare lease on life. If you are to die, you will come back to life… But only once…", 10);
             player.SessionVariables["TrueResurrection"] = true;
             Map.Broadcast(10, $"{player.Nickname} has flipped the Legendary coin and was given a second Life.");
             Vector3 deathPosition = player.Position;
-            CustomEventHandler<DyingEventArgs> dying = null;
-            dying = (ev) => 
+            void dying(DyingEventArgs ev)
             {
                 if (ev.Player.SessionVariables.ContainsKey("TrueResurrection") && (bool)ev.Player.SessionVariables["TrueResurrection"])
                 {
                     deathPosition = player.Position;
                     Exiled.Events.Handlers.Player.Dying.Unsubscribe(dying);
                 }
-            };
+            }
+
             Exiled.Events.Handlers.Player.Dying.Subscribe(dying);
 
-
-            CustomEventHandler<DiedEventArgs> died = null;
-            died = (ev) =>
+            void died(DiedEventArgs ev)
             {
                 if (ev.Player.SessionVariables.ContainsKey("TrueResurrection") && (bool)ev.Player.SessionVariables["TrueResurrection"])
                 {
@@ -238,11 +364,12 @@ public sealed class CoinAction
                     });
                     Exiled.Events.Handlers.Player.Died.Unsubscribe(died);
                 }
-            };
+            }
+
             Exiled.Events.Handlers.Player.Died.Subscribe(died);
         }));
 
-        Actions.Add(new CoinAction("Necromancy", (player, config, actionName) =>
+        Actions.Add(new CoinAction("Necromancy", (player, config, extraSettings) =>
         {
             Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and respawned everyone as their minions");
             player.ShowHint("The coin's power grants you an army of minions loyal to you!", 5);
@@ -264,31 +391,32 @@ public sealed class CoinAction
                 jailbird.TotalCharges = -1_000;
                 jailbird.Give(p);
                 p.CurrentItem = jailbird;
-                // TODO: Figure out how to unsubscibe from it.
-                CustomEventHandler<DroppingItemEventArgs> handler = null;
-                handler = (ev) =>
+
+                void handler(DroppingItemEventArgs ev)
                 {
                     if (ev.Item != jailbird)
                         return;
                     ev.IsAllowed = false;
-                };
+                }
+
                 Exiled.Events.Handlers.Player.DroppingItem.Subscribe(handler);
 
-                CustomEventHandler<DyingEventArgs> dying = null;
-                dying = (ev) =>
+                void dying(DyingEventArgs ev)
                 {
                     if (ev.Player == p)
                     {
                         jailbird.Break();
                         Exiled.Events.Handlers.Player.Dying.Unsubscribe(dying);
+                        Exiled.Events.Handlers.Player.DroppingItem.Unsubscribe(handler);
                     }
-                };
+                }
+
                 Exiled.Events.Handlers.Player.Dying.Subscribe(dying);
 
             }
         }));
 
-        Actions.Add(new CoinAction("DrugCocktail", (player, config, actionName) =>
+        Actions.Add(new CoinAction("DrugCocktail", (player, config, extraSettings) =>
         {
             Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and Has been given a Cocktail of effects");
             player.ShowHint("The coin blesses you with euphoria in the form of every drug known to mankind.", 5);
@@ -302,7 +430,7 @@ public sealed class CoinAction
 
         }));
 
-        Actions.Add(new CoinAction("CursedDrugCocktail", (player, config, actionName) =>
+        Actions.Add(new CoinAction("CursedDrugCocktail", (player, config, extraSettings) =>
         {
             Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and Has been given a Cocktail of effects");
             player.ShowHint("The coin blesses you with euphoria in the form of every drug known to mankind.", 5);
@@ -315,7 +443,7 @@ public sealed class CoinAction
             player.EnableEffect(EffectType.SinkHole, 1, 180);
         }));
 
-        Actions.Add(new CoinAction("ExperimentalItem", (player, config, actionName) =>
+        Actions.Add(new CoinAction("ExperimentalItem", (player, config, extraSettings) =>
         {
             Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and Has Gained a Unique Item");
 
@@ -348,7 +476,7 @@ public sealed class CoinAction
 
         }));
 
-        Actions.Add(new CoinAction("Combustion", (player, config, actionName) =>
+        Actions.Add(new CoinAction("Combustion", (player, config, extraSettings) =>
         {
             foreach (var p in Player.List.Where(p => p.IsAlive))
             {
@@ -361,17 +489,119 @@ public sealed class CoinAction
             Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and has Exploded Everyone");
         }));
 
-        Actions.Add(new CoinAction("awareness", (player, config, actionName) =>
+        Actions.Add(new CoinAction("HighAwareness", (player, config, extraSettings) =>
         {
             Map.Broadcast(5, $"{player.Nickname} has flipped the Legendary Coin and Became Omnipresent");
-            //Start a coroutine
-            // once every muinite
-            // scan all players
-            // display to user what zone they are in 
-            // repeat
+
+            player.EnableEffect(EffectType.SoundtrackMute, 1, 0);
+            player.EnableEffect(EffectType.Scp1344, 1, 0);
+
+            //Start a coroutine so that it repeats every 60 seconds
+            //Timing.WaitForSeconds(60);
+
+            Timing.RunCoroutine(_DisplayEnemyLocations());
+
+            IEnumerator<float> _DisplayEnemyLocations()
+            {
+                while (true)
+                {
+                    yield return Timing.WaitForSeconds(60);
+
+                    // remove after thing
+                    if (!player.IsAlive)
+                        yield break;
+
+                    int scpCount = Player.List.Count(p => p.IsScp);
+                    int ciCount = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency);
+                    int dclassCount = Player.List.Count(p => p.Role.Team == Team.ClassD);
+                    int scientistCount = Player.List.Count(p => p.Role.Team == Team.Scientists);
+                    int foundationCount = Player.List.Count(p => p.Role.Team == Team.FoundationForces);
+
+
+                    int scpLCZ = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int scpHCZ = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int scpEZ = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int scpSurface = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.Surface);
+
+                    int ciLCZ = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int ciHCZ = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int ciEZ = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int ciSurface = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.Surface);
+
+                    int dclassLCZ = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int dclassHCZ = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int dclassEZ = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int dclassSurface = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.Surface);
+
+                    int scientistLCZ = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int scientistHCZ = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int scientistEZ = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int scientistSurface = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.Surface);
+
+                    int mtfLCZ = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int mtfHCZ = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int mtfEZ = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int mtfSurface = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.Surface);
+
+                    string hintMessage = "You can sense:\n";
+
+                    if (scpCount > 0)
+                    {
+                        hintMessage += $"{scpCount} SCP’s: ";
+                        if (scpLCZ > 0) hintMessage += $"{scpLCZ} in LCZ, ";
+                        if (scpHCZ > 0) hintMessage += $"{scpHCZ} in HCZ, ";
+                        if (scpEZ > 0) hintMessage += $"{scpEZ} in EZ, ";
+                        if (scpSurface > 0) hintMessage += $"{scpSurface} on Surface";
+                        hintMessage = hintMessage.TrimEnd(',', ' ') + "\n";
+                    }
+
+                    if (ciCount > 0)
+                    {
+                        hintMessage += $"{ciCount} CI: ";
+                        if (ciLCZ > 0) hintMessage += $"{ciLCZ} in LCZ, ";
+                        if (ciHCZ > 0) hintMessage += $"{ciHCZ} in HCZ, ";
+                        if (ciEZ > 0) hintMessage += $"{ciEZ} in EZ, ";
+                        if (ciSurface > 0) hintMessage += $"{ciSurface} on Surface";
+                        hintMessage = hintMessage.TrimEnd(',', ' ') + "\n";
+                    }
+
+                    if (dclassCount > 0)
+                    {
+                        hintMessage += $"{dclassCount} D-Class: ";
+                        if (dclassLCZ > 0) hintMessage += $"{dclassLCZ} in LCZ, ";
+                        if (dclassHCZ > 0) hintMessage += $"{dclassHCZ} in HCZ, ";
+                        if (dclassEZ > 0) hintMessage += $"{dclassEZ} in EZ, ";
+                        if (dclassSurface > 0) hintMessage += $"{dclassSurface} on Surface";
+                        hintMessage = hintMessage.TrimEnd(',', ' ') + "\n";
+                    }
+
+                    if (scientistCount > 0)
+                    {
+                        hintMessage += $"{scientistCount} Scientists: ";
+                        if (scientistLCZ > 0) hintMessage += $"{scientistLCZ} in LCZ, ";
+                        if (scientistHCZ > 0) hintMessage += $"{scientistHCZ} in HCZ, ";
+                        if (scientistEZ > 0) hintMessage += $"{scientistEZ} in EZ, ";
+                        if (scientistSurface > 0) hintMessage += $"{scientistSurface} on Surface";
+                        hintMessage = hintMessage.TrimEnd(',', ' ') + "\n";
+                    }
+
+                    if (foundationCount > 0)
+                    {
+                        hintMessage += $"{foundationCount} Foundation: ";
+                        if (mtfLCZ > 0) hintMessage += $"{mtfLCZ} in LCZ, ";
+                        if (mtfHCZ > 0) hintMessage += $"{mtfHCZ} in HCZ, ";
+                        if (mtfEZ > 0) hintMessage += $"{mtfEZ} in EZ, ";
+                        if (mtfSurface > 0) hintMessage += $"{mtfSurface} on Surface";
+                        hintMessage = hintMessage.TrimEnd(',', ' ') + "\n";
+                    }
+
+                    player.ShowHint(hintMessage, 10);
+
+                }
+            }
         }));
 
-        Actions.Add(new CoinAction("RocketMan", (player, config, actionName) =>
+        Actions.Add(new CoinAction("RocketMan", (player, config, extraSettings) =>
         {
             player.ShowHint("The coins unstable power unleashes calamity on you", 5);
 
@@ -402,5 +632,23 @@ public sealed class CoinAction
             }
 
         }));
+
+        Actions.Add(new CoinAction("BlessingsAbound", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            Map.Broadcast(5, $"{player.Nickname} has flipped a Legendary Coin and Blessed Everyone");
+            player.ShowHint("The coin blesses everyone with a positive effect", 5);
+
+            foreach (var p in Player.List.Where(p => p.IsAlive))
+            {
+                var effectToAdd = (EffectConfig)extraSettings.RandomItem();
+
+                p.EnableEffect(effectToAdd.EffectType, effectToAdd.Intensity, 180, true);
+                p.ShowHint($"You were given {effectToAdd.EffectType} for 2 minutes thanks to the powers of the coin!", 5);
+            }
+        }));
+
+
     }
 }

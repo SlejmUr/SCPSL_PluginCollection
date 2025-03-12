@@ -100,17 +100,49 @@ public class BaseCustomCoin : CustomItem
         if (!Check(item))
             return;
         var owner = item.Owner;
-        var configKV = ExtraConfig.NameAndWeight.GetRandomWeight(kv => kv.Key.Value == isTails, new("NoAction", true));
-        Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV.Key} {serial}");
-        var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == configKV.Key);
-        if (effect.ActionName == default)
-            return; // ?
-        Log.Info($"Running {configKV.Key} with {owner.Id} {serial}");
-        effect.RunAction(owner, ExtraConfig, configKV.Key);
+        var configKV = ExtraConfig.NameAndWeight.GetRandomWeight(kv => kv.Key.IsTails == isTails);
+        Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV} {serial}");
+
+        List<object> settings = [];
+
+        // getting the extra settings var from it.
+        if (configKV.UseWeight)
+        {
+            if (ExtraConfig.ExtraSettingsAndWeight.TryGetValue(configKV.ExtraSettingsParameter, out var dict2))
+                settings = dict2.GetRandomWeight();
+        }
+        else
+        {
+            if (ExtraConfig.ExtraSettings.TryGetValue(configKV.ExtraSettingsParameter, out var dict2))
+                settings = dict2;
+        }
+
+        if (configKV.ActionName.Contains('&'))
+        {
+            var splitted = configKV.ActionName.Split('&');
+            foreach (var splitted_action in splitted)
+            {
+                var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == splitted_action);
+                if (effect.ActionName == default)
+                    return; // ?
+                Log.Info($"Running {splitted_action} with {owner.Id} {serial}");
+                effect.RunAction(owner, ExtraConfig, settings);
+            }
+        }
+        else
+        {
+            var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == configKV.ActionName);
+            if (effect.ActionName == default)
+                return; // ?
+            Log.Info($"Running {configKV.ActionName} with {owner.Id} {serial}");
+            effect.RunAction(owner, ExtraConfig, settings);
+        }
+        
         FlippedNumber++;
         if (ExtraConfig.MaxFlipping == FlippedNumber)
         {
             Timing.CallDelayed(0.1f, () => owner.RemoveItem(item));
+            owner.ShowHint("Your coin broke!", 5);
             return;
         }
         if (RNGManager.RNG.NextDouble() < ExtraConfig.CoinBrakeChance)

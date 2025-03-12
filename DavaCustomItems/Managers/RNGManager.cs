@@ -26,8 +26,7 @@ public static class RNGManager
         double range = (double)min - (double)max;
         double sample = RNG.NextDouble();
         double scaled = (sample * range) + min;
-        float f = (float)scaled;
-        return f;
+        return (float)scaled;
     }
 
     public static T GetRandomWeight<T>(this Dictionary<T, int> dic, Func<KeyValuePair<T, int>, bool> predicate, T default_val = default)
