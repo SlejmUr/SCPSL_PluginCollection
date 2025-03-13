@@ -42,7 +42,7 @@ public static class CommandParseHelper
             return false;
         }
         var splitted = arg.Split(separator);
-        if (splitted.Length != 4 || splitted.Length != 3)
+        if (!(splitted.Length == 4 || splitted.Length == 3))
         {
             response = $"For Color you need 3 or 4 separate Values! {splitted.Length}";
             return false;

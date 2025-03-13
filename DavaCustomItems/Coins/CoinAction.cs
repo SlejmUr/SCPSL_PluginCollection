@@ -199,7 +199,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             var grenade = new ExplosiveGrenade(ItemType.GrenadeHE);
             grenade.SpawnActive(player.Position);
             player.ShowHint("Oops, Watch your feet!", 5);
-        }));
+        })); 
 
         Actions.Add(new CoinAction("DisappearingAct", (player, config, extraSettings) =>
         {
@@ -209,7 +209,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             };
             flash.SpawnActive(player.Position);
 
-            var accessibleRooms = Room.List.Where(room => room.Zone != ZoneType.LightContainment).ToList();
+            var accessibleRooms = Room.List.Where(room => room.Zone != ZoneType.LightContainment && room.Type != RoomType.HczTesla && room.Type != RoomType.Pocket && room.Type != RoomType.Unknown).ToList();
 
             if (Warhead.IsDetonated)  // make higher in the room 
             {
@@ -217,7 +217,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             }
             var randomRoom = accessibleRooms[RNGManager.RNG.Next(accessibleRooms.Count)];
 
-            player.Position = randomRoom.Position;
+            player.Teleport(randomRoom);
             player.ShowHint("You Disappeared! (into another room)", 5);
 
             if (!extraSettings.IsEmpty() && (bool)extraSettings[0])
@@ -312,7 +312,33 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 return;
             int healthToRemove = (int)extraSettings.RandomItem();
             player.MaxHealth -= healthToRemove;
-            player.ShowHint("You suddenly feel stronger, your Max Ammo increased!", 5);
+            player.ShowHint("You suddenly feel weaker, your Max HP decreased!", 5);
+        }));
+
+        Actions.Add(new CoinAction("Jackpot", (player, config, extraSettings) =>
+        {
+            uint normal_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id;
+            uint rare_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Rare).Id;
+            uint legendary_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Legendary).Id;
+            if (BaseCustomCoin.TryGet(player, out CustomItem customItem))
+                return;
+            if (customItem.Id == normal_id)
+            {
+                    var coin = BaseCustomCoin.Get(rare_id);
+                    coin.Give(player);
+            }
+            else if (customItem.Id == rare_id)
+            {
+                    var coin = BaseCustomCoin.Get(legendary_id);
+                    coin.Give(player);
+            }
+            else
+            {
+                return;
+            }
+
+            player.ShowHint("YOU HIT THE JACKPOT!! Your coin was upgraded!", 5);
+
         }));
 
         //Rare Coin Actions ONLY

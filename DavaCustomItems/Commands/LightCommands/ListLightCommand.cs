@@ -1,7 +1,5 @@
 ﻿using CommandSystem;
 using DavaCustomItems.Managers;
-using Exiled.API.Features;
-using UnityEngine;
 
 namespace DavaCustomItems.Commands.LightCommands;
 

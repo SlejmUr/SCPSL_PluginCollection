@@ -6,6 +6,7 @@ public class LightConfig
 {
     public bool ShouldFollowPlayer { get; set; }
     public bool ShouldMakeLight { get; set; }
+    public bool ShouldShowLightOnSpawn { get; set; }
     //public bool ShouldHideInitially { get; set; }
     public float Intensity { get; set; }
     public float Range { get; set; }
@@ -19,4 +20,9 @@ public class LightConfig
     public byte MovementSmoothing { get; set; } = 60;
     public Vector3 Scale { get; set; } = Vector3.one;
     public RainbowLightConfig RainbowConfig { get; set; } = new();
+
+    public override string ToString()
+    {
+        return $"{ShouldFollowPlayer} {ShouldMakeLight} {ShouldShowLightOnSpawn} | {Intensity} {Range} {SpotAngle} {InnerSpotAngle} {ShadowStrength} | {Color} {LightShape} {LightType} {ShadowType} {MovementSmoothing} {Scale}";
+    }
 }

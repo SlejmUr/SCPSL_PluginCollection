@@ -4,13 +4,13 @@ using DavaCustomItems.Managers;
 namespace DavaCustomItems.Commands.LightCommands;
 
 [CommandHandler(typeof(BaseLightCommand))]
-public class DeleteLightCommand : ICommand, IUsageProvider
+public class GetLightConfigCommand : ICommand, IUsageProvider
 {
-    public string Command => "delete";
+    public string Command => "lightconfig";
 
-    public string[] Aliases => ["d"];
+    public string[] Aliases => ["lc"];
 
-    public string Description => "Removing the Custom Light";
+    public string Description => "Get custom Light Source Config";
 
     public string[] Usage => ["LightId"];
 
@@ -27,8 +27,7 @@ public class DeleteLightCommand : ICommand, IUsageProvider
             response = "Cannot parse to int!";
             return false;
         }
-        LightManager.RemoveLight(l_id);
-        response = "Light removed!";
+        response = LightManager.GetLightConfig(l_id).ToString();
         return true;
     }
 }

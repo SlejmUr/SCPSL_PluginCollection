@@ -38,7 +38,10 @@ public class CreateLightCommand : ICommand, IUsageProvider
         { 
             ShouldMakeLight = true,
             Color = Color.white,
-            Scale = Vector3.one
+            Scale = Vector3.one,
+            LightType = LightType.Area,
+            Intensity = 10,
+            Range = 5
         };
         if (arguments.Count == 2)
         {
@@ -48,15 +51,19 @@ public class CreateLightCommand : ICommand, IUsageProvider
                 response = $"Dont forget If you do not specify anything it will be default valur!\nArgument for Configration would look like: \"follow:true,intensity:10,color:0.4-0.7-0.9-0.5, OR color:0.4-0.7-0.9,scale:1-1-1,lightshape:box,shadowtype:soft,\"";
                 return false;
             }
+
             string[] splitted = [];
             if (!args.Contains(','))
-            {
                 splitted = [args];
-            }
+            else 
+                splitted = args.Split(',');
+
             foreach (string arg in splitted)
             {
                 // split between : because one is key, other is value
                 var arg_split = arg.Split(':');
+                Log.Info(arg_split[0]);
+                Log.Info(arg_split[1]);
                 switch (CommandParseHelper.GetInputTypeForLight(arg_split[0]))
                 {
                     case CommandParseHelper.InputType.Float:
@@ -121,7 +128,7 @@ public class CreateLightCommand : ICommand, IUsageProvider
             }
         }
         int id = LightManager.MakeLight(position, lightConfig);
-        response = $"Light has been made with ID: {id}";
+        response = $"Light has been made with ID: {id} {lightConfig.ToString()}";
         return true;
     }
 

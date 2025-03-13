@@ -5,6 +5,8 @@ using Exiled.API.Features.Pickups.Projectiles;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
+using InventorySystem.Items;
+using InventorySystem.Items.ToggleableLights;
 using MEC;
 using PlayerRoles.FirstPersonControl;
 
@@ -35,6 +37,15 @@ public class BrokenLamp : CustomItem
     {
         base.UnsubscribeEvents();
         Exiled.Events.Handlers.Player.TogglingFlashlight -= TogglingLantern;
+    }
+
+    public override void OnAcquired(Player player, Item item, bool displayMessage)
+    {
+        base.OnAcquired(player, item, displayMessage);
+        if (item.Base is ToggleableLightItemBase toggleable)
+        {
+            toggleable.IsEmittingLight = false;
+        }
     }
 
     public void TogglingLantern(TogglingFlashlightEventArgs ev)

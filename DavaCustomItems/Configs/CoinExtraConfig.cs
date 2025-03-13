@@ -23,6 +23,9 @@ public sealed class NameConfig
 
 public sealed class CoinExtraConfig
 {
+    public bool Replace914Coins { get; set; }
+    public int ReplaceNormalCoinAmount { get; set; }
+    public Dictionary<ItemType /* ItemType */, int/* Count */> ItemsToReplace { get; set; } = [];
     public float CoinBrakeChance { get; set; } = 0.10f;
     public int MaxFlipping { get; set; } = 3;
 

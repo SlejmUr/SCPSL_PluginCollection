@@ -18,6 +18,7 @@ public sealed class Config : IConfig
             {
                 ShouldFollowPlayer = true,
                 ShouldMakeLight = true,
+                ShouldShowLightOnSpawn = true,
                 Color = new(1, 0.5f, 0, 1),
                 Intensity = 40,
                 Range = 10,
@@ -52,7 +53,20 @@ public sealed class Config : IConfig
     };
 
     public Dictionary<CoinRarityType /* Rarity */, CoinConfig /* Coin Config */> CoinRarityConfigs { get; set; } = new()
-    {
+    {        
+        {
+            CoinRarityType.TEST,
+            new()
+            {
+                Id = 499,
+                Name = "TEST Coin",
+                Description = "TEST.",
+                ExtraConfig = new()
+                {
+                    MaxFlipping = 1
+                }
+            }
+        },
         { 
             CoinRarityType.Legendary,
             new()
@@ -112,7 +126,7 @@ public sealed class Config : IConfig
             {
                 Id = 501,
                 Name = "Rare Coin",
-                Description = "RARE!!!.",
+                Description = "Rare coin!",
                 ExtraConfig = new()
                 {
                     NameAndWeight =
@@ -129,6 +143,7 @@ public sealed class Config : IConfig
                         { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
                         { new( "MaxHP", true, "MaxHP", false), 1 },
                         { new( "NeverQuit", true, string.Empty, false), 1 },
+                        { new( "Jackpot", true, string.Empty, false), 1 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
@@ -163,6 +178,37 @@ public sealed class Config : IConfig
                     },
                     ExtraSettings =
                     {
+                        {
+                            "GiveItem",
+                            [ItemType.Adrenaline, ItemType.Radio, ItemType.Painkillers, ItemType.KeycardZoneManager]
+                        },
+                        {
+                            "GiveEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.MovementBoost, 10, 10),
+                                new EffectConfig(EffectType.SilentWalk, 10, 10),
+                                new EffectConfig(EffectType.RainbowTaste, 10, 10)
+                            }
+                        },
+                        {
+                            "GiveBadEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.Scanned, 10, 10),
+                                new EffectConfig(EffectType.CardiacArrest, 10, 10),
+                                new EffectConfig(EffectType.Bleeding, 10, 10)
+                            }
+                        },
+                        {
+                            "GiveMixedEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.Deafened, 10, 10),
+                                new EffectConfig(EffectType.Concussed, 10, 10),
+                                new EffectConfig(EffectType.Ghostly, 10, 10)
+                            }
+                        },
                         {
                             "ThrowableSpawn",
                             [ProjectileType.FragGrenade, ProjectileType.Scp018, ProjectileType.Flashbang]
@@ -231,23 +277,10 @@ public sealed class Config : IConfig
             }
         },
         {
-            CoinRarityType.TEST,
-            new()
-            {
-                Id = 499,
-                Name = "TEST Coin",
-                Description = "TEST.",
-                ExtraConfig = new()
-                {
-                    MaxFlipping = 10
-                }
-            }
-        },
-        {
             CoinRarityType.Normal,
             new()
             {
-                Id = 5002,
+                Id = 502,
                 Name = "Normal Coin",
                 Description = "The Basic Coin",
                 ExtraConfig = new()
@@ -266,6 +299,7 @@ public sealed class Config : IConfig
                         { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
                         { new( "MaxHP", true, "MaxHP", false), 1 },
                         { new( "NeverQuit", true, string.Empty, false), 1 },
+                        { new( "Jackpot", true, string.Empty, false), 1 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
@@ -300,6 +334,37 @@ public sealed class Config : IConfig
                     },
                     ExtraSettings =
                     {
+                        {
+                            "GiveItem",
+                            [ItemType.Adrenaline, ItemType.Radio, ItemType.Painkillers, ItemType.KeycardZoneManager]
+                        },
+                        {
+                            "GiveEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.MovementBoost, 10, 10),
+                                new EffectConfig(EffectType.SilentWalk, 10, 10),
+                                new EffectConfig(EffectType.RainbowTaste, 10, 10)
+                            }
+                        },
+                        {
+                            "GiveBadEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.Scanned, 10, 10),
+                                new EffectConfig(EffectType.CardiacArrest, 10, 10),
+                                new EffectConfig(EffectType.Bleeding, 10, 10)
+                            }
+                        },
+                        {
+                            "GiveMixedEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.Deafened, 10, 10),
+                                new EffectConfig(EffectType.Concussed, 10, 10),
+                                new EffectConfig(EffectType.Ghostly, 10, 10)
+                            }
+                        },
                         {
                             "ThrowableSpawn",
                             [ProjectileType.FragGrenade, ProjectileType.Scp018, ProjectileType.Flashbang]
@@ -359,6 +424,12 @@ public sealed class Config : IConfig
                                 }
                             }
                         }
+                    },
+                    Replace914Coins = true,
+                    ReplaceNormalCoinAmount = 5,
+                    ItemsToReplace =
+                    {
+                        { ItemType.SCP500, 3 }
                     }
                 }
             }

@@ -4,8 +4,6 @@ using DavaCustomItems.Configs;
 using DavaCustomItems.Components;
 using TLight = Exiled.API.Features.Toys.Light;
 using Exiled.API.Interfaces;
-using System.Collections.ObjectModel;
-using Exiled.API.Features;
 
 namespace DavaCustomItems.Managers;
 
@@ -45,8 +43,33 @@ public static class LightManager
         Lights.Add(id, ligth);
         LightAdded?.Invoke(id, lightConfig);
         return id;
-
     }
+
+    public static void ChangeInternalSettings(int LightId, LightConfig lightConfig)
+    {
+        if (!Lights.TryGetValue(LightId, out TLight light))
+            return;
+        light.GameObject.GetComponent<LightConfigComponent>().LightConfig = lightConfig;
+    }
+
+    public static void ApplyInternalSettings(int LightId)
+    {
+        if (!Lights.TryGetValue(LightId, out TLight light))
+            return;
+        var config = light.GameObject.GetComponent<LightConfigComponent>().LightConfig;
+        light.Intensity = config.Intensity;
+        light.Range = config.Range;
+        light.SpotAngle = config.SpotAngle;
+        light.InnerSpotAngle = config.InnerSpotAngle;
+        light.ShadowStrength = config.ShadowStrength;
+        light.LightShape = config.LightShape;
+        light.LightType = config.LightType;
+        light.ShadowType = config.ShadowType;
+        light.MovementSmoothing = config.MovementSmoothing;
+        light.Scale = config.Scale;
+        light.Color = config.Color;
+    }
+
     public static bool IsLightExists(int LightId)
     {
         return Lights.ContainsKey(LightId);
@@ -59,6 +82,7 @@ public static class LightManager
             return;
         Lights.Remove(LightId);
         LightRemoved?.Invoke(LightId);
+        light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
         light.Destroy();
 
     }
@@ -67,8 +91,8 @@ public static class LightManager
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
-        light.UnSpawn();
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
+        light.UnSpawn();
     }
 
     public static void ShowLight(int LightId)
@@ -83,9 +107,7 @@ public static class LightManager
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
             return false;
-        bool isSpawned = light.GameObject.GetComponent<LightConfigComponent>().IsSpawned;
-        Log.Info($"IsLightShown? {isSpawned}");
-        return isSpawned;
+        return light.GameObject.GetComponent<LightConfigComponent>().IsSpawned;;
     }
 
     // Can return null!
@@ -94,6 +116,13 @@ public static class LightManager
         if (Lights.TryGetValue(LightId, out TLight light))
             return light;
         return null;
+    }
+
+    public static LightConfig GetLightConfig(int LightId)
+    {
+        if (!Lights.TryGetValue(LightId, out TLight light))
+            return new();
+        return light.GameObject.GetComponent<LightConfigComponent>().LightConfig;
     }
 
     public static int MakeLightAndFollow(IPosition position, LightConfig lightConfig)
@@ -155,6 +184,7 @@ public static class LightManager
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
         light.Color = color;
+        light.GameObject.GetComponent<LightConfigComponent>().LightConfig.Color = color;
     }
 
     private static IEnumerator<float> LightMove(int LightId, IPosition position)
