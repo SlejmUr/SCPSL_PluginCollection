@@ -7,6 +7,7 @@ using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups.Projectiles;
+using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.Features;
 using InventorySystem.Items.Usables.Scp330;
@@ -233,9 +234,15 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
         Actions.Add(new CoinAction("SourTooth", (player, config, extraSettings) =>
         {
+            player.ShowHint("You Got some VERY sour Candy!", 3);
+            player.TryAddCandy(CandyKindID.Pink);
+        }));
+
+        Actions.Add(new CoinAction("SweetTooth", (player, config, extraSettings) =>
+        {
             if (extraSettings.IsEmpty())
                 return;
-            player.ShowHint("You Got some VERY sour Candy!", 3);
+            player.ShowHint("You Got some Sweet Candy!", 3);
             player.TryAddCandy((CandyKindID)extraSettings.RandomItem());
         }));
 
@@ -247,6 +254,65 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             if (randomItem == ProjectileType.None)
                 return;
             Projectile.CreateAndSpawn(randomItem, player.Position, player.Rotation, true, player);
+        }));
+
+        Actions.Add(new CoinAction("NeverQuit", (player, config, extraSettings) =>
+        {
+            uint normal_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id;
+            uint rare_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Rare).Id;
+            if (BaseCustomCoin.TryGet(player, out CustomItem customItem))
+                return;
+            if (customItem.Id == normal_id)
+            {
+                //if the player has normal coin
+                for (int i = 0; i < 2; i++)
+                {
+                    var coin = BaseCustomCoin.Get(normal_id);
+                    coin.Give(player);
+                }
+            }
+            else if (customItem.Id == rare_id)
+            {
+                //if the player has rare coin
+                for (int i = 0; i < 2; i++)
+                {
+                    var coin = BaseCustomCoin.Get(rare_id);
+                    coin.Give(player);
+                }
+            }
+            else
+            {
+                // we return if neither!
+                return;
+            }
+
+            player.ShowHint("TRUE GAMBLERS NEVER QUIT!", 5);
+
+        }));
+
+        Actions.Add(new CoinAction("AutoNuke", (player, config, extraSettings) =>
+        {
+            Warhead.Start();
+            player.ShowHint("You have activated the Nuke!", 5);
+        }));
+
+        Actions.Add(new CoinAction("MaxHP", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            int healthToAdd = (int)extraSettings.RandomItem();
+            player.MaxHealth += healthToAdd;
+            player.ShowHint("You suddenly feel stronger, your Max HP increased!", 5);
+        }));
+
+
+        Actions.Add(new CoinAction("MinHP", (player, config, extraSettings) =>
+        {
+            if (extraSettings.IsEmpty())
+                return;
+            int healthToRemove = (int)extraSettings.RandomItem();
+            player.MaxHealth -= healthToRemove;
+            player.ShowHint("You suddenly feel stronger, your Max Ammo increased!", 5);
         }));
 
         //Rare Coin Actions ONLY
@@ -490,7 +556,18 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             //Start a coroutine so that it repeats every 60 seconds
             //Timing.WaitForSeconds(60);
 
-            Timing.RunCoroutine(_DisplayEnemyLocations());
+            var coroutineHandle = Timing.RunCoroutine(_DisplayEnemyLocations());
+
+            void OnPlayerDied(DiedEventArgs ev)
+            {
+                if (ev.Player == player)
+                {
+                    Timing.KillCoroutines(coroutineHandle);
+                    Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
+                }
+            }
+
+            Exiled.Events.Handlers.Player.Died += OnPlayerDied;
 
             IEnumerator<float> _DisplayEnemyLocations()
             {
@@ -501,38 +578,39 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                     // remove after thing
                     if (!player.IsAlive)
                         yield break;
+                    // TODO: Optimize this
+                    var list = Player.List.Where(p=> p != player);
+                    int scpCount = list.Count(p => p.IsScp);
+                    int ciCount = list.Count(p => p.Role.Team == Team.ChaosInsurgency);
+                    int dclassCount = list.Count(p => p.Role.Team == Team.ClassD);
+                    int scientistCount = list.Count(p => p.Role.Team == Team.Scientists);
+                    int foundationCount = list.Count(p => p.Role.Team == Team.FoundationForces);
 
-                    int scpCount = Player.List.Count(p => p.IsScp);
-                    int ciCount = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency);
-                    int dclassCount = Player.List.Count(p => p.Role.Team == Team.ClassD);
-                    int scientistCount = Player.List.Count(p => p.Role.Team == Team.Scientists);
-                    int foundationCount = Player.List.Count(p => p.Role.Team == Team.FoundationForces);
 
+                    int scpLCZ = list.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int scpHCZ = list.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int scpEZ = list.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int scpSurface = list.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.Surface);
 
-                    int scpLCZ = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.LightContainment);
-                    int scpHCZ = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
-                    int scpEZ = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.Entrance);
-                    int scpSurface = Player.List.Count(p => p.IsScp && p.CurrentRoom.Zone == ZoneType.Surface);
+                    int ciLCZ = list.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int ciHCZ = list.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int ciEZ = list.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int ciSurface = list.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.Surface);
 
-                    int ciLCZ = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.LightContainment);
-                    int ciHCZ = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
-                    int ciEZ = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.Entrance);
-                    int ciSurface = Player.List.Count(p => p.Role.Team == Team.ChaosInsurgency && p.CurrentRoom.Zone == ZoneType.Surface);
+                    int dclassLCZ = list.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int dclassHCZ = list.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int dclassEZ = list.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int dclassSurface = list.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.Surface);
 
-                    int dclassLCZ = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.LightContainment);
-                    int dclassHCZ = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
-                    int dclassEZ = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.Entrance);
-                    int dclassSurface = Player.List.Count(p => p.Role.Team == Team.ClassD && p.CurrentRoom.Zone == ZoneType.Surface);
+                    int scientistLCZ = list.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int scientistHCZ = list.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int scientistEZ = list.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int scientistSurface = list.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.Surface);
 
-                    int scientistLCZ = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.LightContainment);
-                    int scientistHCZ = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
-                    int scientistEZ = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.Entrance);
-                    int scientistSurface = Player.List.Count(p => p.Role.Team == Team.Scientists && p.CurrentRoom.Zone == ZoneType.Surface);
-
-                    int mtfLCZ = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.LightContainment);
-                    int mtfHCZ = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
-                    int mtfEZ = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.Entrance);
-                    int mtfSurface = Player.List.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.Surface);
+                    int mtfLCZ = list.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.LightContainment);
+                    int mtfHCZ = list.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.HeavyContainment);
+                    int mtfEZ = list.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.Entrance);
+                    int mtfSurface = list.Count(p => p.Role.Team == Team.FoundationForces && p.CurrentRoom.Zone == ZoneType.Surface);
 
                     string hintMessage = "You can sense:\n";
 

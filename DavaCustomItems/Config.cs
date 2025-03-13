@@ -121,11 +121,14 @@ public sealed class Config : IConfig
                         { new( "GiveItem", true, "GiveItem", false), 1 },
                         { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
                         { new( "MoreHealth", true, "MoreHealth", false), 1 },
-                        { new( "SourTooth", true, "SourTooth", true), 1 },
+                        { new( "SweetTooth", true, "SweetTooth", true), 1 },
+                        { new( "SourTooth", true, string.Empty, true), 1 },
                         { new( "MedicalKit", true, "MedicalKit", false), 1 },
                         { new( "GiveXP", true, "GiveXP", false), 1 },
                         { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
                         { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
+                        { new( "MaxHP", true, "MaxHP", false), 1 },
+                        { new( "NeverQuit", true, string.Empty, false), 1 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
@@ -137,6 +140,8 @@ public sealed class Config : IConfig
                         { new( "LoseItems", false, string.Empty , false), 1 },
                         { new( "TpToSCP", false, string.Empty , false), 1 },
                         { new( "Freeze", false, string.Empty, false), 1 },
+                        { new( "MinHP", false, "MinHP", false), 1 },
+                        { new( "AutoNuke", false, string.Empty, false), 1 },
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
@@ -189,12 +194,20 @@ public sealed class Config : IConfig
                         {
                             "TpToSCP",
                             [true]
-                        }
+                        },
+                        {
+                            "MaxHP",
+                            [20]
+                        },
+                        {
+                            "MinHP",
+                            [20]
+                        },
                     },
                     ExtraSettingsAndWeight =
                     {
                         {
-                            "SourTooth",
+                            "SweetTooth",
                             new()
                             {
                                 {
@@ -245,11 +258,14 @@ public sealed class Config : IConfig
                         { new( "GiveItem", true, "GiveItem", false), 1 },
                         { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
                         { new( "MoreHealth", true, "MoreHealth", false), 1 },
-                        { new( "SourTooth", true, "SourTooth", true), 1 },
+                        { new( "SweetTooth", true, "SweetTooth", true), 1 },
+                        { new( "SourTooth", true, string.Empty, true), 1 },
                         { new( "MedicalKit", true, "MedicalKit", false), 1 },
                         { new( "GiveXP", true, "GiveXP", false), 1 },
                         { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
                         { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
+                        { new( "MaxHP", true, "MaxHP", false), 1 },
+                        { new( "NeverQuit", true, string.Empty, false), 1 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
@@ -261,6 +277,8 @@ public sealed class Config : IConfig
                         { new( "LoseItems", false, string.Empty , false), 1 },
                         { new( "TpToSCP", false, string.Empty , false), 1 },
                         { new( "Freeze", false, string.Empty, false), 1 },
+                        { new( "MinHP", false, "MinHP", false), 1 },
+                        { new( "AutoNuke", false, string.Empty, false), 1 },
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
@@ -309,12 +327,20 @@ public sealed class Config : IConfig
                         {
                             "Blackout",
                             [5]
-                        }
+                        },
+                        {
+                            "MaxHP",
+                            [10]
+                        },
+                        {
+                            "MinHP",
+                            [10]
+                        },
                     },
                     ExtraSettingsAndWeight =
                     {
                         {
-                            "SourTooth",
+                            "SweetTooth",
                             new()
                             {
                                 {
