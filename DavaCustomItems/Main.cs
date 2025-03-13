@@ -34,6 +34,7 @@ public sealed class Main : Plugin<Config>
                 Name = item.Value.Name,
                 Rarity = item.Key,
                 ExtraConfig = item.Value.ExtraConfig,
+                CoinPickupHint = item.Value.CoinPickUpHint,
             };
             coin.TryRegister();
         }

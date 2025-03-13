@@ -17,7 +17,7 @@ public static class LightManager
 
     public static IReadOnlyList<int> GetLightIds()
     {
-        return Lights.Keys.ToList();
+        return [.. Lights.Keys];
     }
 
     public static int MakeLight(Vector3 Position, LightConfig lightConfig, bool shouldSpawn = true)

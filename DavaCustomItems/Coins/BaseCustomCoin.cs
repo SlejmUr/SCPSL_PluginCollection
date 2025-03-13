@@ -8,6 +8,7 @@ using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Player;
+using Exiled.Events.Features;
 using InventorySystem;
 using InventorySystem.Items.Coin;
 using MEC;
@@ -30,8 +31,11 @@ public class BaseCustomCoin : CustomItem
     public LightConfig LightConfig { get; set; } = new();
     public CoinExtraConfig ExtraConfig { get; set; } = new();
 
+    public string CoinPickupHint = string.Empty;
+
     private int LightId;
     private Dictionary<ushort, int> FlipByCoin = [];
+    private Dictionary<string, DateTime> CooldownByPlayer = [];
 
     public override void Init()
     {
@@ -47,6 +51,7 @@ public class BaseCustomCoin : CustomItem
         base.SubscribeEvents();
         Exiled.Events.Handlers.Player.ChangedItem += ChangedItem;
         Exiled.Events.Handlers.Player.DroppedItem += DroppedItem;
+        Exiled.Events.Handlers.Player.FlippingCoin += CoinFlipping;
         Exiled.Events.Handlers.Map.FillingLocker += Map_FillingLocker;
         Coin.OnFlipped += Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded += Scp914_Upgraded;
@@ -58,6 +63,7 @@ public class BaseCustomCoin : CustomItem
         Exiled.Events.Handlers.Map.FillingLocker -= Map_FillingLocker;
         Exiled.Events.Handlers.Player.ChangedItem -= ChangedItem;
         Exiled.Events.Handlers.Player.DroppedItem -= DroppedItem;
+        Exiled.Events.Handlers.Player.FlippingCoin -= CoinFlipping;
         Coin.OnFlipped -= Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded -= Scp914_Upgraded;
     }
@@ -72,22 +78,21 @@ public class BaseCustomCoin : CustomItem
 
     public override void OnAcquired(Player player, Item item, bool displayMessage)
     {
-        if (!Check(item))
-            return;
-        item.ChangeItemOwner(null, player);
-
         if (!FlipByCoin.ContainsKey(item.Serial))
             FlipByCoin[item.Serial] = 0;
 
         if (!LightManager.IsLightExists(LightId))
             LightId = LightManager.MakeLight(player.Position, LightConfig, false);
-        //LightManager.ShowLight(LightId);
     }
 
     public override void OnPickingUp(PickingUpItemEventArgs ev)
     {
-        ev.Pickup.PreviousOwner = ev.Player;
         LightManager.HideLight(LightId);
+    }
+
+    public override void OnChanging(ChangingItemEventArgs ev)
+    {
+        ev.Player.ShowHint(CoinPickupHint, 3);
     }
 
     public override void Destroy()
@@ -103,28 +108,34 @@ public class BaseCustomCoin : CustomItem
         {
             LightManager.HideLight(LightId);
         }
-        if (Check(ev.Item))
-        {
-            LightManager.ShowLight(LightId);
-        }
         if (Check(ev.Item) && LightConfig.ShouldFollowPlayer)
         {
             LightManager.StartFollow(LightId, ev.Player);
+        }
+        else if (Check(ev.Item))
+        {
+            LightManager.ShowLight(LightId);
         }
     }
 
     private void Map_FillingLocker(FillingLockerEventArgs ev)
     {
-        if (ev.Pickup.Type == ItemType.Coin && ExtraConfig.ReplaceNormalCoinAmount != 0)
+        var random = RNGManager.RNG.Next(1, 101);
+        bool check = random <= ExtraConfig.ReplaceCoinChance;
+        //Log.Info($"{random} {ExtraConfig.ReplaceCoinChance} {check} {Rarity}");
+        if (ev.Pickup.Type == ItemType.Coin && 
+            ExtraConfig.ReplaceNormalCoinAmount != 0 && check)
         {
             ev.IsAllowed = false;
-            var pickup = Spawn(ev.Pickup.Position);
+            Spawn(ev.Pickup.Position);
+            Log.Info($"Coin replaced with {Rarity} Coin");
             ExtraConfig.ReplaceNormalCoinAmount--;
         }
-        if (ExtraConfig.ItemsToReplace.TryGetValue(ev.Pickup.Type, out int value) && value != 0)
+        if (ExtraConfig.ItemsToReplace.TryGetValue(ev.Pickup.Type, out int value) && value != 0 && check)
         {
             ev.IsAllowed = false;
-            var pickup = Spawn(ev.Pickup.Position);
+            Log.Info($"{ev.Pickup.Type} replaced with {Rarity} Coin");
+            Spawn(ev.Pickup.Position);
             ExtraConfig.ItemsToReplace[ev.Pickup.Type]--;
         }
     }
@@ -174,15 +185,26 @@ public class BaseCustomCoin : CustomItem
             }
         }
     }
+    public void CoinFlipping(FlippingCoinEventArgs ev)
+    {
+        // Make sure we always set this.
+        if (CooldownByPlayer.ContainsKey(ev.Player.UserId) && (DateTime.UtcNow - CooldownByPlayer[ev.Player.UserId]).TotalSeconds < ExtraConfig.CoolDown)
+        {
+            ev.IsAllowed = false;
+            return;
+        }
+        CooldownByPlayer[ev.Player.UserId] = DateTime.UtcNow;
+    }
 
     private void Coin_OnFlipped(ushort serial, bool isTails)
     {
-        var item = Item.Get(serial);
-        if (item == null) 
+        if (!TrackedSerials.Contains(serial))
             return;
-        if (!Check(item))
+        if (!InventoryExtensions.ServerTryGetItemWithSerial(serial, out var item))
             return;
-        var owner = item.Owner;
+
+        var owner = Player.Get(item.Owner);
+
         var configKV = ExtraConfig.NameAndWeight.GetRandomWeight(kv => kv.Key.IsTails == isTails);
         Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV.ActionName} {serial}");
 
@@ -220,19 +242,21 @@ public class BaseCustomCoin : CustomItem
             Log.Info($"Running {configKV.ActionName} with {owner.Id} {serial}");
             effect.RunAction(owner, ExtraConfig, settings);
         }
-        if (!FlipByCoin.ContainsKey(item.Serial))
-            FlipByCoin[item.Serial] = 0;
+
+        if (!FlipByCoin.ContainsKey(serial))
+            FlipByCoin[serial] = 0;
         FlipByCoin[serial]++;
         Log.Info($"FlippedNumber {owner.Id} {FlipByCoin[serial]}");
+
         if (ExtraConfig.MaxFlipping == FlipByCoin[serial])
         {
-            Timing.CallDelayed(0.1f, () => owner.RemoveItem(item));
+            Timing.CallDelayed(0.1f, () => owner.RemoveItem(serial));
             Timing.CallDelayed(3f, () => owner.ShowHint("Your coin broke!", 5));
             return;
         }
         if (RNGManager.RNG.NextDouble() < ExtraConfig.CoinBrakeChance)
         {
-            Timing.CallDelayed(0.1f, () => owner.RemoveItem(item));
+            Timing.CallDelayed(0.1f, () => owner.RemoveItem(serial));
             Timing.CallDelayed(3f, () => owner.ShowHint("Your coin broke!", 5));
         }
     }

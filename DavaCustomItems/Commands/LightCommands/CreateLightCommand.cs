@@ -52,10 +52,8 @@ public class CreateLightCommand : ICommand, IUsageProvider
                 return false;
             }
 
-            string[] splitted = [];
-            if (!args.Contains(','))
-                splitted = [args];
-            else 
+            string[] splitted = [args];
+            if (args.Contains(','))
                 splitted = args.Split(',');
 
             foreach (string arg in splitted)
@@ -128,7 +126,7 @@ public class CreateLightCommand : ICommand, IUsageProvider
             }
         }
         int id = LightManager.MakeLight(position, lightConfig);
-        response = $"Light has been made with ID: {id} {lightConfig.ToString()}";
+        response = $"Light has been made with ID: {id} {lightConfig}";
         return true;
     }
 

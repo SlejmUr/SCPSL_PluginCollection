@@ -25,9 +25,33 @@ public sealed class Config : IConfig
             }
         },
         {
+            "Rare Coin",
+            new()
+            {
+                ShouldFollowPlayer = true,
+                ShouldMakeLight = true,
+                ShouldShowLightOnSpawn = true,
+                Color = UnityEngine.Color.blue,
+                Intensity = 10,
+                Range = 5,
+            }
+        },
+        {
+            "Super Unlucky Coin",
+            new()
+            {
+                ShouldFollowPlayer = true,
+                ShouldMakeLight = true,
+                ShouldShowLightOnSpawn = true,
+                Color = UnityEngine.Color.red,
+                Intensity = 10,
+                Range = 5,
+            }
+        },
+        {
             "TEST Coin",
             new()
-            {   
+            {
                 ShouldFollowPlayer = true,
                 ShouldMakeLight = true,
                 Intensity = 10,
@@ -39,17 +63,6 @@ public sealed class Config : IConfig
                 }
             }
         },
-        {
-            "Rare Coin",
-            new()
-            {
-                ShouldFollowPlayer = true,
-                ShouldMakeLight = true,
-                Color = UnityEngine.Color.blue,
-                Intensity = 10,
-                Range = 5,
-            }
-        }
     };
 
     public Dictionary<CoinRarityType /* Rarity */, CoinConfig /* Coin Config */> CoinRarityConfigs { get; set; } = new()
@@ -74,36 +87,37 @@ public sealed class Config : IConfig
                 Id = 500,
                 Name = "Legendary Coin",
                 Description = "Legendary Coin now give you much better loot and chance and stuff",
+                CoinPickUpHint = "You picked up the <color=orange>LEGENDARY</color> Coin",
                 ExtraConfig = new()
                 {
                     CoinBrakeChance = 0.01f,
                     MaxFlipping = 1,
                     NameAndWeight =
                     {
-                        { new( "ShufflePlayers", false, string.Empty, false), 1},
-                        { new( "ShufflePlayers", true, string.Empty, false), 1},
-                        { new( "GreatGamble", true,  string.Empty, false), 1 },
-                        { new( "GreatGamble", false,  string.Empty, false), 1 },
-                        { new( "ImmenseFortitude", true,  string.Empty, false), 1 },
-                        { new( "ImmenseFortitude", false,  string.Empty, false), 1 },
-                        { new( "TrueResurrection", true,  string.Empty, true), 1 },
-                        { new( "TrueResurrection", false,  string.Empty, true), 1 },
-                        { new( "Necromancy", false,  string.Empty, true), 1 },
-                        { new( "Necromancy", true,  string.Empty, true), 1 },
-                        { new( "DrugCocktail", false,  string.Empty, true), 1 },
-                        { new( "DrugCocktail", true,  string.Empty, true), 1 },
-                        { new( "CursedDrugCocktail", false,  string.Empty, true), 1 },
-                        { new( "CursedDrugCocktail", true,  string.Empty, true), 1 },
-                        { new( "ExperimentalItem", false,  string.Empty, true), 1 },
-                        { new( "ExperimentalItem", true,  string.Empty, true), 1 },
-                        { new( "Combustion", false,  string.Empty, true), 1 },
-                        { new( "Combustion", true,  string.Empty, true), 1 },
-                        { new( "HighAwareness", false,  string.Empty, true), 1 },
-                        { new( "HighAwareness", true,  string.Empty, true), 1 },
+                        { new( "ShufflePlayers", false), 1},
+                        { new( "ShufflePlayers", true), 1},
+                        { new( "GreatGamble", true), 1 },
+                        { new( "GreatGamble", false), 1 },
+                        { new( "ImmenseFortitude", true), 1 },
+                        { new( "ImmenseFortitude", false), 1 },
+                        { new( "TrueResurrection", true), 1 },
+                        { new( "TrueResurrection", false), 1 },
+                        { new( "Necromancy", false), 1 },
+                        { new( "Necromancy", true), 1 },
+                        { new( "DrugCocktail", false), 1 },
+                        { new( "DrugCocktail", true), 1 },
+                        { new( "CursedDrugCocktail", false), 1 },
+                        { new( "CursedDrugCocktail", true), 1 },
+                        { new( "ExperimentalItem", false), 1 },
+                        { new( "ExperimentalItem", true), 1 },
+                        { new( "Combustion", false), 1 },
+                        { new( "Combustion", true), 1 },
+                        { new( "HighAwareness", false), 1 },
+                        { new( "HighAwareness", true), 1 },
                         { new( "BlessingsAbound", false, "BlessingEffects", false), 1 },
                         { new( "BlessingsAbound", true, "BlessingEffects", false), 1 },
-                        { new( "RocketMan", false, string.Empty, false), 1 },
-                        { new( "RocketMan", true, string.Empty, false), 1 },
+                        { new( "RocketMan", false), 1 },
+                        { new( "RocketMan", true), 1 },
                     },
                     ExtraSettings =
                     {
@@ -127,6 +141,7 @@ public sealed class Config : IConfig
                 Id = 501,
                 Name = "Rare Coin",
                 Description = "Rare coin!",
+                CoinPickUpHint = "You picked up the <color=blue>RARE</color> Coin",
                 ExtraConfig = new()
                 {
                     NameAndWeight =
@@ -136,45 +151,50 @@ public sealed class Config : IConfig
                         { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
                         { new( "MoreHealth", true, "MoreHealth", false), 1 },
                         { new( "SweetTooth", true, "SweetTooth", true), 1 },
-                        { new( "SourTooth", true, string.Empty, true), 1 },
+                        { new( "SourTooth", true), 1 },
                         { new( "MedicalKit", true, "MedicalKit", false), 1 },
                         { new( "GiveXP", true, "GiveXP", false), 1 },
                         { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
                         { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
                         { new( "MaxHP", true, "MaxHP", false), 1 },
-                        { new( "NeverQuit", true, string.Empty, false), 1 },
-                        { new( "Jackpot", true, string.Empty, false), 1 },
+                        { new( "NeverQuit", true), 1 },
+                        { new( "Jackpot", true), 1 },
+                        { new( "SPEEED", true, "SPEEED", false), 1 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
                         { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
                         { new( "LoseHealth", false, "LoseHealth", false), 1 },
-                        { new( "1hp", false, string.Empty ,false), 1 },
-                        { new( "FoodPoisoning", false, string.Empty, false), 1 },
-                        { new( "GrenadeDrop", false, string.Empty, false), 1 },
-                        { new( "LoseItems", false, string.Empty , false), 1 },
-                        { new( "TpToSCP", false, string.Empty , false), 1 },
-                        { new( "Freeze", false, string.Empty, false), 1 },
+                        { new( "1hp", false), 1 },
+                        { new( "FoodPoisoning", false), 1 },
+                        { new( "GrenadeDrop", false), 1 },
+                        { new( "LoseItems", false), 1 },
+                        { new( "TpToSCP", false), 1 },
+                        { new( "Freeze", false), 1 },
                         { new( "MinHP", false, "MinHP", false), 1 },
-                        { new( "AutoNuke", false, string.Empty, false), 1 },
+                        { new( "AutoNuke", false), 1 },
+                        { new( "Timeout", false), 1 },
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
                         { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
-                        { new( "DisappearingAct", true, string.Empty, false), 1 },
-                        { new( "DisappearingAct", false, string.Empty, false), 1 },
-                        { new( "Gnome", true, string.Empty, false), 1 },
-                        { new( "Gnome", false, string.Empty, false), 1 },
-                        { new( "TallMan", true, string.Empty, false), 1 },
-                        { new( "TallMan", false, string.Empty, false), 1 },
-                        { new( "NormalMan", true, string.Empty, false), 1 },
-                        { new( "NormalMan", false, string.Empty, false), 1 },
-                        { new( "WideMan", true, string.Empty, false), 1 },
-                        { new( "WideMan", false, string.Empty, false), 1 },
+                        { new( "DisappearingAct", true), 1 },
+                        { new( "DisappearingAct", false), 1 },
+                        { new( "Gnome", true), 1 },
+                        { new( "Gnome", false), 1 },
+                        { new( "TallMan", true), 1 },
+                        { new( "TallMan", false), 1 },
+                        { new( "NormalMan", true), 1 },
+                        { new( "NormalMan", false), 1 },
+                        { new( "WideMan", true), 1 },
+                        { new( "WideMan", false), 1 },
                         { new( "Blackout", true, "Blackout", false), 1 },
                         { new( "Blackout", false, "Blackout", false), 1 },
-                        { new( "TpToRandomPlayer", true, string.Empty, false), 1 },
-                        { new( "TpToRandomPlayer", false, string.Empty, false), 1 },
+                        { new( "TpToRandomPlayer", true), 1 },
+                        { new( "TpToRandomPlayer", false), 1 },
+                        { new( "Exposed", false, "Exposed", false), 1 },
+                        { new( "Exposed", true, "Exposed", false), 1 },
+
                     },
                     ExtraSettings =
                     {
@@ -249,6 +269,14 @@ public sealed class Config : IConfig
                             "MinHP",
                             [20]
                         },
+                        {
+                            "Exposed",
+                            [true]
+                        },
+                        {
+                            "SPEEED",
+                            [true]
+                        }
                     },
                     ExtraSettingsAndWeight =
                     {
@@ -272,7 +300,9 @@ public sealed class Config : IConfig
                                 }
                             }
                         }
-                    }
+                    },
+                    ReplaceCoinChance = 2,
+                    ReplaceItemChance = 10
                 }
             }
         },
@@ -283,7 +313,8 @@ public sealed class Config : IConfig
                 Id = 502,
                 Name = "Normal Coin",
                 Description = "The Basic Coin",
-                ExtraConfig = new()
+                CoinPickUpHint = "You picked up a Coin",
+                ExtraConfig = new() 
                 {
                     NameAndWeight =
                     {
@@ -292,45 +323,51 @@ public sealed class Config : IConfig
                         { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
                         { new( "MoreHealth", true, "MoreHealth", false), 1 },
                         { new( "SweetTooth", true, "SweetTooth", true), 1 },
-                        { new( "SourTooth", true, string.Empty, true), 1 },
+                        { new( "SourTooth", true), 1 },
                         { new( "MedicalKit", true, "MedicalKit", false), 1 },
                         { new( "GiveXP", true, "GiveXP", false), 1 },
                         { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
                         { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
                         { new( "MaxHP", true, "MaxHP", false), 1 },
-                        { new( "NeverQuit", true, string.Empty, false), 1 },
-                        { new( "Jackpot", true, string.Empty, false), 1 },
+                        { new( "NeverQuit", true), 1 },
+                        { new( "Jackpot", true), 1 },
+                        { new( "SPEEED", true, "SPEEED", false), 1 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
                         { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
                         { new( "LoseHealth", false, "LoseHealth", false), 1 },
-                        { new( "1hp", false, string.Empty ,false), 1 },
-                        { new( "FoodPoisoning", false, string.Empty, false), 1 },
-                        { new( "GrenadeDrop", false, string.Empty, false), 1 },
-                        { new( "LoseItems", false, string.Empty , false), 1 },
-                        { new( "TpToSCP", false, string.Empty , false), 1 },
-                        { new( "Freeze", false, string.Empty, false), 1 },
+                        { new( "1hp", false), 1 },
+                        { new( "FoodPoisoning", false), 1 },
+                        { new( "GrenadeDrop", false), 1 },
+                        { new( "LoseItems", false), 1 },
+                        { new( "TpToSCP", false), 1 },
+                        { new( "Freeze", false), 1 },
                         { new( "MinHP", false, "MinHP", false), 1 },
-                        { new( "AutoNuke", false, string.Empty, false), 1 },
+                        { new( "AutoNuke", false), 1 },
+                        { new( "Timeout", false), 1 },
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
                         { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
-                        { new( "DisappearingAct", true, string.Empty, false), 1 },
-                        { new( "DisappearingAct", false, string.Empty, false), 1 },
-                        { new( "Gnome", true, string.Empty, false), 1 },
-                        { new( "Gnome", false, string.Empty, false), 1 },
-                        { new( "TallMan", true, string.Empty, false), 1 },
-                        { new( "TallMan", false, string.Empty, false), 1 },
-                        { new( "WideMan", true, string.Empty, false), 1 },
-                        { new( "WideMan", false, string.Empty, false), 1 },
-                        { new( "NormalMan", true, string.Empty, false), 1 },
-                        { new( "NormalMan", false, string.Empty, false), 1 },
+                        { new( "DisappearingAct", true), 1 },
+                        { new( "DisappearingAct", false), 1 },
+                        { new( "Gnome", true), 1 },
+                        { new( "Gnome", false), 1 },
+                        { new( "TallMan", true), 1 },
+                        { new( "TallMan", false), 1 },
+                        { new( "WideMan", true), 1 },
+                        { new( "WideMan", false), 1 },
+                        { new( "NormalMan", true), 1 },
+                        { new( "NormalMan", false), 1 },
                         { new( "Blackout", true, "Blackout", false), 1 },
                         { new( "Blackout", false, "Blackout", false), 1 },
-                        { new( "TpToRandomPlayer", true, string.Empty, false), 1 },
-                        { new( "TpToRandomPlayer", false, string.Empty, false), 1 },
+                        { new( "TpToRandomPlayer", true), 1 },
+                        { new( "TpToRandomPlayer", false), 1 },
+                        { new( "Exposed", false, "Exposed", false), 1 },
+                        { new( "Exposed", true, "Exposed", false), 1 },
+                        { new( "SideSwapper", false, "SideSwapper", false), 1 },
+                        { new( "SideSwapper", true, "SideSwapper", false), 1 },
                     },
                     ExtraSettings =
                     {
@@ -401,6 +438,18 @@ public sealed class Config : IConfig
                             "MinHP",
                             [10]
                         },
+                        {
+                            "Exposed",
+                            [false]
+                        },
+                        {
+                            "SPEEED",
+                            [true]
+                        },
+                        {
+                            "SideSwapper",
+                            [10]
+                        }
                     },
                     ExtraSettingsAndWeight =
                     {
@@ -430,10 +479,133 @@ public sealed class Config : IConfig
                     ItemsToReplace =
                     {
                         { ItemType.SCP500, 3 }
-                    }
+                    },
+                    ReplaceCoinChance = 98,
+                    ReplaceItemChance = 90
+                },  
+            }
+        },
+        {
+            CoinRarityType.Unlucky,
+            new()
+            {
+                Id = 503,
+                Name = "Unlucky Coin",
+                Description = "Unlucky coin, only bad things happen.",
+                ExtraConfig = new()
+                {
+                    NameAndWeight =
+                    {
+                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
+                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
+                        { new( "LoseHealth", false, "LoseHealth", false), 1 },
+                        { new( "1hp", false), 1 },
+                        { new( "FoodPoisoning", false), 1 },
+                        { new( "GrenadeDrop", false), 1 },
+                        { new( "LoseItems", false), 1 },
+                        { new( "TpToSCP", false), 1 },
+                        { new( "Freeze", false), 1 },
+                        { new( "MinHP", false, "MinHP", false), 1 },
+                        { new( "AutoNuke", false), 1 },
+                        { new( "Timeout", false), 1 },
+
+                        // Mixed
+                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
+                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
+                        { new( "DisappearingAct", true), 1 },
+                        { new( "DisappearingAct", false), 1 },
+                        { new( "Gnome", true), 1 },
+                        { new( "Gnome", false), 1 },
+                        { new( "TallMan", true), 1 },
+                        { new( "TallMan", false), 1 },
+                        { new( "NormalMan", true), 1 },
+                        { new( "NormalMan", false), 1 },
+                        { new( "WideMan", true), 1 },
+                        { new( "WideMan", false), 1 },
+                        { new( "Blackout", true, "Blackout", false), 1 },
+                        { new( "Blackout", false, "Blackout", false), 1 },
+                        { new( "TpToRandomPlayer", true), 1 },
+                        { new( "TpToRandomPlayer", false), 1 },
+                        { new( "Exposed", false, "Exposed", false), 1 },
+                        { new( "Exposed", true, "Exposed", false), 1 },
+                        { new( "SideSwapper", false, "SideSwapper", false), 1 },
+                        { new( "SideSwapper", true, "SideSwapper", false), 1 },
+                    },
+                    ExtraSettings =
+                    {
+                        {
+                            "GiveBadEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.Scanned, 10, 10),
+                                new EffectConfig(EffectType.CardiacArrest, 10, 10),
+                                new EffectConfig(EffectType.Bleeding, 10, 10)
+                            }
+                        },
+                        {
+                            "GiveMixedEffect",
+                            new()
+                            {
+                                new EffectConfig(EffectType.Deafened, 10, 10),
+                                new EffectConfig(EffectType.Concussed, 10, 10),
+                                new EffectConfig(EffectType.Ghostly, 10, 10)
+                            }
+                        },
+                        {
+                            "ThrowableSpawn",
+                            [ProjectileType.FragGrenade, ProjectileType.Scp018, ProjectileType.Flashbang]
+                        },
+                        {
+                            "LoseHealth",
+                            [15,30]
+                        },
+                        {
+                            "Blackout",
+                            [30]
+                        },
+                        {
+                            "TpToSCP",
+                            [true]
+                        },
+                        {
+                            "MinHP",
+                            [20, 40]
+                        },
+                        {
+                            "Exposed",
+                            [true]
+                        },
+                        {
+                            "SideSwapper",
+                            [20]
+                        }
+                    },
                 }
             }
-        }
+        },
+        {
+            CoinRarityType.SuperUnlucky,
+            new()
+            {
+                Id = 504,
+                Name = "Super Unlucky Coin",
+                Description = "REALLY UNLUCKY COIN.",
+                ExtraConfig = new()
+                {
+                    NameAndWeight =
+                    {
+                        { new( "ShufflePlayers", false), 1},
+                        { new( "ShufflePlayers", true), 1},
+                        { new( "CursedDrugCocktail", false), 1 },
+                        { new( "CursedDrugCocktail", true), 1 },
+                        { new( "Combustion", false), 1 },
+                        { new( "Combustion", true), 1 },
+                        { new( "RocketMan", false), 1 },
+                        { new( "RocketMan", true), 1 },
+                    },
+                }
+            }
+        },
     };
 }
 
