@@ -50,6 +50,9 @@ public class BrokenLamp : CustomItem
 
     public void TogglingLantern(TogglingFlashlightEventArgs ev)
     {
+        if (!Check(ev.Item))
+            return;
+
         // if there is a usage and it cannot be used we return and not allow using.
         if (canUse.TryGetValue(ev.Player, out bool can_user) && !can_user)
         {

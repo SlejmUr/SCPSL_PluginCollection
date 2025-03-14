@@ -23,7 +23,7 @@ public class CustomMicro : CustomItem
     public override ItemType Type { get; set; } = ItemType.MicroHID;
     public override SpawnProperties SpawnProperties { get; set; }
 
-    private int LightId;
+    private Dictionary<ushort, int> SerialToLightId = [];
     private LightConfig LightConfig = new()
     { 
         MovementSmoothing = 100,
@@ -36,9 +36,18 @@ public class CustomMicro : CustomItem
         LightType = LightType.Area,
     };
 
+    private Dictionary<MicroHidPhase, Color> PhaseToColor = new()
+    {
+        { MicroHidPhase.Standby, Color.blue },
+        { MicroHidPhase.WindingUp, Color.cyan },
+        { MicroHidPhase.WindingDown, new Color(0, 0.5f, 1f, 1f) },
+        { MicroHidPhase.WoundUpSustain, Color.magenta },
+        { MicroHidPhase.Firing, Color.red },
+    };
+
     public override void OnAcquired(Player player, Item item, bool displayMessage)
     {
-        LightId = LightManager.MakeLightAndFollow(player, LightConfig);
+        SerialToLightId.Add(item.Serial, LightManager.MakeLightAndFollow(player, LightConfig));
     }
 
     public override void SubscribeEvents()
@@ -74,35 +83,23 @@ public class CustomMicro : CustomItem
 
     public override void OnDroppingItem(DroppingItemEventArgs ev)
     {
-        LightManager.RemoveLight(LightId);
+        if (!SerialToLightId.TryGetValue(ev.Item.Serial, out var lightId))
+            return;
+        LightManager.RemoveLight(lightId);
     }
 
     private void CycleController_OnPhaseChanged(ushort serial, MicroHidPhase phase)
     {
         if (!TrackedSerials.Contains(serial))
             return;
-        if (!LightManager.IsLightExists(LightId))
-            LightId = LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
-        switch (phase)
+        if (!SerialToLightId.TryGetValue(serial, out var lightId))
         {
-            case MicroHidPhase.Standby:
-                LightManager.SetLightColor(LightId, Color.blue);
-                break;
-            case MicroHidPhase.WindingUp:
-                LightManager.SetLightColor(LightId, Color.cyan);
-                break;
-            case MicroHidPhase.WindingDown:
-                LightManager.SetLightColor(LightId, new Color(0, 0.5f, 1f, 1f));
-                break;
-            case MicroHidPhase.WoundUpSustain:
-                LightManager.SetLightColor(LightId, Color.magenta);
-                break;
-            case MicroHidPhase.Firing:
-                LightManager.SetLightColor(LightId, Color.red);
-                break;
-            default:
-                break;
+            lightId = LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
+            SerialToLightId.Add(serial, lightId);
         }
+        if (!LightManager.IsLightExists(lightId))
+            SerialToLightId.Add(serial, LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig));
+        LightManager.SetLightColor(lightId, PhaseToColor[phase]);
     }
 
 }

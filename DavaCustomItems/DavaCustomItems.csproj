@@ -7,10 +7,6 @@
 	<LangVersion>12</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="PassiveItem\NewFile1.txt" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" ExcludeAssets="runtime" ReferenceOutputAssembly="false" Private="true" />
 		<PackageReference Include="ExMod.Exiled" PrivateAssets="all" ExcludeAssets="runtime" Version="9.5.1" Publicize="true" />

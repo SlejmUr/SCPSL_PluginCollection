@@ -37,7 +37,8 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             string item = (string)extraSettings.RandomItem();
             if (!Enum.TryParse(item, true, out ItemType itemToAdd))
                 return;
-            player.AddItem(itemToAdd);
+            var citem = Item.Create(itemToAdd);
+            citem.CreatePickup(player.Position);
         }));
 
         Actions.Add(new CoinAction("GivePositiveEffect", (player, config, extraSettings) =>
@@ -184,7 +185,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("TallMan", (player, config, extraSettings) =>
         {
             player.Scale = new Vector3(1.0f, 1.15f, 1.0f);
-            player.ShowHint("You Have Become a Tall", 5);
+            player.ShowHint("You Have Become a Tall Man!", 5);
         }));
 
         Actions.Add(new CoinAction("WideMan", (player, config, extraSettings) =>
@@ -229,7 +230,8 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             room.Type != RoomType.HczTesla && 
             room.Type != RoomType.Pocket && 
             room.Type != RoomType.Unknown &&
-            room.RoomName != MapGeneration.RoomName.EzEvacShelter).ToList();
+            room.RoomName != MapGeneration.RoomName.EzEvacShelter &&
+            room.RoomShape == MapGeneration.RoomShape.Straight).ToList();
 
             if (Warhead.IsDetonated)  // make higher in the room 
             {
@@ -374,7 +376,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         {
             var Randomplayer = Player.List.Where(x => x.IsAlive && !x.IsScp).GetRandomValue();
 
-            player.ShowHint("You have Exposed Somebody's location", 5);
+            player.ShowHint("You’ve just exposed someone’s location, I hope they don’t mind.", 5);
 
             if (Randomplayer != null)
             {
@@ -382,17 +384,17 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 {
                     string playername = Randomplayer.Nickname;
                     string playerClass = Randomplayer.Role.ToString();
-                    string playerZone = Randomplayer.CurrentRoom.Zone.ToString();
+                    string playerZone = Randomplayer.CurrentRoom.Type.ToString();
 
-                    string message = "Coin Has exposed " + playername + " who is a " + playerClass + " in " + playerZone;
+                    string message = $"Coin: {playername} ({playerClass}) is located in {playerZone}";
                     Map.Broadcast(5, message);
                 }
                 else
                 {
                     string playerClass = Randomplayer.Role.ToString();
-                    string playerZone = Randomplayer.CurrentRoom.Zone.ToString();
+                    string playerZone = Randomplayer.CurrentRoom.Type.ToString();
 
-                    string message = "Coin Has exposed a " + playerClass + " in " + playerZone;
+                    string message = $"Coin: A {playerClass} is located in {playerZone}";
                     Map.Broadcast(5, message);
                 }
             }
@@ -406,11 +408,11 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
             if (!extraSettings.IsEmpty() && bool.TryParse((string)extraSettings[0], out var result) && result)
             {
-                player.EnableEffect(EffectType.MovementBoost, 40, 4);
+                player.EnableEffect(EffectType.MovementBoost, 80, 4);
             }
             else
             {
-                player.EnableEffect(EffectType.MovementBoost, 20, 7);
+                player.EnableEffect(EffectType.MovementBoost, 50, 7);
             }
 
         }));

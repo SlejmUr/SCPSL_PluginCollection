@@ -5,6 +5,7 @@ using Exiled.API.Features.Attributes;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups;
 using Exiled.API.Features.Spawn;
+using Exiled.API.Interfaces;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Player;
@@ -33,10 +34,11 @@ public class BaseCustomCoin : CustomItem
 
     public string CoinPickupHint = string.Empty;
 
-    private int LightId;
+    private Dictionary<ushort, int> SerialToLightId = [];
     private Dictionary<ushort, int> FlipByCoin = [];
     private Dictionary<string, DateTime> CooldownByPlayer = [];
 
+    #region Override
     public override void Init()
     {
         base.Init();
@@ -55,6 +57,7 @@ public class BaseCustomCoin : CustomItem
         Exiled.Events.Handlers.Map.FillingLocker += Map_FillingLocker;
         Coin.OnFlipped += Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded += Scp914_Upgraded;
+        InventoryExtensions.OnItemRemoved += InventoryExtensions_OnItemRemoved;
     }
 
     public override void UnsubscribeEvents()
@@ -66,13 +69,16 @@ public class BaseCustomCoin : CustomItem
         Exiled.Events.Handlers.Player.FlippingCoin -= CoinFlipping;
         Coin.OnFlipped -= Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded -= Scp914_Upgraded;
+        InventoryExtensions.OnItemRemoved -= InventoryExtensions_OnItemRemoved;
     }
 
     public override Pickup Spawn(Vector3 position, Item item, Player previousOwner = null)
     {
         var pickup = base.Spawn(position, item, previousOwner);
         if (LightConfig.ShouldShowLightOnSpawn)
-            LightId = LightManager.MakeLight(position, LightConfig, true);
+        {
+            SerialToLightId.Add(item.Serial, LightManager.MakeLight(position, LightConfig, true));
+        }
         return pickup;
     }
 
@@ -81,40 +87,54 @@ public class BaseCustomCoin : CustomItem
         if (!FlipByCoin.ContainsKey(item.Serial))
             FlipByCoin[item.Serial] = 0;
 
-        if (!LightManager.IsLightExists(LightId))
-            LightId = LightManager.MakeLight(player.Position, LightConfig, false);
+        if (!SerialToLightId.TryGetValue(item.Serial, out var LightId))
+        {
+            SerialToLightId.Add(item.Serial, LightManager.MakeLight(player.Position, LightConfig, true));
+        }
+        else
+        {
+            if (!LightManager.IsLightExists(LightId))
+                SerialToLightId[item.Serial] = LightManager.MakeLight(player.Position, LightConfig, false);
+        }
+
     }
 
     public override void OnPickingUp(PickingUpItemEventArgs ev)
     {
-        LightManager.HideLight(LightId);
+        if (SerialToLightId.TryGetValue(ev.Pickup.Serial, out var LightId))
+        {
+            LightManager.HideLight(LightId);
+        }
     }
 
     public override void OnChanging(ChangingItemEventArgs ev)
     {
         ev.Player.ShowHint(CoinPickupHint, 3);
     }
-
-    public override void Destroy()
-    {
-        base.Destroy();
-        LightManager.RemoveLight(LightId);
-    }
-
-
+    #endregion
+    #region Subscribed
     private void ChangedItem(ChangedItemEventArgs ev)
     {
         if (Check(ev.OldItem) && !Check(ev.Item))
         {
-            LightManager.HideLight(LightId);
+            if (SerialToLightId.TryGetValue(ev.OldItem.Serial, out var LightId))
+            {
+                LightManager.HideLight(LightId);
+            }
         }
         if (Check(ev.Item) && LightConfig.ShouldFollowPlayer)
         {
-            LightManager.StartFollow(LightId, ev.Player);
+            if (SerialToLightId.TryGetValue(ev.OldItem.Serial, out var LightId))
+            {
+                LightManager.StartFollow(LightId, ev.Player);
+            }
         }
         else if (Check(ev.Item))
         {
-            LightManager.ShowLight(LightId);
+            if (SerialToLightId.TryGetValue(ev.OldItem.Serial, out var LightId))
+            {
+                LightManager.ShowLight(LightId);
+            }
         }
     }
 
@@ -145,6 +165,25 @@ public class BaseCustomCoin : CustomItem
         if (!Check(ev.Pickup))
             return;
         LightManager.StopFollowAndStartFollow(ev.Player, ev.Pickup);
+    }
+
+    private void InventoryExtensions_OnItemRemoved(ReferenceHub arg1, InventorySystem.Items.ItemBase arg2, InventorySystem.Items.Pickups.ItemPickupBase arg3)
+    {
+        ushort serial = ushort.MaxValue;
+        if (this.TrackedSerials.Contains(arg2.ItemSerial))
+        {
+            Log.Info("InventoryExtensions_OnItemRemoved: ItemBase " + arg2.ItemSerial);
+            serial = arg2.ItemSerial;
+        }
+        if (this.TrackedSerials.Contains(arg3.Info.Serial))
+        {
+            Log.Info("InventoryExtensions_OnItemRemoved: ItemPickupBase " + arg3.Info.Serial);
+            serial = arg3.Info.Serial;
+        }
+        if (SerialToLightId.TryGetValue(serial, out var LightId))
+        {
+            LightManager.RemoveLight(LightId);
+        }
     }
 
     private void Scp914_Upgraded(Scp914Result result, Scp914KnobSetting setting)
@@ -198,6 +237,7 @@ public class BaseCustomCoin : CustomItem
 
     private void Coin_OnFlipped(ushort serial, bool isTails)
     {
+        
         if (!TrackedSerials.Contains(serial))
             return;
         if (!InventoryExtensions.ServerTryGetItemWithSerial(serial, out var item))
@@ -260,4 +300,5 @@ public class BaseCustomCoin : CustomItem
             Timing.CallDelayed(3f, () => owner.ShowHint("Your coin broke!", 5));
         }
     }
+    #endregion
 }
