@@ -73,12 +73,16 @@ public static class LightManager
 
     public static bool IsLightExists(int LightId)
     {
+        if (LightId == -1)
+            return false;
         return Lights.ContainsKey(LightId);
     }
 
 
     public static void RemoveLight(int LightId)
     {
+        if (LightId == -1)
+            return;
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
         Lights.Remove(LightId);
@@ -90,6 +94,8 @@ public static class LightManager
 
     public static void HideLight(int LightId)
     {
+        if (LightId == -1)
+            return;
         if (!Lights.TryGetValue(LightId, out TLight light))
         {
             Log.Info($"{LightId} cannot found in lights to turn off/unspawn");
@@ -102,6 +108,8 @@ public static class LightManager
 
     public static void ShowLight(int LightId)
     {
+        if (LightId == -1)
+            return;
         if (!Lights.TryGetValue(LightId, out TLight light))
         {
             Log.Info($"{LightId} cannot found in lights to turn on/spawn");
@@ -115,6 +123,8 @@ public static class LightManager
 
     public static bool IsLightShown(int LightId)
     {
+        if (LightId == -1)
+            return false;
         if (!Lights.TryGetValue(LightId, out TLight light))
             return false;
         return light.GameObject.GetComponent<LightConfigComponent>().IsSpawned;;
@@ -123,6 +133,8 @@ public static class LightManager
     // Can return null!
     public static TLight GetLight(int LightId)
     {
+        if (LightId == -1)
+            return null;
         if (Lights.TryGetValue(LightId, out TLight light))
             return light;
         return null;
@@ -146,6 +158,8 @@ public static class LightManager
 
     public static void StartFollow(int LightId, IPosition position)
     {
+        if (LightId == -1)
+            return;
         if (!IsLightShown(LightId))
             ShowLight(LightId);
         StopFollow(position, false);
@@ -184,6 +198,8 @@ public static class LightManager
 
     public static void SetLightPos(int LightId, Vector3 pos)
     {
+        if (LightId == -1)
+            return;
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
         light.Position = pos;
@@ -191,6 +207,8 @@ public static class LightManager
 
     public static void SetLightColor(int LightId, Color color)
     {
+        if (LightId == -1)
+            return;
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
         light.Color = color;

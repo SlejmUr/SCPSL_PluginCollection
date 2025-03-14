@@ -125,10 +125,8 @@ public class BaseCustomCoin : CustomItem
 
         if (from_item != ItemIdentifier.None && TrackedSerials.Contains(from_item.SerialNumber) && !TrackedSerials.Contains(to_item.SerialNumber))
         {
-            Log.Info("From item is not none, AND from has tracked AND swapped does not have tracked");
             if (LightSerialManager.HasSerial(from_item.SerialNumber))
             {
-                Log.Info("Please turn off the light");
                 LightManager.HideLight(LightSerialManager.GetLightId(from_item.SerialNumber));
                 return;
             }
@@ -139,10 +137,8 @@ public class BaseCustomCoin : CustomItem
 
         if (TrackedSerials.Contains(to_item.SerialNumber) && LightConfig.ShouldFollowPlayer)
         {
-            Log.Info("This item tracked and should follow player!");
             if (LightSerialManager.HasSerial(to_item.SerialNumber))
             {
-                Log.Info("Please start follow the player");
                 LightManager.StartFollow(LightSerialManager.GetLightId(to_item.SerialNumber), Player.Get(user));
                 return;
             }
@@ -150,10 +146,8 @@ public class BaseCustomCoin : CustomItem
 
         if (TrackedSerials.Contains(to_item.SerialNumber))
         {
-            Log.Info("This item tracked!");
             if (LightSerialManager.HasSerial(to_item.SerialNumber))
             {
-                Log.Info("Please turn on the light");
                 LightManager.ShowLight(LightSerialManager.GetLightId(to_item.SerialNumber));
             }
         }
@@ -202,13 +196,11 @@ public class BaseCustomCoin : CustomItem
 
         if (arg2 != null && this.TrackedSerials.Contains(arg2.ItemSerial))
         {
-            Log.Info("InventoryExtensions_OnItemRemoved: ItemBase " + arg2.ItemSerial);
             serial = arg2.ItemSerial;
         }
 
         if (arg3 != null && this.TrackedSerials.Contains(arg3.Info.Serial))
         {
-            Log.Info("InventoryExtensions_OnItemRemoved: ItemPickupBase " + arg3.Info.Serial);
             serial = arg3.Info.Serial;
         }
 
@@ -267,7 +259,6 @@ public class BaseCustomCoin : CustomItem
 
         if (!CooldownByPlayer.ContainsKey(ev.Player.UserId))
         {
-            Log.Info("Adding player into flipping coin");
             CooldownByPlayer.Add(ev.Player.UserId, DateTime.UtcNow);
             return;
         }
@@ -296,7 +287,7 @@ public class BaseCustomCoin : CustomItem
         var owner = Player.Get(item.Owner);
 
         var configKV = ExtraConfig.NameAndWeight.GetRandomWeight(kv => kv.Key.IsTails == isTails);
-        Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV.ActionName} {serial}");
+        Log.Info($"Player Flipped {owner.Id} ConfigName : {configKV.ActionName} {serial} {Rarity}");
 
         List<object> settings = [];
 
@@ -320,7 +311,7 @@ public class BaseCustomCoin : CustomItem
                 var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == splitted_action);
                 if (effect.ActionName == default)
                     return; // ?
-                Log.Info($"Running {splitted_action} with {owner.Id} {serial}");
+                Log.Info($"Running {splitted_action} with {owner.Id} {serial} {Rarity}");
                 effect.RunAction(owner, ExtraConfig, settings);
             }
         }
@@ -329,14 +320,14 @@ public class BaseCustomCoin : CustomItem
             var effect = CoinAction.Actions.FirstOrDefault(x => x.ActionName == configKV.ActionName);
             if (effect.ActionName == default)
                 return; // ?
-            Log.Info($"Running {configKV.ActionName} with {owner.Id} {serial}");
+            Log.Info($"Running {configKV.ActionName} with {owner.Id} {serial} {Rarity}");
             effect.RunAction(owner, ExtraConfig, settings);
         }
 
         if (!FlipByCoin.ContainsKey(serial))
             FlipByCoin[serial] = 0;
         FlipByCoin[serial]++;
-        Log.Info($"FlippedNumber {owner.Id} {FlipByCoin[serial]}");
+        Log.Info($"FlippedNumber for {owner.Id} is {FlipByCoin[serial]}");
 
         if (ExtraConfig.MaxFlipping == FlipByCoin[serial])
         {

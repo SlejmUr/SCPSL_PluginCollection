@@ -128,7 +128,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         {
             if (extraSettings.IsEmpty())
                 return;
-            Map.TurnOffAllLights((int)extraSettings[0]); 
+            Map.TurnOffAllLights(ObjectConvertManager.ParseToInt(extraSettings[0])); 
             player.ShowHint("You cut the lights out", 5);
         }));
 
@@ -357,7 +357,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 if (!extraSettings.IsEmpty() && ObjectConvertManager.ParseToBool(extraSettings[0]))
                 {
                     string playername = Randomplayer.Nickname;
-                    string playerClass = Randomplayer.Role.ToString();
+                    string playerClass = Randomplayer.Role.Type.ToString();
                     string playerZone = Randomplayer.CurrentRoom.Type.ToString();
 
                     string message = $"Coin: {playername} ({playerClass}) is located in {playerZone}";
@@ -365,7 +365,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 }
                 else
                 {
-                    string playerClass = Randomplayer.Role.ToString();
+                    string playerClass = Randomplayer.Role.Type.ToString();
                     string playerZone = Randomplayer.CurrentRoom.Type.ToString();
 
                     string message = $"Coin: A {playerClass} is located in {playerZone}";
