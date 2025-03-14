@@ -1,14 +1,10 @@
 ﻿using Exiled.API.Features;
 using Exiled.API.Features.Attributes;
 using Exiled.API.Features.Items;
-using Exiled.API.Features.Pickups.Projectiles;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
-using InventorySystem.Items;
-using InventorySystem.Items.ToggleableLights;
 using MEC;
-using PlayerRoles.FirstPersonControl;
 
 namespace DavaCustomItems.PassiveItem;
 
@@ -24,8 +20,8 @@ public class BrokenLamp : CustomItem
     const int MaxUses = 5;
     const int CooldownTime = 10;
 
-    private Dictionary<Player, int> playerUses = [];
-    private Dictionary<Player, bool> canUse = [];
+    private static Dictionary<ushort, int> serialUses = [];
+    private static Dictionary<Player, bool> canUse = [];
 
     public override void SubscribeEvents()
     {
@@ -42,10 +38,8 @@ public class BrokenLamp : CustomItem
     public override void OnAcquired(Player player, Item item, bool displayMessage)
     {
         base.OnAcquired(player, item, displayMessage);
-        if (item.Base is ToggleableLightItemBase toggleable)
-        {
-            toggleable.IsEmittingLight = false;
-        }
+        var fl = item as Flashlight;
+        fl.IsEmittingLight = false;
     }
 
     public void TogglingLantern(TogglingFlashlightEventArgs ev)
@@ -60,7 +54,7 @@ public class BrokenLamp : CustomItem
             return;
         }
 
-        if (playerUses.TryGetValue(ev.Player, out int maxuses) && maxuses >= MaxUses)
+        if (serialUses.TryGetValue(ev.Item.Serial, out int maxuses) && maxuses >= MaxUses)
         {
             ev.IsAllowed = false;
             ev.Player.ShowHint("The Light No longer Turns on...", 5);
@@ -84,9 +78,9 @@ public class BrokenLamp : CustomItem
                 canUse.Add(ev.Player, false);
             canUse[ev.Player] = false;
 
-            if (!playerUses.ContainsKey(ev.Player))
-                playerUses.Add(ev.Player, 0);
-            playerUses[ev.Player]++;
+            if (!serialUses.ContainsKey(ev.Item.Serial))
+                serialUses.Add(ev.Item.Serial, 0);
+            serialUses[ev.Item.Serial]++;
             Timing.RunCoroutine(WaitThenUse(ev.Player));
         }
     }

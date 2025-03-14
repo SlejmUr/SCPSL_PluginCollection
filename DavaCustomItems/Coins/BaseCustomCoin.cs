@@ -11,9 +11,12 @@ using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.Features;
 using InventorySystem;
+using InventorySystem.Items;
 using InventorySystem.Items.Coin;
 using MEC;
+using PlayerRoles.FirstPersonControl;
 using Scp914;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DavaCustomItems.Coins;
@@ -34,9 +37,8 @@ public class BaseCustomCoin : CustomItem
 
     public string CoinPickupHint = string.Empty;
 
-    private Dictionary<ushort, int> SerialToLightId = [];
-    private Dictionary<ushort, int> FlipByCoin = [];
-    private Dictionary<string, DateTime> CooldownByPlayer = [];
+    private static Dictionary<ushort, int> FlipByCoin = [];
+    private static Dictionary<string, DateTime> CooldownByPlayer = [];
 
     #region Override
     public override void Init()
@@ -51,25 +53,25 @@ public class BaseCustomCoin : CustomItem
     public override void SubscribeEvents()
     {
         base.SubscribeEvents();
-        Exiled.Events.Handlers.Player.ChangedItem += ChangedItem;
         Exiled.Events.Handlers.Player.DroppedItem += DroppedItem;
         Exiled.Events.Handlers.Player.FlippingCoin += CoinFlipping;
         Exiled.Events.Handlers.Map.FillingLocker += Map_FillingLocker;
         Coin.OnFlipped += Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded += Scp914_Upgraded;
         InventoryExtensions.OnItemRemoved += InventoryExtensions_OnItemRemoved;
+        Inventory.OnCurrentItemChanged += Inventory_OnCurrentItemChanged;
     }
 
     public override void UnsubscribeEvents()
     {
         base.UnsubscribeEvents();
         Exiled.Events.Handlers.Map.FillingLocker -= Map_FillingLocker;
-        Exiled.Events.Handlers.Player.ChangedItem -= ChangedItem;
         Exiled.Events.Handlers.Player.DroppedItem -= DroppedItem;
         Exiled.Events.Handlers.Player.FlippingCoin -= CoinFlipping;
         Coin.OnFlipped -= Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded -= Scp914_Upgraded;
         InventoryExtensions.OnItemRemoved -= InventoryExtensions_OnItemRemoved;
+        Inventory.OnCurrentItemChanged -= Inventory_OnCurrentItemChanged;
     }
 
     public override Pickup Spawn(Vector3 position, Item item, Player previousOwner = null)
@@ -77,33 +79,37 @@ public class BaseCustomCoin : CustomItem
         var pickup = base.Spawn(position, item, previousOwner);
         if (LightConfig.ShouldShowLightOnSpawn)
         {
-            SerialToLightId.Add(item.Serial, LightManager.MakeLight(position, LightConfig, true));
+            LightSerialManager.AddLight(item.Serial, LightManager.MakeLight(position, LightConfig, true));
         }
         return pickup;
     }
 
     public override void OnAcquired(Player player, Item item, bool displayMessage)
     {
-        if (!FlipByCoin.ContainsKey(item.Serial))
-            FlipByCoin[item.Serial] = 0;
 
-        if (!SerialToLightId.TryGetValue(item.Serial, out var LightId))
+        if (!FlipByCoin.ContainsKey(item.Serial))
+            FlipByCoin.Add(item.Serial, 0);
+
+
+        if (!LightSerialManager.HasSerial(item.Serial))
         {
-            SerialToLightId.Add(item.Serial, LightManager.MakeLight(player.Position, LightConfig, true));
+            LightSerialManager.AddLight(item.Serial, LightManager.MakeLight(player.Position, LightConfig, true));
         }
         else
         {
-            if (!LightManager.IsLightExists(LightId))
-                SerialToLightId[item.Serial] = LightManager.MakeLight(player.Position, LightConfig, false);
+            if (!LightManager.IsLightExists(LightSerialManager.GetLightId(item.Serial)))
+            {
+                LightSerialManager.AddLight(item.Serial, LightManager.MakeLight(player.Position, LightConfig, false));
+            }
+                
         }
-
     }
 
     public override void OnPickingUp(PickingUpItemEventArgs ev)
     {
-        if (SerialToLightId.TryGetValue(ev.Pickup.Serial, out var LightId))
+        if (LightSerialManager.HasSerial(ev.Pickup.Serial))
         {
-            LightManager.HideLight(LightId);
+            LightManager.HideLight(LightSerialManager.GetLightId(ev.Pickup.Serial));
         }
     }
 
@@ -113,27 +119,42 @@ public class BaseCustomCoin : CustomItem
     }
     #endregion
     #region Subscribed
-    private void ChangedItem(ChangedItemEventArgs ev)
+
+    private void Inventory_OnCurrentItemChanged(ReferenceHub user, ItemIdentifier from_item, ItemIdentifier to_item)
     {
-        if (Check(ev.OldItem) && !Check(ev.Item))
+
+        if (from_item != ItemIdentifier.None && TrackedSerials.Contains(from_item.SerialNumber) && !TrackedSerials.Contains(to_item.SerialNumber))
         {
-            if (SerialToLightId.TryGetValue(ev.OldItem.Serial, out var LightId))
+            Log.Info("From item is not none, AND from has tracked AND swapped does not have tracked");
+            if (LightSerialManager.HasSerial(from_item.SerialNumber))
             {
-                LightManager.HideLight(LightId);
+                Log.Info("Please turn off the light");
+                LightManager.HideLight(LightSerialManager.GetLightId(from_item.SerialNumber));
+                return;
             }
         }
-        if (Check(ev.Item) && LightConfig.ShouldFollowPlayer)
+
+        if (to_item == ItemIdentifier.None)
+            return;
+
+        if (TrackedSerials.Contains(to_item.SerialNumber) && LightConfig.ShouldFollowPlayer)
         {
-            if (SerialToLightId.TryGetValue(ev.OldItem.Serial, out var LightId))
+            Log.Info("This item tracked and should follow player!");
+            if (LightSerialManager.HasSerial(to_item.SerialNumber))
             {
-                LightManager.StartFollow(LightId, ev.Player);
+                Log.Info("Please start follow the player");
+                LightManager.StartFollow(LightSerialManager.GetLightId(to_item.SerialNumber), Player.Get(user));
+                return;
             }
         }
-        else if (Check(ev.Item))
+
+        if (TrackedSerials.Contains(to_item.SerialNumber))
         {
-            if (SerialToLightId.TryGetValue(ev.OldItem.Serial, out var LightId))
+            Log.Info("This item tracked!");
+            if (LightSerialManager.HasSerial(to_item.SerialNumber))
             {
-                LightManager.ShowLight(LightId);
+                Log.Info("Please turn on the light");
+                LightManager.ShowLight(LightSerialManager.GetLightId(to_item.SerialNumber));
             }
         }
     }
@@ -164,25 +185,38 @@ public class BaseCustomCoin : CustomItem
     {
         if (!Check(ev.Pickup))
             return;
-        LightManager.StopFollowAndStartFollow(ev.Player, ev.Pickup);
+        Timing.CallDelayed(0.2f, () =>
+        {
+            LightManager.StopFollowAndStartFollow(ev.Player, ev.Pickup);
+        });
     }
 
-    private void InventoryExtensions_OnItemRemoved(ReferenceHub arg1, InventorySystem.Items.ItemBase arg2, InventorySystem.Items.Pickups.ItemPickupBase arg3)
+    private void InventoryExtensions_OnItemRemoved(ReferenceHub arg1, ItemBase arg2, InventorySystem.Items.Pickups.ItemPickupBase arg3)
     {
         ushort serial = ushort.MaxValue;
-        if (this.TrackedSerials.Contains(arg2.ItemSerial))
+
+        if (arg2 != null && this.TrackedSerials.Contains(arg2.ItemSerial) && arg3 != null && this.TrackedSerials.Contains(arg3.Info.Serial))
+        {
+            return;
+        }
+
+        if (arg2 != null && this.TrackedSerials.Contains(arg2.ItemSerial))
         {
             Log.Info("InventoryExtensions_OnItemRemoved: ItemBase " + arg2.ItemSerial);
             serial = arg2.ItemSerial;
         }
-        if (this.TrackedSerials.Contains(arg3.Info.Serial))
+
+        if (arg3 != null && this.TrackedSerials.Contains(arg3.Info.Serial))
         {
             Log.Info("InventoryExtensions_OnItemRemoved: ItemPickupBase " + arg3.Info.Serial);
             serial = arg3.Info.Serial;
         }
-        if (SerialToLightId.TryGetValue(serial, out var LightId))
+
+        if (LightSerialManager.HasSerial(serial))
         {
+            var LightId = LightSerialManager.GetLightId(serial);
             LightManager.RemoveLight(LightId);
+            LightSerialManager.RemoveLight(serial);
         }
     }
 
@@ -227,19 +261,35 @@ public class BaseCustomCoin : CustomItem
     public void CoinFlipping(FlippingCoinEventArgs ev)
     {
         // Make sure we always set this.
-        if (CooldownByPlayer.ContainsKey(ev.Player.UserId) && (DateTime.UtcNow - CooldownByPlayer[ev.Player.UserId]).TotalSeconds < ExtraConfig.CoolDown)
+
+        if (!Check(ev.Item))
+            return;
+
+        if (!CooldownByPlayer.ContainsKey(ev.Player.UserId))
         {
-            ev.IsAllowed = false;
+            Log.Info("Adding player into flipping coin");
+            CooldownByPlayer.Add(ev.Player.UserId, DateTime.UtcNow);
             return;
         }
+
+        if (CooldownByPlayer.TryGetValue(ev.Player.UserId, out var value))
+        {
+            var total = (DateTime.UtcNow - value).TotalSeconds;
+            if (total < ExtraConfig.CoolDown)
+            {
+                ev.IsAllowed = false;
+                return;
+            }
+        }
+
         CooldownByPlayer[ev.Player.UserId] = DateTime.UtcNow;
     }
 
     private void Coin_OnFlipped(ushort serial, bool isTails)
     {
-        
         if (!TrackedSerials.Contains(serial))
             return;
+
         if (!InventoryExtensions.ServerTryGetItemWithSerial(serial, out var item))
             return;
 

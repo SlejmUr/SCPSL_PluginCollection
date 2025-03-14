@@ -4,6 +4,7 @@ using DavaCustomItems.Configs;
 using DavaCustomItems.Components;
 using TLight = Exiled.API.Features.Toys.Light;
 using Exiled.API.Interfaces;
+using Exiled.API.Features;
 
 namespace DavaCustomItems.Managers;
 
@@ -90,17 +91,26 @@ public static class LightManager
     public static void HideLight(int LightId)
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
+        {
+            Log.Info($"{LightId} cannot found in lights to turn off/unspawn");
             return;
+        }
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
         light.UnSpawn();
+        Log.Info($"{LightId} unspawned");
     }
 
     public static void ShowLight(int LightId)
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
+        {
+            Log.Info($"{LightId} cannot found in lights to turn on/spawn");
             return;
+        }
         light.Spawn();
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = true;
+        ApplyInternalSettings(LightId);
+        Log.Info($"{LightId} spawned");
     }
 
     public static bool IsLightShown(int LightId)
@@ -138,7 +148,7 @@ public static class LightManager
     {
         if (!IsLightShown(LightId))
             ShowLight(LightId);
-        StopFollow(position);
+        StopFollow(position, false);
         if (Lights.ContainsKey(LightId))
             PositionToFollower.Add(position, new(Timing.RunCoroutine(LightMove(LightId, position)), LightId));
     }

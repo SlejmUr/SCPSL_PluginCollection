@@ -444,7 +444,7 @@ public sealed class Config : IConfig
                         },
                         {
                             "SPEEED",
-                            [true]
+                            [false]
                         },
                         {
                             "SideSwapper",
