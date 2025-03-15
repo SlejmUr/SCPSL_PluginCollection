@@ -16,6 +16,8 @@ public static class LightSerialManager
 
     private static void LMRemoved(int obj)
     {
+        if (!SerialToLightId.Any(x => x.Value == obj))
+            return;
         var x = SerialToLightId.First(x=>x.Value == obj);
         if (x.Key == default)
             return;

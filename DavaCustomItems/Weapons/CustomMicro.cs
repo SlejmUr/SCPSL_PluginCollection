@@ -1,10 +1,12 @@
-﻿using DavaCustomItems.Configs;
+﻿using AsmResolver.DotNet.Cloning;
+using DavaCustomItems.Configs;
 using DavaCustomItems.Managers;
 using Exiled.API.Features;
 using Exiled.API.Features.Attributes;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups;
 using Exiled.API.Features.Spawn;
+using Exiled.CustomItems.API.EventArgs;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using InventorySystem.Items.MicroHID.Modules;
@@ -92,6 +94,11 @@ public class CustomMicro : CustomItem
             LightSerialManager.RemoveLight(serial);
             LightManager.RemoveLight(lightid);
         }
+    }
+
+    public override void OnOwnerDying(OwnerDyingEventArgs ev)
+    {
+        LightManager.StopFollow(ev.Player);
     }
 
     private void CycleController_OnPhaseChanged(ushort serial, MicroHidPhase phase)

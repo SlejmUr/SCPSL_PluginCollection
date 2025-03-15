@@ -96,6 +96,11 @@ public static class LightManager
         Log.Info($"RemoveLight: {LightId}");
         Lights.Remove(LightId);
         LightRemoved?.Invoke(LightId);
+        // Bug happens here?
+        if (light == null)
+            return;
+        if (light.GameObject == null)
+            return;
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
         light.Destroy();
 

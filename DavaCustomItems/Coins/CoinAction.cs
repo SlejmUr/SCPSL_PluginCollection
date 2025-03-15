@@ -205,7 +205,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             if (extraSettings.IsEmpty())
                 return;
             int xp = ObjectConvertManager.ParseToInt(extraSettings[0]);
-            Server.ExecuteCommand($"/xp give {xp} {player.Id}", ServerConsole.Scs);
+            Server.ExecuteCommand($"xp give {xp} {player.Id}", ServerConsole.Scs);
             player.ShowHint($"You Got {xp} XP from the Coin!", 5);
         }));
 
