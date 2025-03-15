@@ -3,7 +3,6 @@ using DavaCustomItems.Managers;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.CustomItems.API.Features;
-using RemoteAdmin;
 
 namespace DavaCustomItems;
 
@@ -24,6 +23,7 @@ public sealed class Main : Plugin<Config>
             return;
         Instance = this;
         RainbowLightManager.Init();
+        LightSerialManager.Init();
         CoinAction.Init();
         foreach (var item in Config.CoinRarityConfigs)
         {
@@ -49,6 +49,7 @@ public sealed class Main : Plugin<Config>
             return;
         Instance = null;
         RainbowLightManager.UnInit();
+        LightSerialManager.UnInit();
         CustomItem.UnregisterItems();
         base.OnDisabled();
     }

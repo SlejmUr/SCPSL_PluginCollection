@@ -1,11 +1,26 @@
-﻿using Exiled.API.Features;
-
-namespace DavaCustomItems.Managers;
+﻿namespace DavaCustomItems.Managers;
 
 public static class LightSerialManager
 {
 
     private static Dictionary<ushort, int> SerialToLightId = [];
+    public static void Init()
+    {
+        LightManager.LightRemoved += LMRemoved;
+    }
+
+    public static void UnInit()
+    {
+        LightManager.LightRemoved -= LMRemoved;
+    }
+
+    private static void LMRemoved(int obj)
+    {
+        var x = SerialToLightId.First(x=>x.Value == obj);
+        if (x.Key == default)
+            return;
+        SerialToLightId.Remove(x.Key);
+    }
 
     public static int GetLightId(ushort serial)
     {

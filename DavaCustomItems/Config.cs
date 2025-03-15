@@ -20,8 +20,8 @@ public sealed class Config : IConfig
                 ShouldMakeLight = true,
                 ShouldShowLightOnSpawn = true,
                 Color = new(1, 0.5f, 0, 1),
-                Intensity = 40,
-                Range = 10,
+                Intensity = 30,
+                Range = 5,
             }
         },
         {
@@ -32,8 +32,8 @@ public sealed class Config : IConfig
                 ShouldMakeLight = true,
                 ShouldShowLightOnSpawn = true,
                 Color = UnityEngine.Color.blue,
-                Intensity = 10,
-                Range = 5,
+                Intensity = 7,
+                Range = 3,
             }
         },
         {
@@ -46,6 +46,12 @@ public sealed class Config : IConfig
                 Color = UnityEngine.Color.red,
                 Intensity = 10,
                 Range = 5,
+                RainbowConfig = new()
+                {
+                    RainbowType = RainbowLightType.Rave,
+                    ByteAlpha = 10,
+                    Speed = 100
+                }
             }
         },
         {
@@ -94,30 +100,30 @@ public sealed class Config : IConfig
                     MaxFlipping = 1,
                     NameAndWeight =
                     {
-                        { new( "ShufflePlayers", false), 1},
-                        { new( "ShufflePlayers", true), 1},
-                        { new( "GreatGamble", true), 1 },
-                        { new( "GreatGamble", false), 1 },
-                        { new( "ImmenseFortitude", true), 1 },
-                        { new( "ImmenseFortitude", false), 1 },
-                        { new( "TrueResurrection", true), 1 },
-                        { new( "TrueResurrection", false), 1 },
-                        { new( "Necromancy", false), 1 },
-                        { new( "Necromancy", true), 1 },
-                        { new( "DrugCocktail", false), 1 },
-                        { new( "DrugCocktail", true), 1 },
-                        { new( "CursedDrugCocktail", false), 1 },
-                        { new( "CursedDrugCocktail", true), 1 },
-                        { new( "ExperimentalItem", false), 1 },
-                        { new( "ExperimentalItem", true), 1 },
-                        { new( "Combustion", false), 1 },
-                        { new( "Combustion", true), 1 },
-                        { new( "HighAwareness", false), 1 },
-                        { new( "HighAwareness", true), 1 },
-                        { new( "BlessingsAbound", false, "BlessingEffects", false), 1 },
-                        { new( "BlessingsAbound", true, "BlessingEffects", false), 1 },
-                        { new( "RocketMan", false), 1 },
-                        { new( "RocketMan", true), 1 },
+                        { new( "ShufflePlayers", false), 3 },
+                        { new( "ShufflePlayers", true), 3 },
+                        { new( "GreatGamble", true), 3 },
+                        { new( "GreatGamble", false), 3 },
+                        { new( "ImmenseFortitude", true), 6 },
+                        { new( "ImmenseFortitude", false), 6 },
+                        { new( "TrueResurrection", true), 2 },
+                        { new( "TrueResurrection", false), 2 },
+                        { new( "Necromancy", false), 2 },
+                        { new( "Necromancy", true), 2 },
+                        { new( "DrugCocktail", false), 6 },
+                        { new( "DrugCocktail", true), 6 },
+                        { new( "CursedDrugCocktail", false), 2 },
+                        { new( "CursedDrugCocktail", true), 2 },
+                        { new( "ExperimentalItem", false), 3 },
+                        { new( "ExperimentalItem", true), 3 },
+                        { new( "Combustion", false), 5 },
+                        { new( "Combustion", true), 5 },
+                        { new( "HighAwareness", false), 3 },
+                        { new( "HighAwareness", true), 3 },
+                        { new( "BlessingsAbound", false, "BlessingEffects", false), 3 },
+                        { new( "BlessingsAbound", true, "BlessingEffects", false), 3 },
+                        { new( "RocketMan", false), 5 },
+                        { new( "RocketMan", true), 5 },
                     },
                     ExtraSettings =
                     {
@@ -147,60 +153,61 @@ public sealed class Config : IConfig
                     NameAndWeight =
                     {
                         // Good
-                        { new( "GiveItem", true, "GiveItem", false), 1 },
-                        { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
-                        { new( "MoreHealth", true, "MoreHealth", false), 1 },
-                        { new( "SweetTooth", true, "SweetTooth", true), 1 },
-                        { new( "SourTooth", true), 1 },
-                        { new( "MedicalKit", true, "MedicalKit", false), 1 },
-                        { new( "GiveXP", true, "GiveXP", false), 1 },
-                        { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
-                        { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
-                        { new( "MaxHP", true, "MaxHP", false), 1 },
-                        { new( "NeverQuit", true), 1 },
-                        { new( "Jackpot", true), 1 },
-                        { new( "SPEEED", true, "SPEEED", false), 1 },
+                        { new( "GiveItem", true, "GiveItem", false), 4 },
+                        { new( "GivePositiveEffect", true, "GiveEffect", false), 6 },
+                        { new( "MoreHealth", true, "MoreHealth", false), 6 },
+                        { new( "SweetTooth", true, "SweetTooth", true), 4 },
+                        { new( "SourTooth", true), 2 },
+                        { new( "MedicalKit", true, "MedicalKit", false), 6 },
+                        { new( "GiveXP", true, "GiveXP", false), 6 },
+                        { new( "RandomWeapon", true, "RandomWeapon", false), 4 },
+                        { new( "RandomKeycard", true, "RandomKeycard", false), 4 },
+                        { new( "MaxHP", true, "MaxHP", false), 6 },
+                        { new( "NeverQuit", true), 3 },
+                        { new( "Jackpot", true), 2 },
+                        { new( "SPEEED", true, "SPEEED", false), 4 },
+                        { new( "Exposed", true, "Exposed", false), 2 },
                         
                         // Bad
-                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
-                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
-                        { new( "LoseHealth", false, "LoseHealth", false), 1 },
+                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 4 },
+                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 4 },
+                        { new( "LoseHealth", false, "LoseHealth", false), 4 },
                         { new( "1hp", false), 1 },
-                        { new( "FoodPoisoning", false), 1 },
-                        { new( "GrenadeDrop", false), 1 },
+                        { new( "FoodPoisoning", false), 3 },
+                        { new( "GrenadeDrop", false), 4 },
                         { new( "LoseItems", false), 1 },
                         { new( "TpToSCP", false), 1 },
-                        { new( "Freeze", false), 1 },
+                        { new( "Freeze", false), 2 },
                         { new( "MinHP", false, "MinHP", false), 1 },
                         { new( "AutoNuke", false), 1 },
                         { new( "Timeout", false), 1 },
 
                         // Mixed
-                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
-                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
-                        { new( "DisappearingAct", true), 1 },
-                        { new( "DisappearingAct", false), 1 },
-                        { new( "Gnome", true), 1 },
-                        { new( "Gnome", false), 1 },
-                        { new( "TallMan", true), 1 },
-                        { new( "TallMan", false), 1 },
-                        { new( "NormalMan", true), 1 },
-                        { new( "NormalMan", false), 1 },
-                        { new( "WideMan", true), 1 },
-                        { new( "WideMan", false), 1 },
-                        { new( "Blackout", true, "Blackout", false), 1 },
-                        { new( "Blackout", false, "Blackout", false), 1 },
-                        { new( "TpToRandomPlayer", true), 1 },
-                        { new( "TpToRandomPlayer", false), 1 },
-                        { new( "Exposed", false, "Exposed", false), 1 },
-                        { new( "Exposed", true, "Exposed", false), 1 },
+                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 5 },
+                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 5 },
+                        { new( "DisappearingAct", true, "DisappearingAct", false), 5 },
+                        { new( "DisappearingAct", false, "DisappearingAct", false), 5 },
+                        { new( "Gnome", true), 5 },
+                        { new( "Gnome", false), 5 },
+                        { new( "TallMan", true), 5 },
+                        { new( "TallMan", false), 5 },
+                        { new( "NormalMan", true), 5 },
+                        { new( "NormalMan", false), 5 },
+                        { new( "WideMan", true), 5 },
+                        { new( "WideMan", false), 5 },
+                        { new( "Blackout", true, "Blackout", false), 3 },
+                        { new( "Blackout", false, "Blackout", false), 3 },
+                        { new( "TpToRandomPlayer", true), 3 },
+                        { new( "TpToRandomPlayer", false), 3 },
+                        { new( "SideSwapper", false, "SideSwapper", false), 1 },
+                        { new( "SideSwapper", true, "SideSwapper", false), 1 },
 
                     },
                     ExtraSettings =
                     {
                         {
                             "GiveItem",
-                            [ItemType.Adrenaline, ItemType.Radio, ItemType.Painkillers, ItemType.KeycardZoneManager]
+                            [ItemType.SCP500, ItemType.SCP2176, ItemType.Jailbird]
                         },
                         {
                             "GiveEffect",
@@ -247,7 +254,7 @@ public sealed class Config : IConfig
                         },
                         {
                             "RandomWeapon",
-                            [ItemType.GunCrossvec, ItemType.GunAK, ItemType.GunLogicer]
+                            [ItemType.GunCrossvec, ItemType.GunAK, ItemType.GunLogicer, ItemType.GunFRMG0]
                         },
                         {
                             "RandomKeycard",
@@ -255,7 +262,7 @@ public sealed class Config : IConfig
                         },
                         {
                             "Blackout",
-                            [10]
+                            [20]
                         },
                         {
                             "TpToSCP",
@@ -276,7 +283,19 @@ public sealed class Config : IConfig
                         {
                             "SPEEED",
                             [true]
-                        }
+                        },
+                        {
+                              "SideSwapper",
+                            [20]
+                        },
+                        {
+                            "GiveXP",
+                            [200]
+                        },
+                        {
+                            "DisappearingAct",
+                            [true]
+                        },
                     },
                     ExtraSettingsAndWeight =
                     {
@@ -319,53 +338,52 @@ public sealed class Config : IConfig
                     NameAndWeight =
                     {
                         // Good
-                        { new( "GiveItem", true, "GiveItem", false), 1 },
-                        { new( "GivePositiveEffect", true, "GiveEffect", false), 1 },
-                        { new( "MoreHealth", true, "MoreHealth", false), 1 },
-                        { new( "SweetTooth", true, "SweetTooth", true), 1 },
+                        { new( "GiveItem", true, "GiveItem", false), 3 },
+                        { new( "GivePositiveEffect", true, "GiveEffect", false), 5 },
+                        { new( "MoreHealth", true, "MoreHealth", false), 5 },
+                        { new( "SweetTooth", true, "SweetTooth", true), 3 },
                         { new( "SourTooth", true), 1 },
-                        { new( "MedicalKit", true, "MedicalKit", false), 1 },
-                        { new( "GiveXP", true, "GiveXP", false), 1 },
-                        { new( "RandomWeapon", true, "RandomWeapon", false), 1 },
-                        { new( "RandomKeycard", true, "RandomKeycard", false), 1 },
-                        { new( "MaxHP", true, "MaxHP", false), 1 },
-                        { new( "NeverQuit", true), 1 },
+                        { new( "MedicalKit", true, "MedicalKit", false), 6 },
+                        { new( "GiveXP", true, "GiveXP", false), 5 },
+                        { new( "RandomWeapon", true, "RandomWeapon", false), 3 },
+                        { new( "RandomKeycard", true, "RandomKeycard", false), 3 },
+                        { new( "MaxHP", true, "MaxHP", false), 5 },
+                        { new( "NeverQuit", true), 2 },
                         { new( "Jackpot", true), 1 },
-                        { new( "SPEEED", true, "SPEEED", false), 1 },
+                        { new( "SPEEED", true, "SPEEED", false), 3 },
+                        { new( "Exposed", true, "Exposed", false), 1 },
                         
                         // Bad
-                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
-                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
+                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 5 },
+                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 5 },
                         { new( "LoseHealth", false, "LoseHealth", false), 1 },
                         { new( "1hp", false), 1 },
-                        { new( "FoodPoisoning", false), 1 },
-                        { new( "GrenadeDrop", false), 1 },
-                        { new( "LoseItems", false), 1 },
-                        { new( "TpToSCP", false), 1 },
-                        { new( "Freeze", false), 1 },
+                        { new( "FoodPoisoning", false), 5 },
+                        { new( "GrenadeDrop", false), 5 },
+                        { new( "LoseItems", false), 2 },
+                        { new( "TpToSCP", false), 3 },
+                        { new( "Freeze", false), 3 },
                         { new( "MinHP", false, "MinHP", false), 1 },
                         { new( "AutoNuke", false), 1 },
                         { new( "Timeout", false), 1 },
 
                         // Mixed
-                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
-                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
+                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 5 },
+                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 5 },
                         { new( "DisappearingAct", true), 1 },
                         { new( "DisappearingAct", false), 1 },
-                        { new( "Gnome", true), 1 },
-                        { new( "Gnome", false), 1 },
-                        { new( "TallMan", true), 1 },
-                        { new( "TallMan", false), 1 },
-                        { new( "WideMan", true), 1 },
-                        { new( "WideMan", false), 1 },
-                        { new( "NormalMan", true), 1 },
-                        { new( "NormalMan", false), 1 },
-                        { new( "Blackout", true, "Blackout", false), 1 },
-                        { new( "Blackout", false, "Blackout", false), 1 },
-                        { new( "TpToRandomPlayer", true), 1 },
-                        { new( "TpToRandomPlayer", false), 1 },
-                        { new( "Exposed", false, "Exposed", false), 1 },
-                        { new( "Exposed", true, "Exposed", false), 1 },
+                        { new( "Gnome", true), 5 },
+                        { new( "Gnome", false), 5 },
+                        { new( "TallMan", true), 5 },
+                        { new( "TallMan", false), 5 },
+                        { new( "WideMan", true), 5 },
+                        { new( "WideMan", false), 5 },
+                        { new( "NormalMan", true), 5 },
+                        { new( "NormalMan", false), 5 },
+                        { new( "Blackout", true, "Blackout", false), 3 },
+                        { new( "Blackout", false, "Blackout", false), 3 },
+                        { new( "TpToRandomPlayer", true), 3 },
+                        { new( "TpToRandomPlayer", false), 3 },
                         { new( "SideSwapper", false, "SideSwapper", false), 1 },
                         { new( "SideSwapper", true, "SideSwapper", false), 1 },
                     },
@@ -373,7 +391,7 @@ public sealed class Config : IConfig
                     {
                         {
                             "GiveItem",
-                            [ItemType.Adrenaline, ItemType.Radio, ItemType.Painkillers, ItemType.KeycardZoneManager]
+                            [ItemType.Adrenaline, ItemType.KeycardZoneManager, ItemType.SCP500, ItemType.SCP2176]
                         },
                         {
                             "GiveEffect",
@@ -420,11 +438,11 @@ public sealed class Config : IConfig
                         },
                         {
                             "RandomWeapon",
-                            [ItemType.GunCOM18, ItemType.GunCrossvec, ItemType.GunRevolver]
+                            [ItemType.GunCOM18, ItemType.GunA7, ItemType.GunRevolver]
                         },
                         {
                             "RandomKeycard",
-                            [ItemType.KeycardScientist, ItemType.KeycardChaosInsurgency, ItemType.KeycardFacilityManager]
+                            [ItemType.KeycardScientist, ItemType.KeycardMTFOperative, ItemType.KeycardContainmentEngineer]
                         },
                         {
                             "Blackout",
@@ -449,6 +467,10 @@ public sealed class Config : IConfig
                         {
                             "SideSwapper",
                             [10]
+                        },
+                        {
+                            "GiveXP",
+                            [100]
                         }
                     },
                     ExtraSettingsAndWeight =

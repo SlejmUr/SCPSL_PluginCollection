@@ -22,6 +22,16 @@ public class DeleteLightCommand : ICommand, IUsageProvider
             return false;
         }
         var lid = arguments.At(0);
+        if (lid.ToLower().Contains("all"))
+        {
+            var lights = LightManager.GetLightIds();
+            foreach (var item in lights)
+            {
+                LightManager.RemoveLight(item);
+            }
+            response = "All Light removed!";
+            return true;
+        }
         if (!int.TryParse(lid, out int l_id))
         {
             response = "Cannot parse to int!";

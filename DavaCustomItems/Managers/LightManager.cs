@@ -35,8 +35,7 @@ public static class LightManager
         ligth.LightType = lightConfig.LightType;
         ligth.ShadowType = lightConfig.ShadowType;
         ligth.MovementSmoothing = lightConfig.MovementSmoothing;
-        int id = Lights.Count;
-        id++;
+        int id = TryGetNewID(RNGManager.RNG.Next());
         var lcomponent = ligth.GameObject.AddComponent<LightConfigComponent>();
         lcomponent.LightConfig = lightConfig;
         lcomponent.LightId = id;
@@ -44,6 +43,15 @@ public static class LightManager
         Lights.Add(id, ligth);
         LightAdded?.Invoke(id, lightConfig);
         return id;
+    }
+
+    private static int TryGetNewID(int id)
+    {
+        if (Lights.ContainsKey(id))
+            id = RNGManager.RNG.Next();
+        else
+            return id;
+        return TryGetNewID(id);
     }
 
     public static void ChangeInternalSettings(int LightId, LightConfig lightConfig)
@@ -85,6 +93,7 @@ public static class LightManager
             return;
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
+        Log.Info($"RemoveLight: {LightId}");
         Lights.Remove(LightId);
         LightRemoved?.Invoke(LightId);
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
@@ -142,6 +151,8 @@ public static class LightManager
 
     public static LightConfig GetLightConfig(int LightId)
     {
+        if (LightId == -1)
+            return new();
         if (!Lights.TryGetValue(LightId, out TLight light))
             return new();
         return light.GameObject.GetComponent<LightConfigComponent>().LightConfig;

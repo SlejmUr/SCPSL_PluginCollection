@@ -23,7 +23,6 @@ public class CustomMicro : CustomItem
     public override ItemType Type { get; set; } = ItemType.MicroHID;
     public override SpawnProperties SpawnProperties { get; set; }
 
-    private Dictionary<ushort, int> SerialToLightId = [];
     private LightConfig LightConfig = new()
     { 
         MovementSmoothing = 100,
@@ -47,7 +46,10 @@ public class CustomMicro : CustomItem
 
     public override void OnAcquired(Player player, Item item, bool displayMessage)
     {
-        SerialToLightId.Add(item.Serial, LightManager.MakeLightAndFollow(player, LightConfig));
+        if (!LightSerialManager.HasSerial(item.Serial))
+        {
+            LightSerialManager.AddLight(item.Serial, LightManager.MakeLightAndFollow(player, LightConfig));
+        }
     }
 
     public override void SubscribeEvents()
@@ -83,22 +85,36 @@ public class CustomMicro : CustomItem
 
     public override void OnDroppingItem(DroppingItemEventArgs ev)
     {
-        if (!SerialToLightId.TryGetValue(ev.Item.Serial, out var lightId))
-            return;
-        LightManager.RemoveLight(lightId);
+        var serial = ev.Item.Serial;
+        if (LightSerialManager.HasSerial(serial))
+        {
+            var lightid = LightSerialManager.GetLightId(serial);
+            LightSerialManager.RemoveLight(serial);
+            LightManager.RemoveLight(lightid);
+        }
     }
 
     private void CycleController_OnPhaseChanged(ushort serial, MicroHidPhase phase)
     {
         if (!TrackedSerials.Contains(serial))
+        {
             return;
-        if (!SerialToLightId.TryGetValue(serial, out var lightId))
+        }
+        int lightId = -1;
+        if (!LightSerialManager.HasSerial(serial))
         {
             lightId = LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
-            SerialToLightId.Add(serial, lightId);
+            LightSerialManager.AddLight(serial, lightId);
+        }
+        else
+        {
+            lightId = LightSerialManager.GetLightId(serial);
         }
         if (!LightManager.IsLightExists(lightId))
-            SerialToLightId.Add(serial, LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig));
+        {
+            lightId = LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
+            LightSerialManager.AddLight(serial, lightId);
+        }
         LightManager.SetLightColor(lightId, PhaseToColor[phase]);
     }
 
