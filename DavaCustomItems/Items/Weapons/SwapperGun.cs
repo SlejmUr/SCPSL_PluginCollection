@@ -8,7 +8,7 @@ using InventorySystem;
 using MEC;
 using Utils.NonAllocLINQ;
 
-namespace DavaCustomItems.Weapons;
+namespace DavaCustomItems.Items.Weapons;
 
 [CustomItem(ItemType.GunCOM15)]
 public class SwapperGun : CustomWeapon
@@ -47,6 +47,8 @@ public class SwapperGun : CustomWeapon
         var t_Rotation = to.Rotation;
         var p_Items = from.Items.Select(x => x.Type).ToList();
         var t_Items = to.Items.Select(x => x.Type).ToList();
+        var p_Ammo = from.Ammo.ToList();
+        var t_Ammo = to.Ammo.ToList();
         var p_Health = from.Health;
         var t_Health = to.Health;
         var p_ComponentsInChildren = from.ComponentsInChildren; // ?
@@ -75,6 +77,9 @@ public class SwapperGun : CustomWeapon
         yield return 0.1f;
         t_Items.ForEach(x => from.AddItem(x));
         p_Items.ForEach(x => to.AddItem(x));
+        yield return 0.1f;
+        t_Ammo.ForEach(x => from.Inventory.ServerAddAmmo(x.Key,x.Value));
+        p_Ammo.ForEach(x => to.Inventory.ServerAddAmmo(x.Key, x.Value));
         yield return 0.1f;
         from.ArtificialHealth = t_ArtificialHealth;
         to.ArtificialHealth = p_ArtificialHealth;

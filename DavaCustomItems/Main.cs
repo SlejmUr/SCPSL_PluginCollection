@@ -1,4 +1,5 @@
 ﻿using DavaCustomItems.Coins;
+using DavaCustomItems.Items;
 using DavaCustomItems.Managers;
 using Exiled.API.Enums;
 using Exiled.API.Features;
@@ -27,6 +28,8 @@ public sealed class Main : Plugin<Config>
         CoinAction.Init();
         foreach (var item in Config.CoinRarityConfigs)
         {
+            if (item.Key == CoinRarityType.None)
+                continue;
             BaseCustomCoin coin = new()
             {
                 Id = item.Value.Id,

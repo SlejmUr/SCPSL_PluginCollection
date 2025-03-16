@@ -3,7 +3,7 @@ using Exiled.API.Features;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 
-namespace DavaCustomItems.Weapons;
+namespace DavaCustomItems.Items.Weapons;
 
 [CustomItem(ItemType.GunCrossvec)]
 public class NerfGun : CustomWeapon

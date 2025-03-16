@@ -13,7 +13,7 @@ public class BaseLightCommand : ParentCommand
 
     public override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        response = "Invalid subcommand. Available commands: create, delete, list.";
+        response = "Invalid subcommand. Available commands: create, delete, list, lightconfig, lightpos.";
         return true;
     }
 
@@ -22,5 +22,7 @@ public class BaseLightCommand : ParentCommand
         this.RegisterCommand(new CreateLightCommand());
         this.RegisterCommand(new DeleteLightCommand());
         this.RegisterCommand(new ListLightCommand());
+        this.RegisterCommand(new GetLightConfigCommand());
+        this.RegisterCommand(new GetLightPosCommand());
     }
 }

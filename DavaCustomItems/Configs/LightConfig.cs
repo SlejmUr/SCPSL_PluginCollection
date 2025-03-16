@@ -5,6 +5,7 @@ namespace DavaCustomItems.Configs;
 public class LightConfig
 {
     public bool ShouldFollowPlayer { get; set; }
+    public bool ShouldFollowPickup { get; set; }
     public bool ShouldMakeLight { get; set; }
     public bool ShouldShowLightOnSpawn { get; set; }
     //public bool ShouldHideInitially { get; set; }
@@ -23,6 +24,6 @@ public class LightConfig
 
     public override string ToString()
     {
-        return $"{ShouldFollowPlayer} {ShouldMakeLight} {ShouldShowLightOnSpawn} | {Intensity} {Range} {SpotAngle} {InnerSpotAngle} {ShadowStrength} | {Color} {LightShape} {LightType} {ShadowType} {MovementSmoothing} {Scale}";
+        return $"{ShouldFollowPickup} {ShouldFollowPlayer} {ShouldMakeLight} {ShouldShowLightOnSpawn} | {Intensity} {Range} {SpotAngle} {InnerSpotAngle} {ShadowStrength} | {Color} {LightShape} {LightType} {ShadowType} {MovementSmoothing} {Scale}";
     }
 }

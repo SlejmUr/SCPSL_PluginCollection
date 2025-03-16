@@ -1,7 +1,8 @@
 ﻿using DavaCustomItems.Configs;
+using DavaCustomItems.Items;
+using DavaCustomItems.Items.PassiveItem;
+using DavaCustomItems.Items.Weapons;
 using DavaCustomItems.Managers;
-using DavaCustomItems.PassiveItem;
-using DavaCustomItems.Weapons;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
@@ -533,7 +534,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             player.ShowHint("The coin blesses you with great strength. You have gained an extremely potent pool of health and damage reduction.", 10);
             Map.Broadcast(10, $"{player.Nickname} flipped the <color=orange>Legendary</color> coin and Gained Immense Fortitude.");
 
-            player.EnableEffect(EffectType.DamageReduction, 10, 0);
+            player.EnableEffect(EffectType.DamageReduction, 20, 0);
 
             player.SessionVariables["ImmenseFortitude173"] = true;
 
@@ -554,7 +555,8 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         {
             player.ShowHint("The coin gives you a spare lease on life. If you are to die, you will come back to life… But only once…", 10);
             player.SessionVariables["TrueResurrection"] = true;
-            //Map.Broadcast(10, $"{player.Nickname} has flipped the <color=orange>Legendary</color> coin and was given a second Life.");
+            // removed because players doesnt need to know
+            Map.Broadcast(10, $"{player.Nickname} has flipped the <color=orange>Legendary</color> coin and was given a second Life.");
             Vector3 deathPosition = player.Position;
             void dying(DyingEventArgs ev)
             {
@@ -604,13 +606,13 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 p.Health = 50;
                 p.MaxHealth = 50;
 
-                p.Scale = new Vector3(0.75f, 0.75f, 0.75f);
+                p.Scale = new Vector3(0.5f, 0.5f, 0.5f);
 
                 p.Position = player.Position;
                 var jailbird = new Jailbird();
                 jailbird.ChargeDamage /= 2;
                 jailbird.MeleeDamage /= 2;
-                jailbird.TotalCharges = -1_000;
+                jailbird.TotalCharges = -100_000;
                 jailbird.Give(p);
                 p.CurrentItem = jailbird;
 
@@ -625,13 +627,15 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
                 void dying(DyingEventArgs ev)
                 {
-                    if (ev.Player == p)
+                    if (ev.Player != p)
+                        return;
+                    
+                    Timing.CallDelayed(1, () =>
                     {
                         jailbird.Break();
-                        p.Scale = Vector3.one;
                         Exiled.Events.Handlers.Player.Dying.Unsubscribe(dying);
                         Exiled.Events.Handlers.Player.DroppingItem.Unsubscribe(handler);
-                    }
+                    });
                 }
 
                 Exiled.Events.Handlers.Player.Dying.Subscribe(dying);
@@ -640,7 +644,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
         Actions.Add(new CoinAction("DrugCocktail", (player, config, extraSettings) =>
         {
-            //Map.Broadcast(5, $"{player.Nickname} has flipped the <color=orange>Legendary</color> and Has been given a Cocktail of effects");
+            Map.Broadcast(5, $"{player.Nickname} has flipped the <color=orange>Legendary</color> and Has been given a Cocktail of effects");
             player.ShowHint("The coin blesses you with euphoria in the form of every drug known to mankind.", 5);
             player.EnableEffect(EffectType.Invigorated, 1, 0);
             player.EnableEffect(EffectType.BodyshotReduction, 5, 0);
@@ -653,7 +657,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
         Actions.Add(new CoinAction("CursedDrugCocktail", (player, config, extraSettings) =>
         {
-            //Map.Broadcast(5, $"{player.Nickname} has flipped the <color=orange>Legendary</color> and Has been given a Cursed Cocktail of effects");
+            Map.Broadcast(5, $"{player.Nickname} has flipped the <color=orange>Legendary</color> and Has been given a Cursed Cocktail of effects");
             player.ShowHint("The coin cursed you with euphoria in the form of every drug known to mankind.", 5);
             player.EnableEffect(EffectType.AmnesiaVision, 1, 180);
             player.EnableEffect(EffectType.Burned, 1, 180);

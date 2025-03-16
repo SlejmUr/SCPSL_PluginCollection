@@ -7,7 +7,7 @@ using Exiled.Events.EventArgs.Player;
 using MEC;
 using PlayerRoles.FirstPersonControl;
 
-namespace DavaCustomItems.PassiveItem;
+namespace DavaCustomItems.Items.PassiveItem;
 
 [CustomItem(ItemType.ArmorCombat)]
 public class NoGogglesArmor : CustomArmor

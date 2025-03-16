@@ -6,7 +6,7 @@ using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using MEC;
 
-namespace DavaCustomItems.PassiveItem;
+namespace DavaCustomItems.Items.PassiveItem;
 
 [CustomItem(ItemType.Lantern)]
 public class BrokenLamp : CustomItem
@@ -64,7 +64,7 @@ public class BrokenLamp : CustomItem
         if (ev.NewState)
         {
             ev.IsAllowed = false;
-            FlashGrenade flash = (FlashGrenade)FlashGrenade.Create(ItemType.GrenadeFlash);
+            FlashGrenade flash = (FlashGrenade)Item.Create(ItemType.GrenadeFlash);
             flash.FuseTime = 5;
             flash.SpawnActive(ev.Player.Position);
 

@@ -16,6 +16,7 @@ public sealed class Config : IConfig
             "Legendary Coin", 
             new()
             {
+                ShouldFollowPickup = true,
                 ShouldFollowPlayer = true,
                 ShouldMakeLight = true,
                 ShouldShowLightOnSpawn = true,
@@ -28,6 +29,7 @@ public sealed class Config : IConfig
             "Rare Coin",
             new()
             {
+                ShouldFollowPickup = true,
                 ShouldFollowPlayer = true,
                 ShouldMakeLight = true,
                 ShouldShowLightOnSpawn = true,
@@ -37,9 +39,10 @@ public sealed class Config : IConfig
             }
         },
         {
-            "Super Unlucky Coin",
+            "Test05Light",
             new()
             {
+                ShouldFollowPickup = true,
                 ShouldFollowPlayer = true,
                 ShouldMakeLight = true,
                 ShouldShowLightOnSpawn = true,
@@ -53,39 +56,11 @@ public sealed class Config : IConfig
                     Speed = 100
                 }
             }
-        },
-        {
-            "TEST Coin",
-            new()
-            {
-                ShouldFollowPlayer = true,
-                ShouldMakeLight = true,
-                Intensity = 10,
-                Range = 5,
-                RainbowConfig = new()
-                {
-                    RainbowType = RainbowLightType.Breathing,
-                    FloatAlpha = 1
-                }
-            }
-        },
+        }
     };
 
     public Dictionary<CoinRarityType /* Rarity */, CoinConfig /* Coin Config */> CoinRarityConfigs { get; set; } = new()
     {        
-        {
-            CoinRarityType.TEST,
-            new()
-            {
-                Id = 499,
-                Name = "TEST Coin",
-                Description = "TEST.",
-                ExtraConfig = new()
-                {
-                    MaxFlipping = 1
-                }
-            }
-        },
         { 
             CoinRarityType.Legendary,
             new()
@@ -497,137 +472,16 @@ public sealed class Config : IConfig
                         }
                     },
                     Replace914Coins = true,
-                    ReplaceNormalCoinAmount = 5,
+                    ReplaceNormalCoinAmount = 100,
                     ItemsToReplace =
                     {
                         { ItemType.SCP500, 3 }
                     },
-                    ReplaceCoinChance = 98,
-                    ReplaceItemChance = 90
+                    ReplaceCoinChance = 100,
+                    ReplaceItemChance = 100
                 },  
             }
-        },
-        {
-            CoinRarityType.Unlucky,
-            new()
-            {
-                Id = 503,
-                Name = "Unlucky Coin",
-                Description = "Unlucky coin, only bad things happen.",
-                ExtraConfig = new()
-                {
-                    NameAndWeight =
-                    {
-                        { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 1 },
-                        { new( "GiveNegativeEffect", false, "GiveBadEffect", false), 1 },
-                        { new( "LoseHealth", false, "LoseHealth", false), 1 },
-                        { new( "1hp", false), 1 },
-                        { new( "FoodPoisoning", false), 1 },
-                        { new( "GrenadeDrop", false), 1 },
-                        { new( "LoseItems", false), 1 },
-                        { new( "TpToSCP", false), 1 },
-                        { new( "Freeze", false), 1 },
-                        { new( "MinHP", false, "MinHP", false), 1 },
-                        { new( "AutoNuke", false), 1 },
-                        { new( "Timeout", false), 1 },
-
-                        // Mixed
-                        { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 1 },
-                        { new( "GiveMixedEffect", false, "GiveMixedEffect", false), 1 },
-                        { new( "DisappearingAct", true), 1 },
-                        { new( "DisappearingAct", false), 1 },
-                        { new( "Gnome", true), 1 },
-                        { new( "Gnome", false), 1 },
-                        { new( "TallMan", true), 1 },
-                        { new( "TallMan", false), 1 },
-                        { new( "NormalMan", true), 1 },
-                        { new( "NormalMan", false), 1 },
-                        { new( "WideMan", true), 1 },
-                        { new( "WideMan", false), 1 },
-                        { new( "Blackout", true, "Blackout", false), 1 },
-                        { new( "Blackout", false, "Blackout", false), 1 },
-                        { new( "TpToRandomPlayer", true), 1 },
-                        { new( "TpToRandomPlayer", false), 1 },
-                        { new( "Exposed", false, "Exposed", false), 1 },
-                        { new( "Exposed", true, "Exposed", false), 1 },
-                        { new( "SideSwapper", false, "SideSwapper", false), 1 },
-                        { new( "SideSwapper", true, "SideSwapper", false), 1 },
-                    },
-                    ExtraSettings =
-                    {
-                        {
-                            "GiveBadEffect",
-                            new()
-                            {
-                                new EffectConfig(EffectType.Scanned, 10, 10),
-                                new EffectConfig(EffectType.CardiacArrest, 10, 10),
-                                new EffectConfig(EffectType.Bleeding, 10, 10)
-                            }
-                        },
-                        {
-                            "GiveMixedEffect",
-                            new()
-                            {
-                                new EffectConfig(EffectType.Deafened, 10, 10),
-                                new EffectConfig(EffectType.Concussed, 10, 10),
-                                new EffectConfig(EffectType.Ghostly, 10, 10)
-                            }
-                        },
-                        {
-                            "ThrowableSpawn",
-                            [ProjectileType.FragGrenade, ProjectileType.Scp018, ProjectileType.Flashbang]
-                        },
-                        {
-                            "LoseHealth",
-                            [15,30]
-                        },
-                        {
-                            "Blackout",
-                            [30]
-                        },
-                        {
-                            "TpToSCP",
-                            [true]
-                        },
-                        {
-                            "MinHP",
-                            [20, 40]
-                        },
-                        {
-                            "Exposed",
-                            [true]
-                        },
-                        {
-                            "SideSwapper",
-                            [20]
-                        }
-                    },
-                }
-            }
-        },
-        {
-            CoinRarityType.SuperUnlucky,
-            new()
-            {
-                Id = 504,
-                Name = "Super Unlucky Coin",
-                Description = "REALLY UNLUCKY COIN.",
-                ExtraConfig = new()
-                {
-                    NameAndWeight =
-                    {
-                        { new( "ShufflePlayers", false), 1},
-                        { new( "ShufflePlayers", true), 1},
-                        { new( "CursedDrugCocktail", false), 1 },
-                        { new( "CursedDrugCocktail", true), 1 },
-                        { new( "Combustion", false), 1 },
-                        { new( "Combustion", true), 1 },
-                        { new( "RocketMan", false), 1 },
-                        { new( "RocketMan", true), 1 },
-                    },
-                }
-            }
-        },
+        }
     };
 }
 

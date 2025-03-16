@@ -117,7 +117,6 @@ public static class LightManager
         }
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = false;
         light.UnSpawn();
-        Log.Info($"{LightId} unspawned");
     }
 
     public static void ShowLight(int LightId)
@@ -132,7 +131,6 @@ public static class LightManager
         light.Spawn();
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = true;
         ApplyInternalSettings(LightId);
-        Log.Info($"{LightId} spawned");
     }
 
     public static bool IsLightShown(int LightId)

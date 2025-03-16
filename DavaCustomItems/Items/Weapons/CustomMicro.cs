@@ -1,22 +1,18 @@
-﻿using AsmResolver.DotNet.Cloning;
-using DavaCustomItems.Configs;
+﻿using DavaCustomItems.Configs;
 using DavaCustomItems.Managers;
-using Exiled.API.Features;
 using Exiled.API.Features.Attributes;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups;
 using Exiled.API.Features.Spawn;
-using Exiled.CustomItems.API.EventArgs;
 using Exiled.CustomItems.API.Features;
-using Exiled.Events.EventArgs.Player;
 using InventorySystem.Items.MicroHID.Modules;
 using MEC;
 using UnityEngine;
 
-namespace DavaCustomItems.Weapons;
+namespace DavaCustomItems.Items.Weapons;
 
 [CustomItem(ItemType.MicroHID)]
-public class CustomMicro : CustomItem
+public class CustomMicro : BaseLightItem
 {
     public override uint Id { get; set; } = 666;
     public override string Name { get; set; } = "Custom Micro";
@@ -25,7 +21,7 @@ public class CustomMicro : CustomItem
     public override ItemType Type { get; set; } = ItemType.MicroHID;
     public override SpawnProperties SpawnProperties { get; set; }
 
-    private LightConfig LightConfig = new()
+    public override LightConfig LightConfig { get; set; } = new()
     { 
         MovementSmoothing = 100,
         Color = Color.blue,
@@ -36,6 +32,8 @@ public class CustomMicro : CustomItem
         Range = 10,
         LightType = LightType.Area,
     };
+
+    internal override bool GetLigthFromConfig { get; set; } = false;
 
     private Dictionary<MicroHidPhase, Color> PhaseToColor = new()
     {
@@ -58,19 +56,11 @@ public class CustomMicro : CustomItem
         CycleController.OnPhaseChanged -= CycleController_OnPhaseChanged;
     }
 
-    public override void OnChanging(ChangingItemEventArgs ev)
-    {
-        if (!LightSerialManager.HasSerial(ev.Item.Serial))
-        {
-            LightSerialManager.AddLight(ev.Item.Serial, LightManager.MakeLightAndFollow(ev.Player, LightConfig));
-        }
-    }
-
     public override void SpawnAll()
     {
         Quaternion rotation = Quaternion.identity;
         Vector3 pos = Vector3.one;
-        var wrong_micors = Pickup.List.Where(x => x.Type == ItemType.MicroHID && !this.TrackedSerials.Contains(x.Serial)).ToList();
+        var wrong_micors = Pickup.List.Where(x => x.Type == ItemType.MicroHID && !TrackedSerials.Contains(x.Serial)).ToList();
         foreach (var item in wrong_micors)
         {
             rotation = item.Rotation;
@@ -83,22 +73,6 @@ public class CustomMicro : CustomItem
             micro.Rotation = rotation;
             micro.Position = pos;
         });
-    }
-
-    public override void OnDroppingItem(DroppingItemEventArgs ev)
-    {
-        var serial = ev.Item.Serial;
-        if (LightSerialManager.HasSerial(serial))
-        {
-            var lightid = LightSerialManager.GetLightId(serial);
-            LightSerialManager.RemoveLight(serial);
-            LightManager.RemoveLight(lightid);
-        }
-    }
-
-    public override void OnOwnerDying(OwnerDyingEventArgs ev)
-    {
-        LightManager.StopFollow(ev.Player);
     }
 
     private void CycleController_OnPhaseChanged(ushort serial, MicroHidPhase phase)
