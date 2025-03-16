@@ -21,7 +21,7 @@ public class CustomMicro : CustomItem
     public override uint Id { get; set; } = 666;
     public override string Name { get; set; } = "Custom Micro";
     public override string Description { get; set; }
-    public override float Weight { get; set; }
+    public override float Weight { get; set; } = 22;
     public override ItemType Type { get; set; } = ItemType.MicroHID;
     public override SpawnProperties SpawnProperties { get; set; }
 
@@ -32,27 +32,19 @@ public class CustomMicro : CustomItem
         ShouldMakeLight = true,
         ShouldFollowPlayer = true,
         Scale = Vector3.one,
-        Intensity = 40,
+        Intensity = 20,
         Range = 10,
         LightType = LightType.Area,
     };
 
     private Dictionary<MicroHidPhase, Color> PhaseToColor = new()
     {
-        { MicroHidPhase.Standby, Color.blue },
-        { MicroHidPhase.WindingUp, Color.cyan },
-        { MicroHidPhase.WindingDown, new Color(0, 0.5f, 1f, 1f) },
-        { MicroHidPhase.WoundUpSustain, Color.magenta },
-        { MicroHidPhase.Firing, Color.red },
+        { MicroHidPhase.Standby, new Color(0f, 0f, 1f, 0.7f) },
+        { MicroHidPhase.WindingUp, new Color(0f, 1f, 1f, 0.7f) },
+        { MicroHidPhase.WindingDown, new Color(0, 0.5f, 1f, 0.7f) },
+        { MicroHidPhase.WoundUpSustain, new Color(1f, 0f, 1f, 0.7f) },
+        { MicroHidPhase.Firing, new Color(1f, 0f, 0f, 0.7f) },
     };
-
-    public override void OnAcquired(Player player, Item item, bool displayMessage)
-    {
-        if (!LightSerialManager.HasSerial(item.Serial))
-        {
-            LightSerialManager.AddLight(item.Serial, LightManager.MakeLightAndFollow(player, LightConfig));
-        }
-    }
 
     public override void SubscribeEvents()
     {
@@ -64,6 +56,14 @@ public class CustomMicro : CustomItem
     {
         base.UnsubscribeEvents();
         CycleController.OnPhaseChanged -= CycleController_OnPhaseChanged;
+    }
+
+    public override void OnChanging(ChangingItemEventArgs ev)
+    {
+        if (!LightSerialManager.HasSerial(ev.Item.Serial))
+        {
+            LightSerialManager.AddLight(ev.Item.Serial, LightManager.MakeLightAndFollow(ev.Player, LightConfig));
+        }
     }
 
     public override void SpawnAll()
