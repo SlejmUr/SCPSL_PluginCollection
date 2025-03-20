@@ -534,7 +534,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             player.ShowHint("The coin blesses you with great strength. You have gained an extremely potent pool of health and damage reduction.", 10);
             Map.Broadcast(10, $"{player.Nickname} flipped the <color=orange>Legendary</color> coin and Gained Immense Fortitude.");
 
-            player.EnableEffect(EffectType.DamageReduction, 20, 0);
+            player.EnableEffect(EffectType.DamageReduction, 50, 0);
 
             player.SessionVariables["ImmenseFortitude173"] = true;
 

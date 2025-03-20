@@ -5,6 +5,7 @@ using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using MEC;
+using System.Collections.Generic;
 
 namespace DavaCustomItems.Items.PassiveItem;
 
@@ -44,8 +45,11 @@ public class BrokenLamp : CustomItem
 
     public void TogglingLantern(TogglingFlashlightEventArgs ev)
     {
-        if (!Check(ev.Item))
+        // Check if the item being toggled is the Broken Lamp
+        if (ev.Item == null || ev.Item.Type != ItemType.Lantern || !TrackedSerials.Contains(ev.Item.Serial))
+        {
             return;
+        }
 
         // if there is a usage and it cannot be used we return and not allow using.
         if (canUse.TryGetValue(ev.Player, out bool can_user) && !can_user)
@@ -64,7 +68,7 @@ public class BrokenLamp : CustomItem
         if (ev.NewState)
         {
             ev.IsAllowed = false;
-            FlashGrenade flash = (FlashGrenade)Item.Create(ItemType.GrenadeFlash);
+            FlashGrenade flash = (FlashGrenade)FlashGrenade.Create(ItemType.GrenadeFlash);
             flash.FuseTime = 5;
             flash.SpawnActive(ev.Player.Position);
 
