@@ -142,6 +142,8 @@ public sealed class Config : IConfig
                         { new( "Jackpot", true), 2 },
                         { new( "SPEEED", true, "SPEEED", false), 4 },
                         { new( "Exposed", true, "Exposed", false), 2 },
+                        { new( "Lootbox", true, "Lootbox", false), 2},
+                        { new( "SpreadTheLove", true), 3 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 4 },
@@ -156,6 +158,8 @@ public sealed class Config : IConfig
                         { new( "MinHP", false, "MinHP", false), 1 },
                         { new( "AutoNuke", false), 1 },
                         { new( "Timeout", false), 1 },
+                        { new( "InsultToInjury", false, "InsultToInjury", false), 2 },
+                        
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 5 },
@@ -271,6 +275,14 @@ public sealed class Config : IConfig
                             "DisappearingAct",
                             [true]
                         },
+                        {
+                            "Lootbox",
+                            [ItemType.SCP500, ItemType.Lantern, ItemType.KeycardFacilityManager, ItemType.GunE11SR, ItemType.GunA7]
+                        },
+                        {
+                            "InsultToInjury",
+                            [10]
+                        },
                     },
                     ExtraSettingsAndWeight =
                     {
@@ -327,6 +339,8 @@ public sealed class Config : IConfig
                         { new( "Jackpot", true), 1 },
                         { new( "SPEEED", true, "SPEEED", false), 3 },
                         { new( "Exposed", true, "Exposed", false), 1 },
+                        { new( "Lootbox", true, "Lootbox", false), 1 },
+                        { new( "SpreadTheLove", true), 2 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 5 },
@@ -341,6 +355,7 @@ public sealed class Config : IConfig
                         { new( "MinHP", false, "MinHP", false), 1 },
                         { new( "AutoNuke", false), 1 },
                         { new( "Timeout", false), 1 },
+                        { new( "InsultToInjury", false, "InsultToInjury", false), 3 },
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 5 },
@@ -446,7 +461,20 @@ public sealed class Config : IConfig
                         {
                             "GiveXP",
                             [100]
-                        }
+
+                        },
+                        {
+                            "DisappearingAct",
+                            [false]
+                        },
+                        {
+                            "Lootbox",
+                            [ItemType.Adrenaline, ItemType.Flashlight, ItemType.KeycardMTFOperative, ItemType.GunFSP9, ItemType.GunA7]
+                        },
+                        {
+                            "InsultToInjury",
+                            [10]
+                        },
                     },
                     ExtraSettingsAndWeight =
                     {

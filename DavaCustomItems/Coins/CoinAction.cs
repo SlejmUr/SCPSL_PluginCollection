@@ -10,9 +10,11 @@ using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups.Projectiles;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
+using InventorySystem.Items.Coin;
 using InventorySystem.Items.Usables.Scp330;
 using MEC;
 using PlayerRoles;
+using PluginAPI.Events;
 using UnityEngine;
 
 namespace DavaCustomItems.Coins;
@@ -34,7 +36,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("GiveItem", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             ItemType itemType = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), ItemType.None);
             var citem = Item.Create(itemType);
             citem.CreatePickup(player.Position);
@@ -45,7 +50,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("GivePositiveEffect", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             EffectConfig effect = ObjectConvertManager.ParseToEffectConfig(extraSettings.RandomItem(), new());
             player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration, true);
             player.ShowHint($"You were given {effect.EffectType} Temporarily", 3);
@@ -54,7 +62,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("GiveNegativeEffect", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }   
             EffectConfig effect = ObjectConvertManager.ParseToEffectConfig(extraSettings.RandomItem(), new());
             player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration, true);
             player.ShowHint($"You were given {effect.EffectType} Temporarily ", 3);
@@ -63,7 +74,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("GiveMixedEffect", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             EffectConfig effect = ObjectConvertManager.ParseToEffectConfig(extraSettings.RandomItem(), new());
             player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration, true);
             player.ShowHint($"You were given {effect.EffectType} Temporarily", 3);
@@ -72,7 +86,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("MoreHealth", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             int result = ObjectConvertManager.ParseToInt(extraSettings.RandomItem());
             player.Health += result;
             player.ShowHint("You got some health!", 5);
@@ -81,7 +98,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("LoseHealth", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             int item = ObjectConvertManager.ParseToInt(extraSettings.RandomItem());
             player.Health -= item;
             player.ShowHint("You lost some health!", 5);
@@ -96,7 +116,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("MedicalKit", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             foreach (var item in extraSettings)
             {
                 ItemType itemType = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), ItemType.None);
@@ -117,7 +140,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             var scp = Player.List.Where(x => x.IsScp && x.Role.Type != RoleTypeId.Scp079);
             if (!scp.Any())
             {
-                player.ShowHint("Would be teleported to SCP!", 5);
+                player.ShowHint("No SCP to Teleport to... Lucky...", 5);
                 return;
             }
             player.Teleport(scp.GetRandomValue());
@@ -134,7 +157,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             var scp = Player.List.Where(x => x.IsAlive && !x.IsScp);
             if (!scp.Any())
             {
-                player.ShowHint("Would be teleported to random user!", 5);
+                player.ShowHint("No person to Teleport to... Lucky...", 5);
                 return;
             }
             player.Teleport(scp.GetRandomValue());
@@ -145,7 +168,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("Blackout", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             Map.TurnOffAllLights(ObjectConvertManager.ParseToInt(extraSettings[0])); 
             player.ShowHint("You cut the lights out", 5);
         }));
@@ -153,7 +179,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("RandomKeycard", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             ItemType itemType = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), ItemType.None);
             var citem = Item.Create(itemType);
             citem.CreatePickup(player.Position);
@@ -163,7 +192,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("RandomWeapon", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             ItemType itemType = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), ItemType.None);
             var citem = Item.Create(itemType);
             citem.CreatePickup(player.Position);
@@ -204,7 +236,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("GiveXP", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             int xp = ObjectConvertManager.ParseToInt(extraSettings[0]);
             Server.ExecuteCommand($"xp give {xp} {player.Id}", ServerConsole.Scs);
             player.ShowHint($"You Got {xp} XP from the Coin!", 5);
@@ -264,7 +299,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("SweetTooth", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             CandyKindID candy = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), CandyKindID.None);
             player.ShowHint("You Got some Sweet Candy!", 3);
             player.TryAddCandy(candy);
@@ -273,7 +311,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("ThrowableSpawn", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             ProjectileType randomItem = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), ProjectileType.None);
             Projectile.CreateAndSpawn(randomItem, player.Position, player.Rotation, true, player);
             player.ShowHint($"You got hit with a(n) {randomItem}!", 3);
@@ -284,7 +325,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             uint normal_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id;
             uint rare_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Rare).Id;
             if (BaseCustomCoin.TryGet(player, out CustomItem customItem))
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             if (customItem.Id == normal_id)
             {
                 //if the player has normal coin
@@ -306,6 +350,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             else
             {
                 // we return if neither!
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
             }
 
@@ -322,7 +367,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("MaxHP", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             int item = ObjectConvertManager.ParseToInt(extraSettings.RandomItem());
             player.MaxHealth += item;
             player.ShowHint("You suddenly feel stronger, your Max HP increased!", 5);
@@ -332,7 +380,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("MinHP", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             int item = ObjectConvertManager.ParseToInt(extraSettings.RandomItem());
             player.MaxHealth -= item;
             player.ShowHint("You suddenly feel weaker, your Max HP decreased!", 5);
@@ -356,6 +407,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             }
             else
             {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
             }
 
@@ -441,7 +493,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("SideSwapper", (player, config, extraSettings) => //not implement yet
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             int duration = ObjectConvertManager.ParseToInt(extraSettings.RandomItem());
             var pos = player.Position;
             RoleTypeId originalRole = player.Role.Type;
@@ -476,11 +531,97 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 player.ShowHint("You have reverted back to your original class!", 5);
             });
         }));
-        
-        //Rare Coin Actions ONLY
 
+        Actions.Add(new CoinAction("Lootbox", (player, config, extraSettings) =>
+        {
+            // drop all their items
+            player.Handcuff();
+            player.RemoveHandcuffs();
 
-        // Legendary Coin Actions ONLY
+            int itemCount = 5; // Number of random items to drop
+            for (int i = 0; i < itemCount; i++)
+            {
+                ItemType itemType = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), ItemType.None);
+                var citem = Item.Create(itemType);
+                citem.CreatePickup(player.Position);
+            }
+            player.ShowHint("You have become the micro transation", 5);
+        }));
+
+        Actions.Add(new CoinAction("InsultToInjury", (player, config, extraSettings) =>
+        {
+            var randomPlayer = Player.List.Where(p => p != player).GetRandomValue();
+            string name = randomPlayer.Nickname;
+            if (name == null) 
+            {
+                name = "Nobody??"; 
+            }
+            if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please Report this Error To a Developer", 5);
+                return;
+            }
+            
+
+            int damage = ObjectConvertManager.ParseToInt(extraSettings.RandomItem());
+
+            if (randomPlayer.IsScp)
+                damage *= 5;
+
+            player.Hurt(damage);
+
+            string[] insults = new string[]
+            {
+            $"{name} thinks you smell but doesn’t want to tell you",
+            $"{name} said some terrible things about you…",
+            $"haha, oh sorry, {name} just told a really funny joke about you",
+            $"{name} wanted you to feel pain…",
+            $"“Yeah I think {player.Nickname} is dumb” - {name}"
+            };
+
+            string insult = insults[RNGManager.RNG.Next(insults.Length)];
+            player.ShowHint($"Coin: {insult} ... oof", 5);
+        }));
+
+        Actions.Add(new CoinAction("SpreadTheLove", (player, config, extraSettings) =>
+        {
+            var randomPlayer = Player.List.Where(p => p.IsAlive && p != player).GetRandomValue();
+            if (randomPlayer == null)
+            {
+                player.ShowHint("There is no one alive to spread the love to!", 5);
+                return;
+            }
+            var normal = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id);
+            var rare = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Rare).Id);
+            var serial = player.CurrentItem.Serial;
+            Item coinItem = null;
+
+            if (normal.TrackedSerials.Contains(serial))
+            {
+                coinItem = Item.Create(normal.Type);
+                normal.Give(randomPlayer, coinItem);
+            }
+            else if (rare.TrackedSerials.Contains(serial))
+            {
+                coinItem = Item.Create(rare.Type);
+                rare.Give(randomPlayer, coinItem);
+            }
+            else
+            {
+                player.ShowHint("Please report this error To a developer", 5);
+                return;
+            }
+
+            if (coinItem != null)
+            {
+                randomPlayer.CurrentItem = coinItem;
+            }
+
+            player.ShowHint("Spread the gambling love like it’s a disease!", 5);
+            randomPlayer.ShowHint("You were given a coin by another like minded gambler!", 5);
+        }));
+
+        // Legendary Coin Actions Below
 
         Actions.Add(new CoinAction("ShufflePlayers", (player, config, extraSettings) => 
         {
@@ -873,7 +1014,10 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("BlessingsAbound", (player, config, extraSettings) =>
         {
             if (extraSettings.IsEmpty())
+            {
+                player.ShowHint("Please report this error To a developer", 5);
                 return;
+            }
             Map.Broadcast(5, $"{player.Nickname} has flipped a <color=orange>Legendary</color> Coin and Blessed Everyone");
             player.ShowHint("The coin blesses everyone with a positive effect", 5);
 
