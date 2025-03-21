@@ -2,7 +2,7 @@
 
 namespace DavaCustomItems.Configs;
 
-public class LightConfig
+public sealed class LightConfig
 {
     public bool ShouldFollowPlayer { get; set; }
     public bool ShouldFollowPickup { get; set; }

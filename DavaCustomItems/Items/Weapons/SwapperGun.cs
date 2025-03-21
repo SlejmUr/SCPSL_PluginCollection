@@ -13,7 +13,7 @@ namespace DavaCustomItems.Items.Weapons;
 [CustomItem(ItemType.GunCOM15)]
 public class SwapperGun : CustomWeapon
 {
-    public override uint Id { get; set; } = 9000;
+    public override uint Id { get; set; } = (uint)CustomItemsEnum.SwapperGun;
     public override string Name { get; set; } = "Swapper Gun";
     public override string Description { get; set; } = "Swapping to the other player who shot the gun. (The gun will destroyed)";
     public override float Weight { get; set; } = 1.5f;

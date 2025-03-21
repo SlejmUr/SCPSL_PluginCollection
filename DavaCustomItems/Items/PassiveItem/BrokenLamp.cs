@@ -5,14 +5,13 @@ using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using MEC;
-using System.Collections.Generic;
 
 namespace DavaCustomItems.Items.PassiveItem;
 
 [CustomItem(ItemType.Lantern)]
 public class BrokenLamp : CustomItem
 {
-    public override uint Id { get; set; } = 701;
+    public override uint Id { get; set; } = (uint)CustomItemsEnum.BrokenLamp;
     public override string Name { get; set; } = "Broken Lamp";
     public override string Description { get; set; } = "A lamp with a funky Bulb";
     public override float Weight { get; set; }

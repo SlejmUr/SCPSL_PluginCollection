@@ -68,7 +68,7 @@ public abstract class BaseLightItem : CustomItem
 
     public override void OnOwnerDying(OwnerDyingEventArgs ev)
     {
-        LightManager.StopFollow(ev.Player);
+        LightFollowManager.StopFollow(ev.Player);
     }
 
     private void DroppedItem(DroppedItemEventArgs ev)
@@ -79,7 +79,7 @@ public abstract class BaseLightItem : CustomItem
             return;
         Timing.CallDelayed(0.2f, () =>
         {
-            LightManager.StopFollowAndStartFollow(ev.Player, ev.Pickup);
+            LightFollowManager.StopFollowAndStartFollow(ev.Player, ev.Pickup);
         });
     }
 
@@ -100,7 +100,7 @@ public abstract class BaseLightItem : CustomItem
         // Check if the to item is tracked, and has a serial, plus also should folllow our player.
         if (TrackedSerials.Contains(to_item.SerialNumber) && LightConfig.ShouldFollowPlayer && LightSerialManager.HasSerial(to_item.SerialNumber))
         {
-            LightManager.StartFollow(LightSerialManager.GetLightId(to_item.SerialNumber), Player.Get(user));
+            LightFollowManager.StartFollow(LightSerialManager.GetLightId(to_item.SerialNumber), Player.Get(user));
         }
     }
 

@@ -9,7 +9,7 @@ namespace DavaCustomItems.Items.Weapons;
 public class NerfGun : CustomWeapon
 {
     public override float Damage { get; set; } = 1;
-    public override uint Id { get; set; } = 600;
+    public override uint Id { get; set; } = (uint)CustomItemsEnum.NerfGun;
     public override string Name { get; set; } = "Nerf Gun";
     public override string Description { get; set; } // Only Does 1 Damage
     public override float Weight { get; set; } = 1.5f;

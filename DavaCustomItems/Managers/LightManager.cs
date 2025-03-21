@@ -1,20 +1,17 @@
-﻿using MEC;
-using UnityEngine;
+﻿using UnityEngine;
 using DavaCustomItems.Configs;
 using DavaCustomItems.Components;
 using TLight = Exiled.API.Features.Toys.Light;
-using Exiled.API.Interfaces;
 using Exiled.API.Features;
 
 namespace DavaCustomItems.Managers;
 
 public static class LightManager
 {
-    static Dictionary<int, TLight> Lights = [];
-    static Dictionary<IPosition, KeyValuePair<CoroutineHandle, int>> PositionToFollower = [];
-
     public static Action<int> LightRemoved;
     public static Action<int, LightConfig> LightAdded;
+
+    static Dictionary<int, TLight> Lights = [];
 
     public static IReadOnlyList<int> GetLightIds()
     {
@@ -25,33 +22,16 @@ public static class LightManager
     {
         if (!lightConfig.ShouldMakeLight)
             return -1;
-        var ligth = TLight.Create(Position, Vector3.zero, lightConfig.Scale, shouldSpawn, lightConfig.Color);
-        ligth.Intensity = lightConfig.Intensity;
-        ligth.Range = lightConfig.Range;
-        ligth.SpotAngle = lightConfig.SpotAngle;
-        ligth.InnerSpotAngle = lightConfig.InnerSpotAngle;
-        ligth.ShadowStrength = lightConfig.ShadowStrength;
-        ligth.LightShape = lightConfig.LightShape;
-        ligth.LightType = lightConfig.LightType;
-        ligth.ShadowType = lightConfig.ShadowType;
-        ligth.MovementSmoothing = lightConfig.MovementSmoothing;
+        var light = TLight.Create(Position, Vector3.zero, lightConfig.Scale, shouldSpawn, lightConfig.Color);
         int id = TryGetNewID(RNGManager.RNG.Next());
-        var lcomponent = ligth.GameObject.AddComponent<LightConfigComponent>();
+        var lcomponent = light.GameObject.AddComponent<LightConfigComponent>();
         lcomponent.LightConfig = lightConfig;
         lcomponent.LightId = id;
         lcomponent.IsSpawned = shouldSpawn;
-        Lights.Add(id, ligth);
+        ApplyInternalSettings_TLight(light);
+        Lights.Add(id, light);
         LightAdded?.Invoke(id, lightConfig);
         return id;
-    }
-
-    private static int TryGetNewID(int id)
-    {
-        if (Lights.ContainsKey(id))
-            id = RNGManager.RNG.Next();
-        else
-            return id;
-        return TryGetNewID(id);
     }
 
     public static void ChangeInternalSettings(int LightId, LightConfig lightConfig)
@@ -59,24 +39,14 @@ public static class LightManager
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
         light.GameObject.GetComponent<LightConfigComponent>().LightConfig = lightConfig;
+        ApplyInternalSettings_TLight(light);
     }
 
     public static void ApplyInternalSettings(int LightId)
     {
         if (!Lights.TryGetValue(LightId, out TLight light))
             return;
-        var config = light.GameObject.GetComponent<LightConfigComponent>().LightConfig;
-        light.Intensity = config.Intensity;
-        light.Range = config.Range;
-        light.SpotAngle = config.SpotAngle;
-        light.InnerSpotAngle = config.InnerSpotAngle;
-        light.ShadowStrength = config.ShadowStrength;
-        light.LightShape = config.LightShape;
-        light.LightType = config.LightType;
-        light.ShadowType = config.ShadowType;
-        light.MovementSmoothing = config.MovementSmoothing;
-        light.Scale = config.Scale;
-        light.Color = config.Color;
+        ApplyInternalSettings_TLight(light);
     }
 
     public static bool IsLightExists(int LightId)
@@ -85,7 +55,6 @@ public static class LightManager
             return false;
         return Lights.ContainsKey(LightId);
     }
-
 
     public static void RemoveLight(int LightId)
     {
@@ -130,7 +99,7 @@ public static class LightManager
         }
         light.Spawn();
         light.GameObject.GetComponent<LightConfigComponent>().IsSpawned = true;
-        ApplyInternalSettings(LightId);
+        ApplyInternalSettings_TLight(light);
     }
 
     public static bool IsLightShown(int LightId)
@@ -161,55 +130,6 @@ public static class LightManager
         return light.GameObject.GetComponent<LightConfigComponent>().LightConfig;
     }
 
-    public static int MakeLightAndFollow(IPosition position, LightConfig lightConfig)
-    {
-        int id = MakeLight(position.Position, lightConfig);
-        if (id == -1)
-            return id;
-        StartFollow(id, position);
-        return id;
-    }
-
-    public static void StartFollow(int LightId, IPosition position)
-    {
-        if (LightId == -1)
-            return;
-        if (!IsLightShown(LightId))
-            ShowLight(LightId);
-        StopFollow(position, false);
-        if (Lights.ContainsKey(LightId))
-            PositionToFollower.Add(position, new(Timing.RunCoroutine(LightMove(LightId, position)), LightId));
-    }
-    
-
-    public static void StopFollow(IPosition position, bool shouldHide = true)
-    {
-        if (!PositionToFollower.TryGetValue(position, out var coroutineHandle))
-            return;
-        PositionToFollower.Remove(position);
-        Timing.KillCoroutines(coroutineHandle.Key);
-        if (shouldHide)
-            HideLight(coroutineHandle.Value);
-    }
-
-    public static void StopFollowAndStartFollow(IPosition oldFollower, IPosition newFollower)
-    {
-        if (!PositionToFollower.TryGetValue(oldFollower, out var follower))
-            return;
-        PositionToFollower.Remove(oldFollower);
-        Timing.KillCoroutines(follower.Key);
-        StartFollow(follower.Value, newFollower);
-    }
-
-    public static void StopFollowAndStartNew(IPosition oldFollower, IPosition newFollower, ref int LightId, LightConfig lightConfig, bool makeNewIfNotExists = true)
-    {
-        StopFollow(oldFollower);
-        if (!Lights.ContainsKey(LightId) && makeNewIfNotExists)
-            LightId = MakeLight(newFollower.Position, lightConfig);
-        if (Lights.ContainsKey(LightId))
-            StartFollow(LightId, newFollower);
-    }
-
     public static void SetLightPos(int LightId, Vector3 pos)
     {
         if (LightId == -1)
@@ -229,14 +149,30 @@ public static class LightManager
         light.GameObject.GetComponent<LightConfigComponent>().LightConfig.Color = color;
     }
 
-    private static IEnumerator<float> LightMove(int LightId, IPosition position)
+    #region Private
+    private static int TryGetNewID(int id)
     {
-        yield return 0;
-        while (Lights.ContainsKey(LightId) && PositionToFollower.ContainsKey(position))
-        {
-            Lights[LightId].Position = position.Position;
-            yield return 0;
-        }
-        yield break;
+        if (Lights.ContainsKey(id))
+            id = RNGManager.RNG.Next();
+        else
+            return id;
+        return TryGetNewID(id);
     }
+
+    private static void ApplyInternalSettings_TLight(TLight light)
+    {
+        var config = light.GameObject.GetComponent<LightConfigComponent>().LightConfig;
+        light.Intensity = config.Intensity;
+        light.Range = config.Range;
+        light.SpotAngle = config.SpotAngle;
+        light.InnerSpotAngle = config.InnerSpotAngle;
+        light.ShadowStrength = config.ShadowStrength;
+        light.LightShape = config.LightShape;
+        light.LightType = config.LightType;
+        light.ShadowType = config.ShadowType;
+        light.MovementSmoothing = config.MovementSmoothing;
+        light.Scale = config.Scale;
+        light.Color = config.Color;
+    }
+    #endregion
 }

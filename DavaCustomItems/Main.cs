@@ -32,7 +32,7 @@ public sealed class Main : Plugin<Config>
                 continue;
             BaseCustomCoin coin = new()
             {
-                Id = item.Value.Id,
+                Id = (uint)CustomItemsEnum.None + (uint)item.Key,
                 Description = item.Value.Description,
                 Name = item.Value.Name,
                 Rarity = item.Key,

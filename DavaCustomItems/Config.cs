@@ -37,25 +37,6 @@ public sealed class Config : IConfig
                 Intensity = 7,
                 Range = 3,
             }
-        },
-        {
-            "Test05Light",
-            new()
-            {
-                ShouldFollowPickup = true,
-                ShouldFollowPlayer = true,
-                ShouldMakeLight = true,
-                ShouldShowLightOnSpawn = true,
-                Color = UnityEngine.Color.red,
-                Intensity = 10,
-                Range = 5,
-                RainbowConfig = new()
-                {
-                    RainbowType = RainbowLightType.Rave,
-                    ByteAlpha = 10,
-                    Speed = 100
-                }
-            }
         }
     };
 
@@ -65,7 +46,6 @@ public sealed class Config : IConfig
             CoinRarityType.Legendary,
             new()
             {
-                Id = 500,
                 Name = "Legendary Coin",
                 Description = "Legendary Coin now give you much better loot and chance and stuff",
                 CoinPickUpHint = "You picked up the <color=orange>LEGENDARY</color> Coin",
@@ -119,7 +99,6 @@ public sealed class Config : IConfig
             CoinRarityType.Rare,
             new()
             {
-                Id = 501,
                 Name = "Rare Coin",
                 Description = "Rare coin!",
                 CoinPickUpHint = "You picked up the <color=blue>RARE</color> Coin",
@@ -316,7 +295,6 @@ public sealed class Config : IConfig
             CoinRarityType.Normal,
             new()
             {
-                Id = 502,
                 Name = "Normal Coin",
                 Description = "The Basic Coin",
                 CoinPickUpHint = "You picked up a Coin",

@@ -1,6 +1,5 @@
 ﻿using DavaCustomItems.Configs;
 using UnityEngine;
-using static PlayerArms;
 
 namespace DavaCustomItems.Commands;
 

@@ -12,7 +12,7 @@ namespace DavaCustomItems.Items.PassiveItem;
 [CustomItem(ItemType.ArmorCombat)]
 public class NoGogglesArmor : CustomArmor
 {
-    public override uint Id { get; set; } = 700;
+    public override uint Id { get; set; } = (uint)CustomItemsEnum.NoGogglesArmor;
     public override string Name { get; set; } = "No Goggle Armor";
     public override string Description { get; set; } = "This Armor makes the equipped player not seen in Goggles";
     public override float Weight { get; set; }

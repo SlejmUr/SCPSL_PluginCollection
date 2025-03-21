@@ -14,7 +14,7 @@ namespace DavaCustomItems.Items.Weapons;
 [CustomItem(ItemType.MicroHID)]
 public class CustomMicro : BaseLightItem
 {
-    public override uint Id { get; set; } = 666;
+    public override uint Id { get; set; } = (uint)CustomItemsEnum.CustomMicro;
     public override string Name { get; set; } = "Custom Micro";
     public override string Description { get; set; }
     public override float Weight { get; set; } = 22;
@@ -84,7 +84,7 @@ public class CustomMicro : BaseLightItem
         int lightId = -1;
         if (!LightSerialManager.HasSerial(serial))
         {
-            lightId = LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
+            lightId = LightFollowManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
             LightSerialManager.AddLight(serial, lightId);
         }
         else
@@ -93,7 +93,7 @@ public class CustomMicro : BaseLightItem
         }
         if (!LightManager.IsLightExists(lightId))
         {
-            lightId = LightManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
+            lightId = LightFollowManager.MakeLightAndFollow(Item.Get(serial).Owner, LightConfig);
             LightSerialManager.AddLight(serial, lightId);
         }
         LightManager.SetLightColor(lightId, PhaseToColor[phase]);

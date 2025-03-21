@@ -1,7 +1,5 @@
 ﻿using DavaCustomItems.Configs;
 using DavaCustomItems.Items;
-using DavaCustomItems.Items.PassiveItem;
-using DavaCustomItems.Items.Weapons;
 using DavaCustomItems.Managers;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
@@ -10,11 +8,9 @@ using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups.Projectiles;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
-using InventorySystem.Items.Coin;
 using InventorySystem.Items.Usables.Scp330;
 using MEC;
 using PlayerRoles;
-using PluginAPI.Events;
 using UnityEngine;
 
 namespace DavaCustomItems.Coins;
@@ -322,28 +318,25 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
         Actions.Add(new CoinAction("NeverQuit", (player, config, extraSettings) =>
         {
-            uint normal_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id;
-            uint rare_id = Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Rare).Id;
-            if (BaseCustomCoin.TryGet(player, out CustomItem customItem))
-            {
-                player.ShowHint("Please report this error To a developer", 5);
-                return;
-            }
-            if (customItem.Id == normal_id)
+            var normal = CustomItem.Get((uint)CustomItemsEnum.NormalCoin);
+            var rare = CustomItem.Get((uint)CustomItemsEnum.RareCoin);
+            var legendary = CustomItem.Get((uint)CustomItemsEnum.LegendaryCoin);
+            var serial = player.CurrentItem.Serial;
+            if (normal.TrackedSerials.Contains(serial))
             {
                 //if the player has normal coin
                 for (int i = 0; i < 2; i++)
                 {
-                    var coin = BaseCustomCoin.Get(normal_id);
+                    var coin = CustomItem.Get((uint)CustomItemsEnum.NormalCoin);
                     coin.Give(player);
                 }
             }
-            else if (customItem.Id == rare_id)
+            else if (rare.TrackedSerials.Contains(serial))
             {
                 //if the player has rare coin
                 for (int i = 0; i < 2; i++)
                 {
-                    var coin = BaseCustomCoin.Get(rare_id);
+                    var coin = CustomItem.Get((uint)CustomItemsEnum.RareCoin);
                     coin.Give(player);
                 }
             }
@@ -391,9 +384,9 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
         Actions.Add(new CoinAction("Jackpot", (player, config, extraSettings) =>
         {
-            var normal = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id);
-            var rare = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Rare).Id);
-            var legendary = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Legendary).Id);
+            var normal = CustomItem.Get((uint)CustomItemsEnum.NormalCoin);
+            var rare = CustomItem.Get((uint)CustomItemsEnum.RareCoin);
+            var legendary = CustomItem.Get((uint)CustomItemsEnum.LegendaryCoin);
             var serial = player.CurrentItem.Serial;
             if (normal.TrackedSerials.Contains(serial))
             {
@@ -466,15 +459,19 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
             player.EnableEffect(EffectType.MovementBoost, 60, 5);
 
-            //create rainbow light source that attaches and follows player
-            // when the effect ends remove the light source
-            // - RainbowLightManager.Create(player);
+            int oldId = LightFollowManager.StopFollow(player); // remove if has any follower
+            // add Breathing light to user
+            int id = LightManager.MakeLight(player.Position, SetLightConfigs.Breathing_LightConfig);
 
-            // Currntly you need to create a light then add rainbow things to it
-            // but i plan to expand and make it work with commands and stuff
-            // 
-            //ok so for time being we can leave this one out and do it later
-            // +1
+            Timing.CallDelayed(5.5f, () => 
+            {
+                LightFollowManager.StopFollow(player);
+                LightManager.RemoveLight(id);
+                if (oldId != -1)
+                {
+                    LightFollowManager.StartFollow(oldId, player);
+                }
+            });
         }));
 
         Actions.Add(new CoinAction("Timeout", (player, config, extraSettings) => //not implement yet
@@ -551,17 +548,12 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("InsultToInjury", (player, config, extraSettings) =>
         {
             var randomPlayer = Player.List.Where(p => p != player).GetRandomValue();
-            string name = randomPlayer.Nickname;
-            if (name == null) 
-            {
-                name = "Nobody??"; 
-            }
+            string name = randomPlayer.Nickname ?? "Nobody??";
             if (extraSettings.IsEmpty())
             {
                 player.ShowHint("Please Report this Error To a Developer", 5);
                 return;
             }
-            
 
             int damage = ObjectConvertManager.ParseToInt(extraSettings.RandomItem());
 
@@ -570,14 +562,15 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
             player.Hurt(damage);
 
-            string[] insults = new string[]
-            {
-            $"{name} thinks you smell but doesn’t want to tell you",
-            $"{name} said some terrible things about you…",
-            $"haha, oh sorry, {name} just told a really funny joke about you",
-            $"{name} wanted you to feel pain…",
-            $"“Yeah I think {player.Nickname} is dumb” - {name}"
-            };
+            string[] insults =
+            [
+                $"{name} thinks you smell but doesn’t want to tell you",
+                $"{name} said some terrible things about you…",
+                $"haha, oh sorry, {name} just told a really funny joke about you",
+                $"{name} wanted you to feel pain…",
+                $"“Yeah I think {player.Nickname} is dumb” - {name}",
+                $"I think you should uninstall - {name}",
+            ];
 
             string insult = insults[RNGManager.RNG.Next(insults.Length)];
             player.ShowHint($"Coin: {insult} ... oof", 5);
@@ -591,8 +584,8 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 player.ShowHint("There is no one alive to spread the love to!", 5);
                 return;
             }
-            var normal = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id);
-            var rare = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Rare).Id);
+            var normal = CustomItem.Get((uint)CustomItemsEnum.NormalCoin);
+            var rare = CustomItem.Get((uint)CustomItemsEnum.RareCoin);
             var serial = player.CurrentItem.Serial;
             Item coinItem = null;
 
@@ -654,7 +647,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
             foreach (var p in Player.List.Where(p=> p.IsAlive))
             {
-                var coin = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id);
+                var coin = CustomItem.Get((uint)CustomItemsEnum.NormalCoin);
                 var item = Item.Create(coin.Type);
                 coin.Give(p, item);
                 p.CurrentItem = item;
@@ -662,7 +655,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
             for (int i = 0; i < 3; i++)
             {
-                var coin = BaseCustomCoin.Get(Main.Instance.Config.CoinRarityConfigs.Get(CoinRarityType.Normal).Id);
+                var coin = CustomItem.Get((uint)CustomItemsEnum.NormalCoin);
                 coin.Give(player);
             }
         }));
@@ -750,7 +743,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 p.Scale = new Vector3(0.5f, 0.5f, 0.5f);
 
                 p.Position = player.Position;
-                var jailbird = new Jailbird();
+                Jailbird jailbird = new();
                 jailbird.ChargeDamage /= 2;
                 jailbird.MeleeDamage /= 2;
                 jailbird.TotalCharges = -100_000;
@@ -819,19 +812,19 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             switch (randomNumber)
             {
                 case 1:
-                    var Nerfgun = NerfGun.Get(600);
+                    var Nerfgun = CustomItem.Get((uint)CustomItemsEnum.NerfGun);
                     Nerfgun.Give(player);
                     break;
                 case 2:
-                    var Swappergun = SwapperGun.Get(9000);
+                    var Swappergun = CustomItem.Get((uint)CustomItemsEnum.SwapperGun);
                     Swappergun.Give(player);
                     break;
                 case 3:
-                    var NoGogglesVest = NoGogglesArmor.Get(700);
+                    var NoGogglesVest = CustomItem.Get((uint)CustomItemsEnum.NoGogglesArmor);
                     NoGogglesVest.Give(player);
                     break;
                 case 4:
-                    var BrokenLamps = BrokenLamp.Get(701);
+                    var BrokenLamps = CustomItem.Get((uint)CustomItemsEnum.BrokenLamp);
                     BrokenLamps.Give(player);
                     break;
                 default:
@@ -994,7 +987,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             }
             for (int i = 0; i < 2; i++) // replace 2 with variable later
             {
-                FlashGrenade flash = (FlashGrenade)FlashGrenade.Create(ItemType.GrenadeFlash);
+                FlashGrenade flash = (FlashGrenade)Item.Create(ItemType.GrenadeFlash);
                 
                 flash.SpawnActive(player.Position);
                 {

@@ -18,11 +18,14 @@ public static class RainbowLightManager
     public static void Init()
     {
         LightManager.LightAdded += LMLightAdded;
+        LightManager.LightRemoved += LMLightRemoved; 
     }
 
     public static void UnInit()
     {
         LightManager.LightAdded -= LMLightAdded;
+        LightManager.LightRemoved += LMLightRemoved;
+
     }
 
     private static void LMLightAdded(int LightId, LightConfig config)
@@ -30,6 +33,11 @@ public static class RainbowLightManager
         if (config.RainbowConfig.RainbowType == RainbowLightType.None)
             return;
         MakeRainbow(LightId, config.RainbowConfig);
+    }
+
+    private static void LMLightRemoved(int obj)
+    {
+        StopRainbow(obj);
     }
 
     public static void MakeRainbow(int LightId, RainbowLightConfig rainbowConfig)
