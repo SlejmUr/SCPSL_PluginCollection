@@ -2,7 +2,6 @@
 using Exiled.Events.EventArgs.Player;
 using MEC;
 using SimpleCustomRoles.RoleInfo;
-using System.Linq;
 
 namespace SimpleCustomRoles.Handler;
 

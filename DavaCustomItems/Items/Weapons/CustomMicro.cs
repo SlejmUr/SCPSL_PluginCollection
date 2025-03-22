@@ -69,7 +69,7 @@ public class CustomMicro : BaseLightItem
         }
         Timing.CallDelayed(1, () =>
         {
-            var micro = Get(666).Spawn(pos);
+            var micro = Get((uint)CustomItemsEnum.CustomMicro).Spawn(pos);
             micro.Rotation = rotation;
             micro.Position = pos;
         });
