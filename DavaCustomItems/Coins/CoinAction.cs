@@ -614,6 +614,76 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             randomPlayer.ShowHint("You were given a coin by another like minded gambler!", 5);
         }));
 
+        Actions.Add(new CoinAction("SITREP", (player, config, extraSettings) =>
+        {
+            var scpSubjects = Player.List.Where(p => p.IsScp && p.Role.Type != RoleTypeId.Scp0492).ToList();
+            int scpCount = scpSubjects.Count;
+
+            foreach (var scp in scpSubjects)
+            {
+                scp.ShowHint("Coin has Exposed Your Escape", 5);
+            }
+
+            if (scpCount == 0)
+            {
+                Cassie.Message("NO SCP SUBJECTS REMAIN", false, false);
+            }
+            else
+            {
+                string scpList = string.Join(", ", scpSubjects.Select(p => p.Role.Type.ToString()));
+                Cassie.Message($"{scpCount} SCP SUBJECTS REMAIN, {scpList}", false, false);
+            }
+
+            player.ShowHint("I hope this helps! - the Coin", 5);
+        }));
+
+        /*Actions.Add(new CoinAction("QuestGiver", (player, config, extraSettings) =>
+        {
+              var rooms = Room.List.Where(room => room.Zone != ZoneType.Pocket && room.Zone != ZoneType.Unknown).ToList();
+              var targetRoom = rooms.GetRandomValue();
+
+              player.ShowHint($"Coin Quest: Visit {targetRoom.Name} to be given bountiful rewards!", 5);
+
+              void OnPlayerEnterRoom(whatever to enter room event arg ev)
+              {
+                  if (ev.Player == player && ev.NewRoom == targetRoom)
+                  {
+                      player.ShowHint("You completed the Quest!!", 5);
+
+                      // Grant two random positive effects
+                      for (int i = 0; i < 2; i++)
+                      {
+                          EffectConfig effect = ObjectConvertManager.ParseToEffectConfig(extraSettings.RandomItem(), new());
+                          player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration, true);
+                          player.ShowHint($"You were given {effect.EffectType} for completing the quest!", 5);
+                      }
+
+                      Exiled.Events.Handlers.Player. -= OnPlayerEnterRoom;
+                  }
+              }
+
+              Exiled.Events.Handlers.Player. += OnPlayerEnterRoom;
+        })); 
+        */
+
+        Actions.Add(new CoinAction("BecomeScp", (player, config, extraSettings) =>
+        {
+            List<RoleTypeId> scpRoles = new List<RoleTypeId>
+    {
+        RoleTypeId.Scp049,
+        RoleTypeId.Scp0492,
+        RoleTypeId.Scp096,
+        RoleTypeId.Scp106,
+        RoleTypeId.Scp173,
+        RoleTypeId.Scp939
+    };
+
+            RoleTypeId randomScpRole = scpRoles.GetRandomValue();
+            player.Role.Set(randomScpRole, SpawnReason.ForceClass, RoleSpawnFlags.None);
+            player.ShowHint($"You have become {randomScpRole}!", 5);
+        }));
+
+
         // Legendary Coin Actions Below
 
         Actions.Add(new CoinAction("ShufflePlayers", (player, config, extraSettings) => 

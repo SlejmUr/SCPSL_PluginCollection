@@ -123,6 +123,7 @@ public sealed class Config : IConfig
                         { new( "Exposed", true, "Exposed", false), 2 },
                         { new( "Lootbox", true, "Lootbox", false), 2},
                         { new( "SpreadTheLove", true), 3 },
+                        { new( "SITREP", true), 2 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 4 },
@@ -138,6 +139,7 @@ public sealed class Config : IConfig
                         { new( "AutoNuke", false), 1 },
                         { new( "Timeout", false), 1 },
                         { new( "InsultToInjury", false, "InsultToInjury", false), 2 },
+                        { new( "BecomeScp", false), 1 },
                         
 
                         // Mixed
@@ -319,6 +321,7 @@ public sealed class Config : IConfig
                         { new( "Exposed", true, "Exposed", false), 1 },
                         { new( "Lootbox", true, "Lootbox", false), 1 },
                         { new( "SpreadTheLove", true), 2 },
+                        { new( "SITREP", true), 1 },
                         
                         // Bad
                         { new( "ThrowableSpawn", false, "ThrowableSpawn", false), 5 },
@@ -334,6 +337,7 @@ public sealed class Config : IConfig
                         { new( "AutoNuke", false), 1 },
                         { new( "Timeout", false), 1 },
                         { new( "InsultToInjury", false, "InsultToInjury", false), 3 },
+                        { new( "BecomeScp", false), 1 },
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 5 },
