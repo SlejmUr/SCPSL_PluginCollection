@@ -2,7 +2,6 @@
 using InventorySystem.Items.Usables.Scp330;
 using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp079;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace SimpleCustomRoles.RoleInfo;
@@ -26,6 +25,12 @@ public class CustomRoleInfo
 
     [Description("NOTDEAD! Role spawn ammount")]
     public int SpawnAmount { get; set; } = 0;
+
+    [Description("REQUIRED! Minimum player count this role should spawn (-1 means no minimum!)")]
+    public int MinimumPlayerCount { get; set; } = -1;
+
+    [Description("REQUIRED! Maximum player count this role should spawn (-1 means no maximum!)")]
+    public int MaximumPlayerCount { get; set; } = -1;
 
     [Description("Type of the Role. Check CustomRoleTypes.txt")]
     public CustomRoleType RoleType { get; set; } = CustomRoleType.Regular;

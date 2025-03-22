@@ -122,6 +122,8 @@ internal class CreateAndInit_Handler
                     IsSpawning = true;
                     if (item.RoleType == CustomRoleType.SPC_Specific)
                         Main.Instance.SPC_SpecificRoles.Add(item);
+                    if (item.RoleType == CustomRoleType.SPC_Specific)
+                        Main.Instance.InWaveRoles.Add(item);
                     else
                         Main.Instance.RegularRoles.Add(item);
                 }
@@ -137,7 +139,7 @@ internal class CreateAndInit_Handler
         if (Main.Instance.Config.IsPaused)
             return;
 
-        // Round lock for cerain roles.
+        // Round lock for certain roles.
         bool do_lock = false;
         if (!Round.IsLocked)
         {
@@ -147,19 +149,20 @@ internal class CreateAndInit_Handler
 
         foreach (var item in Main.Instance.RegularRoles)
         {
-            if (item.RoleType == CustomRoleType.InWave)
+            if (!RoleSetter.IsShouldSpawn(item))
             {
-                Main.Instance.InWaveRoles.Add(item);
+                if (Main.Instance.Config.Debug)
+                    Log.Info($"Role has been no longer spawn: {item.RoleName} (Reason: Player limited)");
                 continue;
             }
             Player player = null;
             if (item.RoleToReplace == PlayerRoles.RoleTypeId.None && item.ReplaceFromTeam != PlayerRoles.Team.Dead)
             {
-                player = Player.List.Where(x => x.Role.Team == item.ReplaceFromTeam).GetRandomValue();
+                player = Player.List.GetRandomValue(x => x.Role.Team == item.ReplaceFromTeam);
             }
             else
             {
-                player = Player.List.Where(x => x.Role == item.RoleToReplace).GetRandomValue();
+                player = Player.List.GetRandomValue(x => x.Role == item.RoleToReplace);
             }
             if (player == null)
                 continue;

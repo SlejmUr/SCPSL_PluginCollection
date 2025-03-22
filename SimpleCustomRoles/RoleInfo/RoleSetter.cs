@@ -1,8 +1,6 @@
 ﻿using Exiled.API.Extensions;
 using Exiled.API.Features;
 using MEC;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SimpleCustomRoles.RoleInfo;
 
@@ -41,6 +39,20 @@ public class RoleSetter
         UnSetCustomInfoToPlayer(player);
         Timing.CallDelayed(0.5f, ()=> { SetCustomInfoToPlayer(player, customRoleInfo); });
 
+    }
+
+
+    public static bool IsShouldSpawn(CustomRoleInfo roleInfo)
+    {
+        if (roleInfo.MinimumPlayerCount == -1 && roleInfo.MaximumPlayerCount == -1)
+            return true;
+        if (roleInfo.MinimumPlayerCount == -1 && roleInfo.MaximumPlayerCount >= Server.PlayerCount)
+            return true;
+        if (roleInfo.MinimumPlayerCount <= Server.PlayerCount && roleInfo.MaximumPlayerCount >= Server.PlayerCount)
+            return true;
+        if (roleInfo.MinimumPlayerCount <= Server.PlayerCount && roleInfo.MaximumPlayerCount == -1)
+            return true;
+        return false;
     }
 
     static Dictionary<string, string> UserIdToOldCustomInfo = [];
