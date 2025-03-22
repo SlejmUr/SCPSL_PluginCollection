@@ -14,15 +14,9 @@ public class AdrenalinBoost : CustomItem
     public override float Weight { get; set; } = 5;
     public override SpawnProperties SpawnProperties { get; set; } = new()
     { 
-        Limit = 3,
+        Limit = 2,
         LockerSpawnPoints =
         [
-            new LockerSpawnPoint()
-            {
-                Chance = 100,
-                Type = Exiled.API.Enums.LockerType.Adrenaline,
-                UseChamber = true,
-            },
             new LockerSpawnPoint()
             {
                 Chance = 100,

@@ -313,7 +313,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             }
             ProjectileType randomItem = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), ProjectileType.None);
             Projectile.CreateAndSpawn(randomItem, player.Position, player.Rotation, true, player);
-            player.ShowHint($"You got hit with a(n) {randomItem}!", 3);
+            player.ShowHint($"You got hit with a {randomItem}!", 3);
         }));
 
         Actions.Add(new CoinAction("NeverQuit", (player, config, extraSettings) =>
@@ -547,7 +547,12 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
         Actions.Add(new CoinAction("InsultToInjury", (player, config, extraSettings) =>
         {
-            var randomPlayer = Player.List.Where(p => p != player).GetRandomValue();
+            var randomPlayer = Player.List.GetRandomValue(p => p != player);
+            if (randomPlayer == null)
+            {
+                player.ShowHint("You could not insult anyone", 5);
+                return;
+            }
             string name = randomPlayer.Nickname ?? "Nobody??";
             if (extraSettings.IsEmpty())
             {
@@ -573,7 +578,8 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             ];
 
             string insult = insults[RNGManager.RNG.Next(insults.Length)];
-            player.ShowHint($"Coin: {insult} ... oof", 5);
+            randomPlayer.ShowHint($"Coin: {insult} ... oof", 5);
+            player.ShowHint($"You just insulted {name}", 5);
         }));
 
         Actions.Add(new CoinAction("SpreadTheLove", (player, config, extraSettings) =>

@@ -337,7 +337,6 @@ public sealed class Config : IConfig
                         { new( "AutoNuke", false), 1 },
                         { new( "Timeout", false), 1 },
                         { new( "InsultToInjury", false, "InsultToInjury", false), 3 },
-                        { new( "BecomeScp", false), 1 },
 
                         // Mixed
                         { new( "GiveMixedEffect", true, "GiveMixedEffect", false), 5 },
