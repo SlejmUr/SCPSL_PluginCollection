@@ -839,7 +839,11 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
                 {
                     if (ev.Player != p)
                         return;
-                    
+
+                    p.MaxHealth = 100;
+
+                    p.Scale = Vector3.one;
+
                     Timing.CallDelayed(1, () =>
                     {
                         jailbird.Break();
