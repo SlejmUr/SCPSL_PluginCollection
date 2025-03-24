@@ -4,6 +4,7 @@ using Exiled.API.Features.Attributes;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups;
 using Exiled.API.Features.Spawn;
+using Exiled.CustomItems.API.EventArgs;
 using Exiled.CustomItems.API.Features;
 using InventorySystem.Items.MicroHID.Modules;
 using MEC;
@@ -99,4 +100,21 @@ public class CustomMicro : BaseLightItem
         LightManager.SetLightColor(lightId, PhaseToColor[phase]);
     }
 
+    public override void OnUpgrading(UpgradingItemEventArgs ev)
+    {
+        if (ev.KnobSetting == Scp914.Scp914KnobSetting.OneToOne || ev.KnobSetting == Scp914.Scp914KnobSetting.Fine || ev.KnobSetting == Scp914.Scp914KnobSetting.VeryFine)
+        {
+            MicroHid mcro = ev.Item as MicroHid;
+            mcro.Energy = 1;
+        }
+    }
+
+    public override void OnUpgrading(UpgradingEventArgs ev)
+    {
+        if (ev.KnobSetting == Scp914.Scp914KnobSetting.OneToOne || ev.KnobSetting == Scp914.Scp914KnobSetting.Fine || ev.KnobSetting == Scp914.Scp914KnobSetting.VeryFine)
+        {
+            MicroHIDPickup mcro = ev.Pickup as MicroHIDPickup;
+            mcro.Energy = 1;
+        }
+    }
 }
