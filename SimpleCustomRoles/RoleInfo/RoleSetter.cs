@@ -153,7 +153,7 @@ public class RoleSetter
         }
         player.Scale = UnityEngine.Vector3.one;
         //  Scale
-        if (customRoleInfo.Advanced.Scale.ConvertFromV3() != new V3().ConvertFromV3())
+        if (customRoleInfo.Advanced.Scale.ConvertFromV3() != UnityEngine.Vector3.one)
         {
             Timing.CallDelayed(2.5f, () =>
             {

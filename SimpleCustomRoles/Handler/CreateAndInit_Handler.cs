@@ -117,7 +117,13 @@ internal class CreateAndInit_Handler
             {
                 bool IsSpawning = false;
                 var random = RandomGenerator.GetInt16(1, 10000, true);
-                if (random <= item.SpawnChance)
+
+                int chance = item.SpawnChance;
+                if (Main.Instance.Config.UsePlayerPercent)
+                {
+                    chance = (int)(chance * (float)(Server.PlayerCount / Server.MaxPlayerCount));
+                }
+                if (random <= chance)
                 {
                     IsSpawning = true;
                     if (item.RoleType == CustomRoleType.SPC_Specific)
@@ -128,7 +134,7 @@ internal class CreateAndInit_Handler
                         Main.Instance.RegularRoles.Add(item);
                 }
                 if (Main.Instance.Config.Debug)
-                    Log.Info($"Rolled chance: {random}/{item.SpawnChance} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ") + "spawning.");
+                    Log.Info($"Rolled chance: {random}/{chance} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ") + "spawning.");
             }
         }
         Log.Info("Loading custom roles finished!");
