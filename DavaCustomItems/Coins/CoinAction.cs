@@ -11,6 +11,7 @@ using Exiled.Events.EventArgs.Player;
 using InventorySystem.Items.Usables.Scp330;
 using MEC;
 using PlayerRoles;
+using System.Linq;
 using UnityEngine;
 
 namespace DavaCustomItems.Coins;
@@ -627,17 +628,17 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
             foreach (var scp in scpSubjects)
             {
-                scp.ShowHint("Coin has Exposed Your Escape", 5);
+                scp.ShowHint("Coin has Exposed You!", 5);
             }
 
             if (scpCount == 0)
             {
-                Cassie.Message("NO SCP SUBJECTS REMAIN", false, false);
+                Cassie.Message("NO SCP FOUND ", false, false);
             }
             else
             {
-                string scpList = string.Join(", ", scpSubjects.Select(p => p.Role.Type.ToString()));
-                Cassie.Message($"{scpCount} SCP SUBJECTS REMAIN, {scpList}", false, false);
+                string scpList = string.Join(" ", scpSubjects.Select(p => "SCP " + p.Role.Type.ToString().ToUpper().Replace("SCP", string.Empty).Aggregate("", (c, i) => c + i + ' ')));
+                Cassie.Message($"AWAITINGRECONTAINMENT {scpCount} SCP, {scpList}", false, false);
             }
 
             player.ShowHint("I hope this helps! - the Coin", 5);
