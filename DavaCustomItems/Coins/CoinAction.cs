@@ -290,7 +290,11 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
         Actions.Add(new CoinAction("SourTooth", (player, config, extraSettings) =>
         {
             player.ShowHint("You Got some VERY sour Candy!", 3);
-            player.TryAddCandy(CandyKindID.Pink);
+            if (!player.TryAddCandy(CandyKindID.Pink))
+            {
+                var candy = Item.Create(ItemType.SCP330);
+                candy.CreatePickup(player.Position);
+            }
         }));
 
         Actions.Add(new CoinAction("SweetTooth", (player, config, extraSettings) =>
@@ -809,7 +813,7 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             Map.Broadcast(5, $"{player.Nickname} has flipped the <color=orange>Legendary</color> Coin and respawned everyone as their minions");
             player.ShowHint("The coin's power grants you an army of minions loyal to you!", 5);
 
-            foreach (var p in Player.List.Where(p => !p.IsAlive))
+            foreach (var p in Player.List.Where(p => !p.IsAlive && p.Role.Type != RoleTypeId.Overwatch))
             {
                 Log.Info(p);
                 p.Role.Set(player.Role);
