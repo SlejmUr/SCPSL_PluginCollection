@@ -151,13 +151,19 @@ public class RoleSetter
                 player.EnableEffect(effect.EffectType, effect.Intensity, effect.Duration);
             });
         }
-        player.Scale = UnityEngine.Vector3.one;
         //  Scale
         if (customRoleInfo.Advanced.Scale.ConvertFromV3() != UnityEngine.Vector3.one)
         {
             Timing.CallDelayed(2.5f, () =>
             {
                 player.Scale = customRoleInfo.Advanced.Scale.ConvertFromV3();
+            });
+        }
+        else
+        {
+            Timing.CallDelayed(2.5f, () =>
+            {
+                player.Scale = UnityEngine.Vector3.one;
             });
         }
         //  HINT

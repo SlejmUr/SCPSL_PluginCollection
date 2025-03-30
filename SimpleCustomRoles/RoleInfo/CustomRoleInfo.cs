@@ -418,9 +418,9 @@ public class V3 //Vector3
     public float Z { get; set; }
     public V3()
     {
-        X = 0;
-        Y = 0;
-        Z = 0;
+        X = 1;
+        Y = 1;
+        Z = 1;
     }
     public V3(float all)
     {
