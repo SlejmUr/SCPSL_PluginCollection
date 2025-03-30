@@ -95,49 +95,7 @@ internal class CreateAndInit_Handler
         Main.Instance.SPC_SpecificRoles = [];
         Main.Instance.EscapeRoles = [];
         Main.Instance.RolesLoader.Load();
-        if (Main.Instance.Config.Debug)
-            Log.Info("Loading custom roles!");
-        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
-        {
-            if (item.RoleType == CustomRoleType.AfterDead)
-            {
-                if (Main.Instance.Config.Debug)
-                    Log.Info($"After Death Role added: " + item.RoleName);
-                Main.Instance.AfterDeathRoles.Add(item);
-                continue;
-            }
-            if (item.RoleType == CustomRoleType.Escape)
-            {
-                if (Main.Instance.Config.Debug)
-                    Log.Info($"Escape Role added: " + item.RoleName);
-                Main.Instance.EscapeRoles.Add(item);
-                continue;
-            }
-            for (int i = 0; i < item.SpawnAmount; i++)
-            {
-                bool IsSpawning = false;
-                var random = RandomGenerator.GetInt16(1, 10000, true);
-
-                int chance = item.SpawnChance;
-                if (Main.Instance.Config.UsePlayerPercent)
-                {
-                    chance = (int)(chance * (float)(Server.PlayerCount / Server.MaxPlayerCount));
-                }
-                if (random <= chance)
-                {
-                    IsSpawning = true;
-                    if (item.RoleType == CustomRoleType.SPC_Specific)
-                        Main.Instance.SPC_SpecificRoles.Add(item);
-                    if (item.RoleType == CustomRoleType.SPC_Specific)
-                        Main.Instance.InWaveRoles.Add(item);
-                    else
-                        Main.Instance.RegularRoles.Add(item);
-                }
-                if (Main.Instance.Config.Debug)
-                    Log.Info($"Rolled chance: {random}/{chance} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ") + "spawning.");
-            }
-        }
-        Log.Info("Loading custom roles finished!");
+        Log.Debug("Loaded custom roles!");
     }
 
     public static void RoundStarted()
@@ -152,15 +110,53 @@ internal class CreateAndInit_Handler
             Round.IsLocked = true;
             do_lock = true;
         }
+        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
+        {
+            if (item.RoleType == CustomRoleType.AfterDead)
+            {
+                Log.Debug($"After Death Role added: " + item.RoleName);
+                Main.Instance.AfterDeathRoles.Add(item);
+                continue;
+            }
+            if (item.RoleType == CustomRoleType.Escape)
+            {
+                Log.Debug($"Escape Role added: " + item.RoleName);
+                Main.Instance.EscapeRoles.Add(item);
+                continue;
+            }
+            for (int i = 0; i < item.SpawnAmount; i++)
+            {
+                bool IsSpawning = false;
+                var random = RandomGenerator.GetInt16(1, 10000, true);
+                if (!RoleSetter.IsShouldSpawn(item))
+                {
+                    Log.Debug($"Role has been no longer spawn: {item.RoleName} (Reason: Player limited)");
+                    continue;
+                }
+                int chance = item.SpawnChance;
+                if (Main.Instance.Config.UsePlayerPercent)
+                {
+                    Log.Debug($"Basic chance: {chance}");
+                    float chance_mulitplier = ((float)Server.PlayerCount / (float)Server.MaxPlayerCount);
+                    chance = (int)(chance * chance_mulitplier);
+                    Log.Debug($"Final chance: {chance}");
+                }
+                if (random <= chance)
+                {
+                    IsSpawning = true;
+                    if (item.RoleType == CustomRoleType.SPC_Specific)
+                        Main.Instance.SPC_SpecificRoles.Add(item);
+                    if (item.RoleType == CustomRoleType.SPC_Specific)
+                        Main.Instance.InWaveRoles.Add(item);
+                    else
+                        Main.Instance.RegularRoles.Add(item);
+                }
+                Log.Debug($"Rolled chance: {random}/{chance} for Role {item.RoleName}. Role is " + (IsSpawning ? "" : "NOT ") + "spawning.");
+            }
+        }
 
         foreach (var item in Main.Instance.RegularRoles)
         {
-            if (!RoleSetter.IsShouldSpawn(item))
-            {
-                if (Main.Instance.Config.Debug)
-                    Log.Info($"Role has been no longer spawn: {item.RoleName} (Reason: Player limited)");
-                continue;
-            }
             Player player = null;
             if (item.RoleToReplace == PlayerRoles.RoleTypeId.None && item.ReplaceFromTeam != PlayerRoles.Team.Dead)
             {

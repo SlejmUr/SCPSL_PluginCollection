@@ -292,7 +292,8 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             player.ShowHint("You Got some VERY sour Candy!", 3);
             if (!player.TryAddCandy(CandyKindID.Pink))
             {
-                var candy = Item.Create(ItemType.SCP330);
+                var candy = (Scp330)Item.Create(ItemType.SCP330);
+                candy.AddCandy(CandyKindID.Pink); // making sure we add pink candy!
                 candy.CreatePickup(player.Position);
             }
         }));
@@ -306,6 +307,12 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
             }
             CandyKindID candy = ObjectConvertManager.ParseToEnum(extraSettings.RandomItem(), CandyKindID.None);
             player.ShowHint("You Got some Sweet Candy!", 3);
+            if (!player.TryAddCandy(candy))
+            {
+                var bag = (Scp330)Item.Create(ItemType.SCP330);
+                bag.AddCandy(candy); // making sure we add candy!
+                bag.CreatePickup(player.Position);
+            }
             player.TryAddCandy(candy);
         }));
 
@@ -849,8 +856,9 @@ public sealed class CoinAction(string actionName, Action<Player, CoinExtraConfig
 
                     p.Scale = Vector3.one;
 
-                    Timing.CallDelayed(1, () =>
+                    Timing.CallDelayed(0.5f, () =>
                     {
+                        jailbird.WearState = InventorySystem.Items.Jailbird.JailbirdWearState.Broken;
                         jailbird.Break();
                         Exiled.Events.Handlers.Player.Dying.Unsubscribe(dying);
                         Exiled.Events.Handlers.Player.DroppingItem.Unsubscribe(handler);
