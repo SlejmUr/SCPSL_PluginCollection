@@ -40,6 +40,7 @@ public class BaseCustomCoin : BaseLightItem
         base.SubscribeEvents();
         Exiled.Events.Handlers.Player.FlippingCoin += CoinFlipping;
         Exiled.Events.Handlers.Map.FillingLocker += Map_FillingLocker;
+        Exiled.Events.Handlers.Map.PickupAdded += PickupAdded;
         Coin.OnFlipped += Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded += Scp914_Upgraded;
     }
@@ -49,6 +50,7 @@ public class BaseCustomCoin : BaseLightItem
         base.UnsubscribeEvents();
         Exiled.Events.Handlers.Map.FillingLocker -= Map_FillingLocker;
         Exiled.Events.Handlers.Player.FlippingCoin -= CoinFlipping;
+        Exiled.Events.Handlers.Map.PickupAdded -= PickupAdded;
         Coin.OnFlipped -= Coin_OnFlipped;
         Scp914Upgrader.OnUpgraded -= Scp914_Upgraded;
     }
@@ -66,8 +68,31 @@ public class BaseCustomCoin : BaseLightItem
     {
         ev.Player.ShowHint(CoinPickupHint, 3);
     }
+
     #endregion
     #region Subscribed
+
+    private void PickupAdded(PickupAddedEventArgs ev)
+    {
+        if (ev.Pickup.Type != ItemType.Coin)
+            return;
+        if (Rarity != CoinRarityType.Normal)
+            return;
+        // maybe race condition is there when we check.
+        Timing.CallDelayed(0.5f, () => 
+        {
+            if (Get((uint)CustomItemsEnum.RareCoin).TrackedSerials.Contains(ev.Pickup.Serial))
+                return;
+            if (Get((uint)CustomItemsEnum.LegendaryCoin).TrackedSerials.Contains(ev.Pickup.Serial))
+                return;
+            if (!TrackedSerials.Contains(ev.Pickup.Serial))
+            {
+                Log.Debug($"Serial ({ev.Pickup.Serial}) registered to Normal Coin!");
+                TrackedSerials.Add(ev.Pickup.Serial);
+            }
+        });
+        
+    }
 
     private void Map_FillingLocker(FillingLockerEventArgs ev)
     {
@@ -102,11 +127,7 @@ public class BaseCustomCoin : BaseLightItem
             {
                 if (item.ItemTypeId != ItemType.Coin)
                     continue;
-                Timing.CallDelayed(1, () => 
-                {
-                    Player.Get(item.Owner).RemoveItem(Item.Get(item));
-                    Give(Player.Get(item.Owner), false);
-                });
+                TrackedSerials.Add(item.ItemSerial);
             }
         }
 
@@ -116,16 +137,7 @@ public class BaseCustomCoin : BaseLightItem
             {
                 if (item.Info.ItemId != ItemType.Coin)
                     continue;
-                Timing.CallDelayed(1, () =>
-                {
-                    var prev_pickup_serial = item.Info.Serial;
-                    Server.Host.Inventory.ServerRemoveItem(item.Info.Serial, item);
-                    item.DestroySelf();
-                    Player owner = null;
-                    if (item.PreviousOwner.Hub != null)
-                        owner = Player.Get(item.PreviousOwner.Hub);
-                    Spawn(item.Position, owner);
-                });
+                TrackedSerials.Add(item.Info.Serial);
             }
         }
     }

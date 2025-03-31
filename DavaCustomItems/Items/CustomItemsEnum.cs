@@ -9,7 +9,11 @@ public enum CustomItemsEnum : uint
     CustomMicro,
     NerfGun,
     SwapperGun,
+    SwapperGunWithReload,
     BrokenLamp,
     NoGogglesArmor,
     AdrenalinBoost,
+    EffectCloner,
+    EffectClonerGiveAHP,
+    AHPGun,
 }

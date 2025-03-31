@@ -8,9 +8,9 @@ using MEC;
 namespace DavaCustomItems.Items.Weapons;
 
 [CustomItem(ItemType.GunCOM15)]
-public class SwapperGun : CustomWeapon
+public class SwapperGunWithReload : CustomWeapon
 {
-    public override uint Id { get; set; } = (uint)CustomItemsEnum.SwapperGun;
+    public override uint Id { get; set; } = (uint)CustomItemsEnum.SwapperGunWithReload;
     public override string Name { get; set; } = "Swapper Gun";
     public override string Description { get; set; } = "Swapping to the other player who shot the gun.";
     public override float Weight { get; set; } = 1.5f;
@@ -38,10 +38,5 @@ public class SwapperGun : CustomWeapon
         to.Position = p_Position;
         from.Rotation = t_Rotation;
         to.Rotation = p_Rotation;
-    }
-
-    public override void OnReloading(ReloadingWeaponEventArgs ev)
-    {
-        ev.IsAllowed = false;
     }
 }

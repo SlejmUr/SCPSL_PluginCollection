@@ -6,6 +6,7 @@ using Exiled.API.Features.Pickups;
 using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.EventArgs;
 using Exiled.CustomItems.API.Features;
+using Exiled.Events.EventArgs.Player;
 using InventorySystem.Items.MicroHID.Modules;
 using MEC;
 using UnityEngine;
@@ -48,12 +49,14 @@ public class CustomMicro : BaseLightItem
     public override void SubscribeEvents()
     {
         base.SubscribeEvents();
+        Exiled.Events.Handlers.Player.PickingUpItem += PickingUpMicro;
         CycleController.OnPhaseChanged += CycleController_OnPhaseChanged;
     }
 
     public override void UnsubscribeEvents()
     {
         base.UnsubscribeEvents();
+        Exiled.Events.Handlers.Player.PickingUpItem -= PickingUpMicro;
         CycleController.OnPhaseChanged -= CycleController_OnPhaseChanged;
     }
 
@@ -74,6 +77,15 @@ public class CustomMicro : BaseLightItem
             micro.Rotation = rotation;
             micro.Position = pos;
         });
+    }
+
+    private void PickingUpMicro(PickingUpItemEventArgs ev)
+    {
+        if (ev.Pickup.Type != ItemType.MicroHID)
+            return;
+        if (Check(ev.Pickup))
+            return;
+        TrackedSerials.Add(ev.Pickup.Serial);
     }
 
     private void CycleController_OnPhaseChanged(ushort serial, MicroHidPhase phase)
@@ -102,19 +114,29 @@ public class CustomMicro : BaseLightItem
 
     public override void OnUpgrading(UpgradingItemEventArgs ev)
     {
+        ev.IsAllowed = true;
+        return;
+        // old code
+        /*
         if (ev.KnobSetting == Scp914.Scp914KnobSetting.OneToOne || ev.KnobSetting == Scp914.Scp914KnobSetting.Fine || ev.KnobSetting == Scp914.Scp914KnobSetting.VeryFine)
         {
             MicroHid mcro = ev.Item as MicroHid;
             mcro.Energy = 1;
         }
+        */
     }
 
     public override void OnUpgrading(UpgradingEventArgs ev)
     {
+        ev.IsAllowed = true;
+        return;
+        // old code
+        /*
         if (ev.KnobSetting == Scp914.Scp914KnobSetting.OneToOne || ev.KnobSetting == Scp914.Scp914KnobSetting.Fine || ev.KnobSetting == Scp914.Scp914KnobSetting.VeryFine)
         {
             MicroHIDPickup mcro = ev.Pickup as MicroHIDPickup;
             mcro.Energy = 1;
         }
+        */
     }
 }
