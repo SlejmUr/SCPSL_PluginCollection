@@ -9,4 +9,5 @@ public class Config : IConfig
     public bool IsPaused { get; set; }
     public ushort SpectatorBroadcastTime { get; set; } = 7;
     public bool UsePlayerPercent { get; set; }
+    public float SpawnRateMultiplier { get; set; } = 1f;
 }

@@ -3,8 +3,6 @@ using Exiled.API.Features;
 using MEC;
 using Respawning.Waves;
 using SimpleCustomRoles.RoleInfo;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SimpleCustomRoles.Handler;
 
@@ -141,6 +139,7 @@ internal class CreateAndInit_Handler
                     chance = (int)(chance * chance_mulitplier);
                     Log.Debug($"Final chance: {chance}");
                 }
+                chance = (int)((float)chance * Main.Instance.Config.SpawnRateMultiplier);
                 if (random <= chance)
                 {
                     IsSpawning = true;
