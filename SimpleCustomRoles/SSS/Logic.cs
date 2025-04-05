@@ -1,4 +1,6 @@
 ﻿using Hints;
+using LabApi.Features.Wrappers;
+using SimpleCustomRoles.Helpers;
 using UserSettings.ServerSpecific;
 
 namespace SimpleCustomRoles.SSS;
@@ -13,15 +15,15 @@ internal class Logic
         Settings = 
         [
             new SSGroupHeader("Simple Custom Roles"),
-            showRolekb = new SSKeybindSetting(null,"Show my Role Info Again", UnityEngine.KeyCode.L)
+            showRolekb = new SSKeybindSetting(null, "Show my Role Info Again", UnityEngine.KeyCode.L)
         ];
         List<ServerSpecificSettingBase> settingBases = [];
         if (ServerSpecificSettingsSync.DefinedSettings != null)
         {
-            settingBases = ServerSpecificSettingsSync.DefinedSettings.ToList();
+            settingBases = [.. ServerSpecificSettingsSync.DefinedSettings];
         }
         settingBases.AddRange(Settings);
-        ServerSpecificSettingsSync.DefinedSettings = settingBases.ToArray();
+        ServerSpecificSettingsSync.DefinedSettings = [.. settingBases];
         ServerSpecificSettingsSync.ServerOnSettingValueReceived += ServerOnSettingValueReceived;
         ServerSpecificSettingsSync.SendToAll();
     }
@@ -35,21 +37,21 @@ internal class Logic
    
     private static void ServerOnSettingValueReceived(ReferenceHub hub, ServerSpecificSettingBase @base)
     {
-        if (!Main.Instance.PlayerCustomRole.TryGetValue(hub.authManager.UserId, out var customRoleInfo))
+        if (!CustomRoleHelpers.TryGetCustomRole(Player.Get(hub), out var customRoleInfo))
             return;
 
         if (@base is SSKeybindSetting { SyncIsPressed : true } keybindSetting && keybindSetting.SettingId == showRolekb.SettingId)
         {
-            if (!string.IsNullOrEmpty(customRoleInfo.Hint.SpawnHint)) // role does not have any spawning hints
+            if (!string.IsNullOrEmpty(customRoleInfo.Hint.Hint)) // role does not have any spawning hints
             {
-                hub.hints.Show(new TextHint(customRoleInfo.Hint.SpawnHint,
+                hub.hints.Show(new TextHint(customRoleInfo.Hint.Hint,
                 [
-                    new StringHintParameter(customRoleInfo.Hint.SpawnHint)
-                ], null, customRoleInfo.Hint.SpawnHintDuration));
+                    new StringHintParameter(customRoleInfo.Hint.Hint)
+                ], null, customRoleInfo.Hint.HintDuration));
             }
-            if (!string.IsNullOrEmpty(customRoleInfo.Hint.SpawnBroadcast)) // role does not have any broadcast hints
+            if (!string.IsNullOrEmpty(customRoleInfo.Hint.Broadcast)) // role does not have any broadcast hints
             {
-                Broadcast.Singleton.TargetAddElement(hub.connectionToClient, customRoleInfo.Hint.SpawnBroadcast, customRoleInfo.Hint.SpawnBroadcastDuration, Broadcast.BroadcastFlags.Normal);
+                Broadcast.Singleton.TargetAddElement(hub.connectionToClient, customRoleInfo.Hint.Broadcast, customRoleInfo.Hint.BroadcastDuration, Broadcast.BroadcastFlags.Normal);
             }
         }
             

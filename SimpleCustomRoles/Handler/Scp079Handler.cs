@@ -3,7 +3,7 @@ using SimpleCustomRoles.RoleInfo;
 
 namespace SimpleCustomRoles.Handler;
 
-public class SCP_079_Handler
+public class Scp079Handler
 {
 
 }

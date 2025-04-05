@@ -1,34 +1,34 @@
-roleName: 0492_LootGoblin
-displayRoleName: 049-2 Loot Goblin
-roleDisplayColorHex: '#ff0000'
-spawnChance: 10000
-spawnAmount: 1
-roleType: SPC_Specific
-roleToSpawnAs: Scp0492
-roleToReplace: Scp0492
+rolename: 0492_LootGoblin
+display_rolename: 049-2 Loot Goblin
+display_color: '#ff0000'
+spawn_chance: 10000
+spawn_amount: 1
+role_type: ScpSpecific
+role_to_spawn: Scp0492
+replace_role: Scp0492
 hint:
-  spawnBroadcast: <size=40>You got a <color=#fc0335>mythically rare</color> role!</size>\n <color=#ff0000><b>SCP-049-2 - Loot Goblin</b></color>!\n<size=30>A bag full of loot has made you much louder, but your horde gives you strength!</size>
-  spawnBroadcastDuration: 15
-  spawnHint: You have an immense amount of Hume Shield and movement speed but significantly lower maximum hitpoints, a smaller size, loud footsteps and you drop a horde of treasure when you die.
-  spawnHintDuration: 15
+  broadcast: <size=40>You got a <color=#fc0335>mythically rare</color> role!</size>\n <color=#ff0000><b>SCP-049-2 - Loot Goblin</b></color>!\n<size=30>A bag full of loot has made you much louder, but your horde gives you strength!</size>
+  broadcast_duration: 15
+  hint: You have an immense amount of Hume Shield and movement speed but significantly lower maximum hitpoints, a smaller size, loud footsteps and you drop a horde of treasure when you die.
+  hint_duration: 15
 health:
   health:
     value: 150
-    setType: Subtract
+    math: Subtract
   humeShield:
     value: 400
-    setType: Add
+    math: Add
 effects:
-- canRemovedWithSCP500: false
-  effectTypeName: MovementBoost
+- removable: false
+  effect_name: MovementBoost
   duration: 0
   intensity: 80
-- canRemovedWithSCP500: false
-  effectTypeName: SinkHole
+- removable: false
+  effect_name: SinkHole
   duration: 0
   intensity: 1
 inventory:
-  inventoryItems:
+  items:
   - SCP500
   - AntiSCP207
   - Adrenaline
@@ -43,10 +43,10 @@ inventory:
     Ammo12gauge: 20
     Ammo762x39: 100
     Ammo44cal: 20
-scpSpecific:
+scp_specific:
   scp0492:
-    canSpawnIfNoCustom094: true
-    chanceForSpawn: 150 #100
+    can_spawn_if_no_custom094: true
+    chance_for_spawn: 150
 advanced:
   scale:
     x: 0.50

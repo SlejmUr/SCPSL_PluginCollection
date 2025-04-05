@@ -1,16 +1,16 @@
-roleName: 049_ScpRevive
-displayRoleName: 049_ScpRevive
-roleDisplayColorHex: '#ff0000'
-spawnChance: 0
-spawnAmount: 1
-roleToSpawnAs: Scp049
-roleToReplace: Scp049
+rolename: 049_ScpRevive
+display_rolename: 049_ScpRevive
+display_color: '#ff0000'
+spawn_chance: 0
+spawn_amount: 1
+role_to_spawn: Scp049
+replace_role: Scp049
 health:
   health:
     value: 1000
-    setType: Add
-scpSpecific:
+    math: Add
+scp_specific:
   scp049:
-    roleNameRandom:
+    random:
     - 173_BigNut
     - 0492_LootGoblin

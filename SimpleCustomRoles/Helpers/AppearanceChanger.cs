@@ -69,7 +69,7 @@ internal static class AppearanceChanger
 
         // To counter a bug that makes the player invisible until they move after changing their appearance, we will teleport them upwards slightly to force a new position update for all clients.
         if (!skipJump)
-            player.Position += Vector3.up * 0.25f;
+            player.Position += Vector3.up * 0.15f;
     }
 
 }

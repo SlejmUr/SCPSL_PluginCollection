@@ -4,22 +4,23 @@ using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp079;
 using SimpleCustomRoles.Helpers;
 using System.ComponentModel;
+using UnityEngine;
 
 namespace SimpleCustomRoles.RoleInfo;
 
 public class CustomRoleInfo
 {
     [Description("Role name, can be the name of the file, just be different then others. REQUIRED (DONT USE SPACE!)")]
-    public string RoleName { get; set; }
+    public string Rolename { get; set; }
 
     [Description("Role display name")]
-    public string DisplayRoleName { get; set; } = string.Empty;
+    public string DisplayRolename { get; set; } = string.Empty;
 
     [Description("Role display color")]
-    public string RoleDisplayColorHex { get; set; } = "#ffffff";
+    public string DisplayColor { get; set; } = "#ffffff";
 
     [Description("Can the role display")]
-    public bool RoleCanDisplay { get; set; } = true;
+    public bool CanDisplay { get; set; } = true;
 
     [Description("REQUIRED! Role spawning chance. 0 means NEVER, min 1, max 10000 [10 000] (so 0.01 = 1, 60 = 6000 [6 000])")]
     public int SpawnChance { get; set; } = 0;
@@ -27,20 +28,29 @@ public class CustomRoleInfo
     [Description("NOTDEAD! Role spawn ammount")]
     public int SpawnAmount { get; set; } = 0;
 
+    [Description("Minimum player count this role should spawn (-1 means no minimum!)")]
+    public int MinimumPlayers { get; set; } = -1;
+
+    [Description("Maximum player count this role should spawn (-1 means no maximum!)")]
+    public int MaximumPlayers { get; set; } = -1;
+
+    [Description("Denying editing the Spawn Chance by any means.")]
+    public bool DenyChance { get; set; } = false;
+
     [Description("Type of the Role. Check CustomRoleTypes.txt")]
     public CustomRoleType RoleType { get; set; } = CustomRoleType.Regular;
 
     [Description("REQUIRED! From RoleTypeIds it declare what Role it will spawn as.")]
-    public RoleTypeId RoleToSpawnAs { get; set; } = RoleTypeId.None;
+    public RoleTypeId RoleToSpawn { get; set; } = RoleTypeId.None;
 
     [Description("TEAMREPLACE! From RoleTypeIds it declare what Role it will replace from.")]
-    public RoleTypeId RoleToReplace { get; set; } = RoleTypeId.None;
+    public RoleTypeId ReplaceRole { get; set; } = RoleTypeId.None;
 
     [Description("TEAMREPLACE! From Team it declare what teams it will pick a random user from.")]
-    public Team ReplaceFromTeam { get; set; } = Team.Dead;
+    public Team ReplaceTeam { get; set; } = Team.Dead;
 
-    [Description("WAVE!")]
-    public SpawnWaveSpecific SpawnWaveSpecific { get; set; } = new();
+    [Description("Wave specific option, use it if RoleType is InWave!")]
+    public SpawnWaveSpecific SpawnWave { get; set; } = new();
 
     [Description("Location, declare where to spawn.")]
     public Location Location { get; set; } = new();
@@ -55,84 +65,83 @@ public class CustomRoleInfo
     public HealthClass Health { get; set; } = new();
 
     [Description("Using hint, broadcast")]
-    public HintStuff Hint { get; set; } = new();
+    public HintClass Hint { get; set; } = new();
 
     [Description("Advanced configurations.")]
     public Advanced Advanced { get; set; } = new();
 
     [Description("SCP Specific actions.")]
-    public SCP_Specific Scp_Specific { get; set; } = new();
+    public SCP_Specific ScpSpecific { get; set; } = new();
 
     [Description("Making a Console command with some premade values. Good for ScriptedEvents")]
-    public EventCaller EventCaller { get; set; } = new();
+    public EventCaller Events { get; set; } = new();
 }
+
 public enum CustomRoleType
 {
     Regular,        // Only appears when start of the game.
     AfterDead,      // Only appears after dying
     InWave,         // Only appears inside the SpawnWave.
-    SPC_Specific,   // Only appears if set by Custom SCP's.
+    ScpSpecific,    // Only appears if set by Custom SCP's.
     Escape,         // Only appears after Players escaped.
 }
+
 public class SpawnWaveSpecific
 {
     [Description("Spawning Faction Type.")]
     public Faction Faction { get; set; } = Faction.Unclassified;
 
     [Description("Minimum Team Member Required to spawn this class.")]
-    public int MinimumTeamMemberRequired { get; set; } = 0;
+    public int MinRequired { get; set; } = 0;
 
     [Description("Should skip the minimum check.")]
-    public bool SkipMinimumCheck { get; set; } = false;
+    public bool SkipCheck { get; set; } = false;
 }
+
 public class Inventory
 {
     [Description("Items to spawn in.")]
-    public List<ItemType> InventoryItems { get; set; } = [];
-
-    [Description("Denied using items list")]
-    public List<ItemType> DeniedUsingItems { get; set; } = [];
-
-    [Description("Cannot drop items list.")]
-    public List<ItemType> CannotDropItems { get; set; } = [];
+    public List<ItemType> Items { get; set; } = [];
 
     [Description("Ammos and amount of it.")]
     public Dictionary<ItemType, ushort> Ammos { get; set; } = [];
 
     [Description("IF you use custom item, you can declare the IDS's here.")]
-    public List<uint> CustomItemIds { get; set; } = [];
+    public List<uint> CustomIds { get; set; } = [];
 }
-public class HintStuff
+
+public class HintClass
 {
     [Description("Suggestion: Say that what the user spawned as. Can use something like <color=#ededb4><b>TEMP</b></color>\\n\\tFav role")]
-    public string SpawnBroadcast { get; set; } = string.Empty;
+    public string Broadcast { get; set; } = string.Empty;
 
     [Description("Suggestion: Set as 15, so when you spawned most of the UI is gonna get obscured. After 10 or 8 second it will be removed/hidden.")]
-    public ushort SpawnBroadcastDuration { get; set; } = 0;
+    public ushort BroadcastDuration { get; set; } = 0;
 
     [Description("Suggestion: Any hints to display.")]
-    public string SpawnHint { get; set; } = string.Empty;
+    public string Hint { get; set; } = string.Empty;
 
     [Description("Suggestion: Set as 15, so when you spawned most of the UI is gonna get obscured. After 10 or 8 second it will be removed/hidden.")]
-    public float SpawnHintDuration { get; set; } = 0;
+    public float HintDuration { get; set; } = 0;
 
     [Description("Broadcast to All users.")]
-    public string SpawnBroadcastToAll { get; set; } = string.Empty;
+    public string BroadcastAll { get; set; } = string.Empty;
 
     [Description("Suggestion: Set as 15, so when you spawned most of the UI is gonna get obscured. After 10 or 8 second it will be removed/hidden.")]
-    public ushort SpawnBroadcastToAllDuration { get; set; } = 0;
+    public ushort BroadcastAllDuration { get; set; } = 0;
 
 }
+
 public class ValueSetter
 {
     public float Value { get; set; } = 0;
 
     [Description("Value's Math option. Check MathOptions.txt.")]
-    public MathOption SetType { get; set; } = MathOption.None;
+    public MathOption Math { get; set; } = MathOption.None;
 }
+
 public class HealthClass
 {
-
     [Description("Health Value edit.")]
     public ValueSetter Health { get; set; } = new();
 
@@ -142,6 +151,7 @@ public class HealthClass
     [Description("HumeShield Value edit. (Used if SCP class)")]
     public ValueSetter HumeShield { get; set; } = new();
 }
+
 public class Location
 {
 
@@ -161,10 +171,10 @@ public class Location
     public List<RoomName> ExludeSpawnRooms { get; set; }
 
     [Description("Exact Position with Vector3.")]
-    public V3 ExactPosition { get; set; } = new();
+    public Vector3 ExactPosition { get; set; } = Vector3.one;
 
     [Description("Offset by all Spawn Position (Except when Default is True).")]
-    public V3 OffsetPosition { get; set; } = new();
+    public Vector3 OffsetPosition { get; set; } = Vector3.one;
 }
 public enum LocationSpawnPriority
 {
@@ -178,10 +188,10 @@ public class Effect
 {
 
     [Description("Effect can be removed with SCP-500.")]
-    public bool CanRemovedWithSCP500 { get; set; } = true;
+    public bool Removable { get; set; } = true;
 
     [Description("Effect Type to add into the user. Check EffectTypes.txt")]
-    public string EffectTypeName { get; set; }
+    public string EffectName { get; set; }
 
     [Description("Duration how long the effect should last.")]
     public float Duration { get; set; }
@@ -192,14 +202,20 @@ public class Effect
 }
 public class Advanced
 {
+    [Description("Denied using items list")]
+    public List<ItemType> DeniedUsingItems { get; set; } = [];
+
+    [Description("Cannot drop items list.")]
+    public List<ItemType> CannotDropItems { get; set; } = [];
+
     [Description("Player Scale")]
-    public V3 Scale { get; set; } = new V3();
+    public Vector3 Scale { get; set; } = Vector3.one;
 
     [Description("Player Appearance to others")]
-    public RoleTypeId RoleAppearance { get; set; } = RoleTypeId.None;
+    public RoleTypeId Appearance { get; set; } = RoleTypeId.None;
 
     [Description("Enable Door Bypassing.")]
-    public bool BypassModeEnabled { get; set; } = false;
+    public bool Bypass { get; set; } = false;
 
     [Description("Open all dorrs next to spawned place.")]
     public bool OpenDoorsNextToSpawn { get; set; } = false;
@@ -216,7 +232,7 @@ public class Advanced
     [Description("Candy releated actions.")]
     public CandyStuff Candy { get; set; } = new();
 
-    [Description("Damager for Receiving and Sending damaga values.")]
+    [Description("Damager for Receiving and Sending damage values.")]
     public Damager Damager { get; set; } = new();
 
     [Description("Friendly Fire to each Role.")]
@@ -243,9 +259,9 @@ public class Advanced
 public class RoleSetAfter
 {
     //  RoleType must be set to AfterDead!
-    public RoleTypeId RoleAfterKilled { get; set; } = RoleTypeId.None;
-    public string RoleNameToRespawnAs { get; set; } = string.Empty;
-    public List<string> RoleNameRandom { get; set; } = [];
+    public RoleTypeId AfterDeath { get; set; } = RoleTypeId.None;
+    public string RoleName { get; set; } = string.Empty;
+    public List<string> Random { get; set; } = [];
 }
 public class DeadBy : RoleSetAfter
 {
@@ -253,11 +269,12 @@ public class DeadBy : RoleSetAfter
     public RoleTypeId KillerRole { get; set; } = RoleTypeId.None;
     public Team KillerTeam { get; set; } = Team.Dead;
 }
+
 public class CandyStuff
 {
 
     [Description("Candies to give to the player when spawned. Check CandyKindIDs.txt")]
-    public List<CandyKindID> CandiesToGive { get; set; } = [];
+    public List<CandyKindID> Candies { get; set; } = [];
 
     [Description("Can the user Take candies from the bowl.")]
     public bool CanTakeCandy { get; set; } = true;
@@ -379,10 +396,10 @@ public class SCP_Specific
 public class Damager
 {
     [Description("Damage Dictionary that Player Received.")]
-    public Dictionary<DamageMaker, ValueSetter> DamageReceivedDict { get; set; } = [];
+    public Dictionary<DamageMaker, ValueSetter> DamageReceived { get; set; } = [];
 
     [Description("Damage Dictionary that Player Sent/Dealt.")]
-    public Dictionary<DamageMaker, ValueSetter> DamageSentDict { get; set; } = [];
+    public Dictionary<DamageMaker, ValueSetter> DamageSent { get; set; } = [];
 
     public class DamageMaker
     {
@@ -393,7 +410,7 @@ public class Damager
         public DamageHelper.SubType DamageSubType { get; set; } = DamageHelper.SubType.None;
 
         [Description("The SubType type if exists.")]
-        public object subType { get; set; }
+        public object SubType { get; set; }
     }
 }
 
@@ -416,29 +433,4 @@ public class EventCaller
     public string OnDealDamage { get; set; } = string.Empty;
     public string OnReceiveDamage { get; set; } = string.Empty;
     public string OnSpawned { get; set; } = string.Empty;
-}
-
-public class V3 //Vector3
-{
-    public float X { get; set; }
-    public float Y { get; set; }
-    public float Z { get; set; }
-    public V3()
-    {
-        X = 0;
-        Y = 0;
-        Z = 0;
-    }
-    public V3(float all)
-    {
-        X = all;
-        Y = all;
-        Z = all;
-    }
-    public V3(float x, float y, float z)
-    {
-        X = x;
-        Y = y;
-        Z = z;
-    }
 }

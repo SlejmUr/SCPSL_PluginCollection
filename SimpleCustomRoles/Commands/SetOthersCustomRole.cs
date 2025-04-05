@@ -1,6 +1,7 @@
 ﻿using CommandSystem;
+using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
-using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.Helpers;
 using Utils;
 
 namespace SimpleCustomRoles.Commands;
@@ -72,20 +73,20 @@ public class SetOthersCustomRole : ICommand
         //CL.Info(rolename + " " + (rolename[0] == '.') + " " + (rolename == "."));
         if (rolename == ".")
         {
-            RoleSetter.UnSetCustomInfoToPlayer(player);
+            CustomRoleHelpers.UnSetCustomInfoToPlayer(player);
             response = $"You unset {player.PlayerId}!";
             return true;
         }
         else
         {
-            var role = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == rolename);
+            var role = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.Rolename == rolename);
             if (role == default)
             {
                 response = $"Role with name {rolename} not exist!";
                 return false;
             }
-            RoleSetter.SetFromCMD(player, role);
-            response = $"You set {player.PlayerId} as a role: {rolename}[{role.DisplayRoleName}]!";
+            CustomRoleHelpers.SetFromCMD(player, role);
+            response = $"You set {player.PlayerId} as a role: {rolename}[{role.DisplayRolename}]!";
             return true;
         }
         

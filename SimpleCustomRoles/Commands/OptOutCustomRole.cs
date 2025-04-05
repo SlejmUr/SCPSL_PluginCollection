@@ -1,7 +1,7 @@
 ﻿using CommandSystem;
 using LabApi.Features.Wrappers;
 using RemoteAdmin;
-using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.Helpers;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -30,7 +30,7 @@ public class OptOutCustomRole : ICommand
             response = "Must be coming from Player!";
             return false;
         }
-        RoleSetter.UnSetCustomInfoToPlayer(player);
+        CustomRoleHelpers.UnSetCustomInfoToPlayer(player);
         response = "Sucessfully opted out from Custom Roles";
         return true;
     }

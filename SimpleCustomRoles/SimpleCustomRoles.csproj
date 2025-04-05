@@ -1,29 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net48</TargetFramework>
-		<PlatformTarget>x64</PlatformTarget>
-		<OutputType>Library</OutputType>
-
 		<AssemblyName>SimpleCustomRoles</AssemblyName>
 		<RootNamespace>SimpleCustomRoles</RootNamespace>
 
-		<Configurations>Release;EXILED Release</Configurations>
-		<Platforms>AnyCPU</Platforms>
 		<Copyright>SlejmUr</Copyright>
-		<IsPackable>false</IsPackable>
-		<DebugType>none</DebugType>
-		<LangVersion>12</LangVersion>
 	</PropertyGroup>
-
-	<PropertyGroup>
-		<!-- Disable automatic generation of version attribute -->
-		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
-
 	<ItemGroup>
 	  <None Remove="TheYML.yml" />
 	</ItemGroup>
@@ -33,32 +15,6 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" ExcludeAssets="runtime" ReferenceOutputAssembly="false" Private="true" />
-	  <Reference Include="Assembly-CSharp" Publicize="true" Private="false" />
-	  <Reference Include="LabApi" Publicize="true" Private="false" />
-	  <Reference Include="Assembly-CSharp-firstpass" Publicize="true" Private="false" />
-	  <Reference Include="Mirror" Publicize="true" Private="false" />
-	  <Reference Include="Mirror.Components" Private="false" />
-	  <Reference Include="UnityEngine" Private="false" />
-	  <Reference Include="UnityEngine.CoreModule" Private="false" />
-	  <Reference Include="Pooling" Private="false" />
-	  <Reference Include="YamlDotNet" Private="false" />
-	  <Reference Include="CommandSystem.Core" Publicize="true" Private="false" />
-	</ItemGroup>
-
-	<Import Project="ReferencePaths.props.user" />
-	<PropertyGroup>
-		<AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
-	</PropertyGroup>
-	
-	<ItemGroup>
-	  <Using Include="LabApi.Features.Console.Logger">
-	    <Alias>CL</Alias>
-	  </Using>
-	</ItemGroup>
-	
 	<ItemGroup>
 	  <Folder Include="ExampleRoles\" />
 	</ItemGroup>

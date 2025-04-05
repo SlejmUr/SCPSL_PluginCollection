@@ -22,7 +22,7 @@ public class ReloadCustomRoles : ICommand
             response = "You dont have permission!";
             return false;
         }
-        CrateAndInit_Handler.ReloadRoles();
+        ServerHandler.ReloadRoles();
         response = "Roles Reloaded!";
         return true;
     }

@@ -1,0 +1,6 @@
+<Project>
+	<Import Project="ReferencePaths.props.user" />
+	<PropertyGroup>
+		<AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
+	</PropertyGroup>
+</Project>

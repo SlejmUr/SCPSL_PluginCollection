@@ -1,5 +1,6 @@
 ﻿using CommandSystem;
-using LabApi.Features.Wrappers;
+using SimpleCustomRoles.Helpers;
+using SimpleCustomRoles.RoleInfo;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -22,17 +23,17 @@ public class ShowCurCustomRole : ICommand
             return false;
         }
         response = "Currently Playing roles:\n";
-        if (Main.Instance.PlayerCustomRole.Count == 0)
+        var players = CustomRoleHelpers.GetPlayers();
+        if (players.Count() == 0)
         {
             response += $"There is no Custom Roles\n";
         }
         else
         {
-            foreach (var role in Main.Instance.PlayerCustomRole)
+            foreach (var player in players)
             {
-                var player = Player.List.Where(x => x.UserId == role.Key).FirstOrDefault();
-                if (player != null)
-                    response += $"{role.Value.RoleName} [{role.Value.DisplayRoleName}]: [Id]{player.PlayerId} [Name]{player.Nickname}\n";
+                if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
+                    response += $"{role.Rolename} [{role.DisplayRolename}]: [Id]{player.PlayerId} [Name]{player.Nickname}\n";
             }
         }
 

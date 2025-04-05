@@ -24,7 +24,7 @@ internal class ScaleHelper
         }
         catch (Exception exception)
         {
-            LabApi.Features.Console.Logger.Error($"{nameof(SetScale)} error: {exception}");
+            CL.Error($"{nameof(SetScale)} error: {exception}");
         }
     }
 

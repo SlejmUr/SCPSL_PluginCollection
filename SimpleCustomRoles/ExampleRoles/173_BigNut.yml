@@ -1,21 +1,21 @@
-roleName: 173_BigNut
-displayRoleName: Big Nut
-roleDisplayColorHex: '#ff0000'
-spawnChance: 200 #400
-spawnAmount: 1
-roleToSpawnAs: Scp173
-roleToReplace: Scp173
+rolename: 173_BigNut
+display_rolename: Big Nut
+display_color: '#ff0000'
+spawn_chance: 200 #400
+spawn_amount: 1
+role_to_spawn: Scp173
+replace_role: Scp173
 health:
   health:
     value: 1050
-    setType: Add
+    math: Add
 hint:
-  spawnBroadcast: <size=40>You got a <color=#fc0335>mythically rare</color> role!</size>\n <color=#ff0000><b>SCP 173 - Big Nut</b></color>!\n<size=30>Da big nut.</size>
-  spawnBroadcastDuration: 15
-  spawnHint: You're extremely massive but have more hit points.
-  spawnHintDuration: 15
+  broadcast: <size=40>You got a <color=#fc0335>mythically rare</color> role!</size>\n <color=#ff0000><b>SCP 173 - Big Nut</b></color>!\n<size=30>Da big nut.</size>
+  broadcast_duration: 15
+  hint: You're extremely massive but have more hit points.
+  hint_duration: 15
 advanced:
   scale:
-    x: 1.2
-    y: 1.2
-    z: 1.2
+    x: 1.1
+    y: 1.1
+    z: 1.1

@@ -1,7 +1,7 @@
 ﻿using CommandSystem;
 using LabApi.Features.Wrappers;
 using RemoteAdmin;
-using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.Helpers;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -41,13 +41,13 @@ public class SetMyCustomRole : ICommand
             response = "Must be coming from Player!";
             return false;
         }
-        var role = Main.Instance.RolesLoader.RoleInfos.Where(x => x.RoleName == name).FirstOrDefault();
+        var role = Main.Instance.RolesLoader.RoleInfos.Where(x => x.Rolename == name).FirstOrDefault();
         if (role == null)
         {
             response = $"Role with name {name} not exist!";
             return false;
         }
-        RoleSetter.SetFromCMD(player, role);
+        CustomRoleHelpers.SetFromCMD(player, role);
         response = $"You set yourself as a role: {name}!";
         return true;
     }

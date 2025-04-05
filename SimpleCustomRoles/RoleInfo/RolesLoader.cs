@@ -1,8 +1,8 @@
-﻿using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
-using PlayerRoles;
+﻿using PlayerRoles;
 using LabApi.Loader;
 using MapGeneration;
+using LabApi.Loader.Features.Yaml;
+using UnityEngine;
 
 namespace SimpleCustomRoles.RoleInfo;
 
@@ -16,52 +16,30 @@ public class RolesLoader
         RoleInfos = [];
         if (Directory.Exists(Dir))
         {
-            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), HelperTxts.TheYML_PRE_Comment + "\n" + Serialize(CreateTemplate()));
-            File.WriteAllText(Path.Combine(Dir, "Template.yml"), Serialize(CreateTemplate()));
+            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), HelperTxts.TheYML_PRE_Comment + "\n" + YamlConfigParser.Serializer.Serialize(CreateTemplate()));
+            File.WriteAllText(Path.Combine(Dir, "Template.yml"), YamlConfigParser.Serializer.Serialize(CreateTemplate()));
             foreach (var file in Directory.GetFiles(Dir))
             {
                 if (file.Contains(".disable") || file.Contains(".d"))
                     continue;
-                if (file.Contains(".yml"))
-                {
-                    if (Main.Instance.Config.Debug)
-                    {
-                        CL.Debug(file);
-                    }
-                    RoleInfos.Add(Deserialize(File.ReadAllText(file)));
-                }
+                if (!file.Contains(".yml"))
+                    continue;
+                CL.Debug(file, Main.Instance.Config.Debug);
+                RoleInfos.Add(YamlConfigParser.Deserializer.Deserialize<CustomRoleInfo>(File.ReadAllText(file)));
             }
+
         }
         else
         {
             Directory.CreateDirectory(Dir);
-            File.WriteAllText(Dir + "/Template.yml.d", Serialize(CreateTemplate()));
+            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), YamlConfigParser.Serializer.Serialize(CreateTemplate()));
         }
         Main.Instance.RolesLoader.RoleInfos = [.. Main.Instance.RolesLoader.RoleInfos.OrderBy(x=>x.SpawnChance)];
     }
 
-    public void Dispose()
+    public void Clear()
     {
         RoleInfos.Clear();
-    }
-
-    public string Serialize(CustomRoleInfo customRole)
-    {
-        var serializer = new SerializerBuilder()
-        .WithNamingConvention(CamelCaseNamingConvention.Instance)
-        .WithTypeInspector(inner => new CommentGatheringTypeInspector(inner))
-        .WithEmissionPhaseObjectGraphVisitor(args => new CommentsObjectGraphVisitor(args.InnerVisitor))
-        .Build();
-        return serializer.Serialize(customRole);
-    }
-
-
-    public CustomRoleInfo Deserialize(string txt)
-    {
-        var deserializer = new DeserializerBuilder()
-        .WithNamingConvention(CamelCaseNamingConvention.Instance)
-        .Build();
-        return deserializer.Deserialize<CustomRoleInfo>(txt);
     }
 
 
@@ -69,16 +47,16 @@ public class RolesLoader
     {
         return new()
         {
-            RoleName = "Temp",
-            RoleDisplayColorHex = "#ffffff",
+            Rolename = "Temp",
+            DisplayColor = "#ffffff",
             RoleType = CustomRoleType.Regular,
             SpawnAmount = 1,
             SpawnChance = 0,
-            RoleToSpawnAs = RoleTypeId.Scientist,
-            RoleToReplace = RoleTypeId.ClassD,
+            RoleToSpawn = RoleTypeId.Scientist,
+            ReplaceRole = RoleTypeId.ClassD,
             Inventory = new Inventory()
             {
-                InventoryItems =
+                Items =
                 [
                      ItemType.KeycardScientist, ItemType.Medkit, ItemType.Adrenaline, ItemType.Coin
                 ],
@@ -86,28 +64,20 @@ public class RolesLoader
                 {
                     { ItemType.Ammo762x39, 3  }
                 },
-                DeniedUsingItems =
-                [
-                    ItemType.Coin
-                ],
-                CannotDropItems =
-                [
-                    ItemType.Coin
-                ],
-                CustomItemIds = []
+                CustomIds = []
             },
             Effects =
             [
                  new Effect()
                  {
-                     EffectTypeName = "DamageReduction",
+                     EffectName = "DamageReduction",
                      Duration = 100,
                      Intensity = 3
                  },
                  new Effect()
                  {
-                     CanRemovedWithSCP500 = false,
-                     EffectTypeName = "MovementBoost",
+                     Removable = false,
+                     EffectName = "MovementBoost",
                      Duration = 433,
                      Intensity = 12
                  }
@@ -122,21 +92,29 @@ public class RolesLoader
             },
             Advanced = new()
             {
-                RoleAppearance = RoleTypeId.ClassD,
+                DeniedUsingItems =
+                [
+                    ItemType.Coin
+                ],
+                CannotDropItems =
+                [
+                    ItemType.Coin
+                ],
+                Appearance = RoleTypeId.ClassD,
                 Damager = new()
                 {
-                    DamageReceivedDict =
+                    DamageReceived =
                     {
                         { 
                             new Damager.DamageMaker()
                             {
                                 DamageType = Helpers.DamageHelper.DamageType.Firearm,
                                 DamageSubType = Helpers.DamageHelper.SubType.AmmoType,
-                                subType = ItemType.Ammo556x45
+                                SubType = ItemType.Ammo556x45
                             }, 
                             new()
                             { 
-                                SetType = MathOption.Set,
+                                Math = MathOption.Set,
                                 Value = 0
                             }
                         },
@@ -145,27 +123,27 @@ public class RolesLoader
                             {
                                 DamageType = Helpers.DamageHelper.DamageType.Explosion,
                                 DamageSubType = Helpers.DamageHelper.SubType.ExplosionType,
-                                subType = ExplosionType.PinkCandy
+                                SubType = ExplosionType.PinkCandy
                             },
                             new()
                             {
-                                SetType = MathOption.Set,
+                                Math = MathOption.Set,
                                 Value = 0
                             }
                         }
                     },
-                    DamageSentDict =
+                    DamageSent =
                     {
                         {
                             new Damager.DamageMaker()
                             {
                                 DamageType = Helpers.DamageHelper.DamageType.Snowball,
                                 DamageSubType = Helpers.DamageHelper.SubType.None,
-                                subType = null
+                                SubType = null
                             },
                             new()
                             {
-                                SetType = MathOption.Set,
+                                Math = MathOption.Set,
                                 Value = 0
                             }
                         }
@@ -176,15 +154,15 @@ public class RolesLoader
                     IsConfigurated = false,
                     KillerRole = RoleTypeId.None,
                     KillerTeam = Team.OtherAlive,
-                    RoleAfterKilled = RoleTypeId.None,
-                    RoleNameRandom = ["choserandomthis","chooserandom2"],
-                    RoleNameToRespawnAs = "yeeet"
+                    AfterDeath = RoleTypeId.None,
+                    Random = ["choserandomthis","chooserandom2"],
+                    RoleName = "yeeet"
                 },
                 OpenDoorsNextToSpawn = false,
-                BypassModeEnabled = false,
+                Bypass = false,
                 Candy = new()
                 {
-                    CandiesToGive =
+                    Candies =
                     [
                         InventorySystem.Items.Usables.Scp330.CandyKindID.Pink
                     ],
@@ -212,12 +190,7 @@ public class RolesLoader
 
                 },
                 CanTrigger096 = true,
-                Scale = new()
-                {
-                    X = 1,
-                    Y = 1,
-                    Z = 1
-                },
+                Scale = Vector3.one,
                 FriendlyFire =
                 [
                     new Advanced.FF()
@@ -241,21 +214,21 @@ public class RolesLoader
                     }
                 }
             },
-            Hint = new HintStuff()
+            Hint = new HintClass()
             {
-                SpawnBroadcast = "You spawned as TEMP",
-                SpawnBroadcastDuration = 10,
-                SpawnHint = "Do your stuff!",
-                SpawnHintDuration = 10,
+                Broadcast = "You spawned as TEMP",
+                BroadcastDuration = 10,
+                Hint = "Do your stuff!",
+                HintDuration = 10,
             },
-            Scp_Specific = new()
+            ScpSpecific = new()
             {
                 Scp049 = new()
                 {
                     CanRecall = true,
-                    RoleAfterKilled = RoleTypeId.None,
-                    RoleNameRandom = ["random1", "random2"],
-                    RoleNameToRespawnAs = "always_role"
+                    AfterDeath = RoleTypeId.None,
+                    Random = ["random1", "random2"],
+                    RoleName = "always_role"
                 },
                 Scp0492 = new()
                 {
@@ -271,7 +244,7 @@ public class RolesLoader
                     ],
                     Enraging = new()
                     {
-                        SetType = MathOption.Add,
+                        Math = MathOption.Add,
                         Value = 100
                     },
                     CanCharge = false,
@@ -303,33 +276,33 @@ public class RolesLoader
                     ]
                 }
             },
-            DisplayRoleName = "TEMPORARY",
-            SpawnWaveSpecific = new() 
+            DisplayRolename = "TEMPORARY",
+            SpawnWave = new() 
             { 
-                MinimumTeamMemberRequired = 3,
-                SkipMinimumCheck = true,
+                MinRequired = 3,
+                SkipCheck = true,
                 Faction = Faction.FoundationEnemy
             },
             Health = new()
             { 
                 Health = new()
                 { 
-                    SetType = MathOption.Add,
+                    Math = MathOption.Add,
                     Value = 30
                 },
                 Ahp = new()
                 {
-                    SetType = MathOption.Set,
+                    Math = MathOption.Set,
                     Value = 10
                 },
                 HumeShield = new()
                 {
-                    SetType = MathOption.Multiply,
+                    Math = MathOption.Multiply,
                     Value = 2
                 },
             },
-            EventCaller = new(),
-            ReplaceFromTeam = Team.ClassD,
+            Events = new(),
+            ReplaceTeam = Team.ClassD,
         };
 
     }

@@ -1,8 +1,9 @@
-﻿using LabApi.Events.Handlers;
+﻿using LabApi.Events.CustomHandlers;
 using LabApi.Features;
 using LabApi.Loader.Features.Plugins;
 using Respawning;
 using SimpleCustomRoles.Handler;
+using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleInfo;
 using SimpleCustomRoles.SSS;
 
@@ -15,93 +16,84 @@ internal class Main : Plugin<Config>
     #region Plugin Info
     public override string Author => "SlejmUr";
     public override string Name => "SimpleCustomRoles";
-    public override Version Version => new(0,4, 0);
+    public override Version Version => new(0, 4, 1);
     public override string Description => "Add simple YAML Support for creating custom roles.";
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
     #endregion
     public RolesLoader RolesLoader;
-    public Dictionary<string, CustomRoleInfo> PlayerCustomRole;
     public List<CustomRoleInfo> RegularRoles;
     public List<CustomRoleInfo> InWaveRoles;
     public List<CustomRoleInfo> AfterDeathRoles;
-    public List<CustomRoleInfo> SPC_SpecificRoles;
+    public List<CustomRoleInfo> ScpSpecificRoles;
     public List<CustomRoleInfo> EscapeRoles;
+
+    private ServerHandler serverHandler;
+    private PlayerHandler playerHandler;
+    private Scp0492Handler scp0492Handler;
+    private Scp049Handler scp049Handler;
+    private Scp096Handler scp096Handler;
+    private Scp173Handler scp173Handler;
+    private Scp330Handler scp330Handler;
+
 
     public override void Enable()
     {
         Instance = this;
+        CustomDataStoreManagerExtended.EnsureExists<CustomRoleInfoStorage>();
         HelperTxts.WriteAll();
-        RolesLoader = new RolesLoader();
+        RolesLoader = new();
         Logic.Init();
-        ServerEvents.WaitingForPlayers += CrateAndInit_Handler.WaitingForPlayers;
-        ServerEvents.RoundRestarted += CrateAndInit_Handler.RoundStarted;
 
-        PlayerEvents.Escaping += TheHandler.Escaping;
-        PlayerEvents.Death += TheHandler.Died;
-        PlayerEvents.UsingItem += TheHandler.UsingItem;
-        PlayerEvents.DroppingItem += TheHandler.DroppingItem;
-        PlayerEvents.ChangedSpectator += TheHandler.ChangingSpectatedPlayer;
-        PlayerEvents.Hurting += TheHandler.Hurting;
-        PlayerEvents.ChangingRole += TheHandler.ChangingRole;
-        PlayerEvents.Dying += TheHandler.Dying;
-        Scp049Events.ResurrectingBody += SCP_049_Handler.FinishingRecall;
+        serverHandler = new();
+        CustomHandlersManager.RegisterEventsHandler(serverHandler);
 
-        // LabAPI doesnt have consuming corpse as 049-2
-        // Exiled.Events.Handlers.Scp0492.ConsumingCorpse += SCP_0492_Handler.ConsumingCorpse;
+        playerHandler = new();
+        CustomHandlersManager.RegisterEventsHandler(playerHandler);
 
-        Scp096Events.AddingTarget += SCP_096_Handler.AddingTarget;
-        Scp096Events.TryingNotToCry += SCP_096_Handler.TryingNotToCry;
-        Scp096Events.Charging += SCP_096_Handler.Charging;
-        Scp096Events.Enraging += SCP_096_Handler.Enraging;
-        Scp096Events.PryingGate += SCP_096_Handler.StartPryingGate;
+        scp049Handler = new();
+        CustomHandlersManager.RegisterEventsHandler(scp049Handler);
 
-        Scp173Events.CreatingTantrum += SCP_173_Handler.PlacingTantrum;
-        Scp173Events.BreakneckSpeedChanging += SCP_173_Handler.UsingBreakneckSpeeds;
+        scp0492Handler = new();
+        CustomHandlersManager.RegisterEventsHandler(scp0492Handler);
 
-        /*
-        Exiled.Events.Handlers.Scp330.InteractingScp330 += SCP_330_Handler.InteractingScp330;
-        Exiled.Events.Handlers.Scp330.EatingScp330 += SCP_330_Handler.EatingScp330;
-        Exiled.Events.Handlers.Scp330.DroppingScp330 += SCP_330_Handler.DroppingScp330;
-        */
-        WaveManager.OnWaveSpawned += TheHandler.RespawnManager_ServerOnRespawned;
+        scp096Handler = new();
+        CustomHandlersManager.RegisterEventsHandler(scp096Handler);
+
+        scp173Handler = new();
+        CustomHandlersManager.RegisterEventsHandler(scp173Handler);
+
+        scp330Handler = new();
+        CustomHandlersManager.RegisterEventsHandler(scp330Handler);
+
+        WaveManager.OnWaveSpawned += PlayerHandler.RespawnManager_ServerOnRespawned;
     }
 
     public override void Disable()
     {
-        ServerEvents.WaitingForPlayers -= CrateAndInit_Handler.WaitingForPlayers;
-        ServerEvents.RoundRestarted -= CrateAndInit_Handler.RoundStarted;
+        CustomHandlersManager.RegisterEventsHandler(serverHandler);
+        serverHandler = null;
 
-        PlayerEvents.Escaping -= TheHandler.Escaping;
-        PlayerEvents.Death -= TheHandler.Died;
-        PlayerEvents.UsingItem -= TheHandler.UsingItem;
-        PlayerEvents.DroppingItem -= TheHandler.DroppingItem;
-        PlayerEvents.ChangedSpectator -= TheHandler.ChangingSpectatedPlayer;
-        PlayerEvents.Hurting -= TheHandler.Hurting;
-        PlayerEvents.ChangingRole -= TheHandler.ChangingRole;
-        PlayerEvents.Dying -= TheHandler.Dying;
-        Scp049Events.ResurrectingBody -= SCP_049_Handler.FinishingRecall;
+        CustomHandlersManager.RegisterEventsHandler(playerHandler);
+        playerHandler = null;
 
-        // LabAPI doesnt have consuming corpse as 049-2
-        // Exiled.Events.Handlers.Scp0492.ConsumingCorpse += SCP_0492_Handler.ConsumingCorpse;
+        CustomHandlersManager.RegisterEventsHandler(scp049Handler);
+        scp049Handler = null;
 
-        Scp096Events.AddingTarget -= SCP_096_Handler.AddingTarget;
-        Scp096Events.TryingNotToCry -= SCP_096_Handler.TryingNotToCry;
-        Scp096Events.Charging -= SCP_096_Handler.Charging;
-        Scp096Events.Enraging -= SCP_096_Handler.Enraging;
-        Scp096Events.PryingGate -= SCP_096_Handler.StartPryingGate;
+        CustomHandlersManager.RegisterEventsHandler(scp0492Handler);
+        scp0492Handler = null;
 
-        Scp173Events.CreatingTantrum -= SCP_173_Handler.PlacingTantrum;
-        Scp173Events.BreakneckSpeedChanging -= SCP_173_Handler.UsingBreakneckSpeeds;
+        CustomHandlersManager.RegisterEventsHandler(scp096Handler);
+        scp096Handler = null;
 
-        /*
-        Exiled.Events.Handlers.Scp330.InteractingScp330 += SCP_330_Handler.InteractingScp330;
-        Exiled.Events.Handlers.Scp330.EatingScp330 += SCP_330_Handler.EatingScp330;
-        Exiled.Events.Handlers.Scp330.DroppingScp330 += SCP_330_Handler.DroppingScp330;
-        */
+        CustomHandlersManager.RegisterEventsHandler(scp173Handler);
+        scp173Handler = null;
 
-        WaveManager.OnWaveSpawned -= TheHandler.RespawnManager_ServerOnRespawned;
+        CustomHandlersManager.RegisterEventsHandler(scp330Handler);
+        scp330Handler = null;
+
+        WaveManager.OnWaveSpawned -= PlayerHandler.RespawnManager_ServerOnRespawned;
         Logic.UnInit();
-        RolesLoader.Dispose();
+        RolesLoader.Clear();
         RolesLoader = null;
         Instance = null;
     }

@@ -16,7 +16,7 @@ public class ListCustomRoles : ICommand
         response = "Roles: \n";
         foreach (var item in Main.Instance.RolesLoader.RoleInfos)
         {
-            response += $"{item.RoleName} [{item.DisplayRoleName}], ";
+            response += $"{item.Rolename} [{item.DisplayRolename}], ";
         }
         response = response.Remove(response.Length - 2);
         return true;

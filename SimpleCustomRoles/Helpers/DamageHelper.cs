@@ -2,6 +2,9 @@
 using PlayerRoles.PlayableScps.Scp3114;
 using PlayerRoles.PlayableScps.Scp939;
 using PlayerStatsSystem;
+using SimpleCustomRoles.RoleInfo;
+using static SimpleCustomRoles.Helpers.DamageHelper;
+using static SimpleCustomRoles.RoleInfo.Damager;
 
 namespace SimpleCustomRoles.Helpers;
 
@@ -224,5 +227,30 @@ public class DamageHelper
             default:
                 return null;
         }
+    }
+
+
+    public static float CalculateDamage(Dictionary<DamageMaker, ValueSetter> dict, DamageHandlerBase damageHandlerBase, float baseDamage, DamageType damageType)
+    {
+        float newDamage = baseDamage;
+        foreach (var item in dict.
+               Where(x => x.Key.DamageType == damageType).
+               Select(x => x.Key.DamageSubType))
+        {
+            var obj = GetObjectBySubType(damageHandlerBase, item);
+            if (obj == null)
+                continue;
+            var sent = dict.
+                Where(x => x.Key.DamageType == damageType && x.Key.DamageSubType == item).
+                Where(x => x.Key.SubType.ToString() == obj.ToString());
+            if (sent.Any())
+            {
+                var first = sent.First();
+                if (first.Value == null)
+                    continue;
+                newDamage = first.Value.Math.MathWithFloat(newDamage, first.Value.Value);
+            }
+        }
+        return newDamage;
     }
 }
