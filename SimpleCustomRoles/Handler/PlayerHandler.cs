@@ -32,21 +32,21 @@ public class PlayerHandler : CustomEventsHandler
             return;
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Target, out var role))
             return;
-        CustomRoleInfo attacker_role = null;
+        CustomRoleInfo attackerRole = null;
         float Damage = GetDamageValue(ev.DamageHandler);
         var damageType = GetDamageType(ev.DamageHandler);
         if (ev.Player != null && ev.Player != ev.Target)
         {
-            if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out attacker_role))
+            if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out attackerRole))
                 return;
-            if (!attacker_role.Advanced.Damager.DamageSent.Any(x => x.Key.DamageType == damageType))
+            if (!attackerRole.Advanced.Damager.DamageSent.Any(x => x.Key.DamageType == damageType))
                 return;
-            Damage = CalculateDamage(attacker_role.Advanced.Damager.DamageSent, ev.DamageHandler, Damage, damageType);
+            Damage = CalculateDamage(attackerRole.Advanced.Damager.DamageSent, ev.DamageHandler, Damage, damageType);
         }
         if (role.Advanced.Damager.DamageReceived.Any(x => x.Key.DamageType == damageType))
             Damage = CalculateDamage(role.Advanced.Damager.DamageReceived, ev.DamageHandler, Damage, damageType);
-        if (attacker_role != null)
-            CommandHelper.RunCommand(attacker_role.Events.OnDealDamage, $"{ev.Player.PlayerId} {ev.Target.PlayerId} {damageType} {Damage}");
+        if (attackerRole != null)
+            CommandHelper.RunCommand(attackerRole.Events.OnDealDamage, $"{ev.Player.PlayerId} {ev.Target.PlayerId} {damageType} {Damage}");
         CommandHelper.RunCommand(role.Events.OnReceiveDamage, $"{ev.Target.PlayerId} {(ev.Player != null ? ev.Player.PlayerId : 0)} {damageType} {Damage}");
         SetDamageValue(ev.DamageHandler, Damage);
     }
@@ -94,8 +94,8 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerDeath(PlayerDeathEventArgs ev)
     {
-        if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var died_player_role))
-            CommandHelper.RunCommand(died_player_role.Events.OnDied, $"{ev.Player.PlayerId} {(ev.Attacker != null ? ev.Attacker.PlayerId : 0)} {GetDamageType(ev.DamageHandler)} {GetDamageValue(ev.DamageHandler)}");
+        if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var died_playerRole))
+            CommandHelper.RunCommand(died_playerRole.Events.OnDied, $"{ev.Player.PlayerId} {(ev.Attacker != null ? ev.Attacker.PlayerId : 0)} {GetDamageType(ev.DamageHandler)} {GetDamageValue(ev.DamageHandler)}");
         CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         if (ev.Attacker == null)
             return;
@@ -121,10 +121,10 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerDying(PlayerDyingEventArgs ev)
     {
-        if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var dying_player_role))
+        if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var dying_playerRole))
             return;
         var damageType = GetDamageType(ev.DamageHandler);
-        Server.RunCommand($"{dying_player_role.Events.OnDying} {ev.Player.PlayerId} {(ev.Attacker != null ? ev.Attacker.PlayerId : 0)} {damageType}");
+        Server.RunCommand($"{dying_playerRole.Events.OnDying} {ev.Player.PlayerId} {(ev.Attacker != null ? ev.Attacker.PlayerId : 0)} {damageType}");
     }
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)

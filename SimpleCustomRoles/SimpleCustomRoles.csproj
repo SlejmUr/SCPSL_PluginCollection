@@ -7,15 +7,6 @@
 		<Copyright>SlejmUr</Copyright>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="TheYML.yml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="TheYML.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-	<ItemGroup>
 	  <Folder Include="ExampleRoles\" />
 	</ItemGroup>
 </Project>

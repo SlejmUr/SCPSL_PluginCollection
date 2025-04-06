@@ -16,8 +16,8 @@ public class RolesLoader
         RoleInfos = [];
         if (Directory.Exists(Dir))
         {
-            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), HelperTxts.TheYML_PRE_Comment + "\n" + YamlConfigParser.Serializer.Serialize(CreateTemplate()));
-            File.WriteAllText(Path.Combine(Dir, "Template.yml"), YamlConfigParser.Serializer.Serialize(CreateTemplate()));
+            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), HelperTxts.TheYML_PRE_Comment + "\n" + CustomYaml.Serializer.Serialize(CreateTemplate()));
+            File.WriteAllText(Path.Combine(Dir, "Template.yml"), CustomYaml.Serializer.Serialize(CreateTemplate()));
             foreach (var file in Directory.GetFiles(Dir))
             {
                 if (file.Contains(".disable") || file.Contains(".d"))
@@ -25,14 +25,14 @@ public class RolesLoader
                 if (!file.Contains(".yml"))
                     continue;
                 CL.Debug(file, Main.Instance.Config.Debug);
-                RoleInfos.Add(YamlConfigParser.Deserializer.Deserialize<CustomRoleInfo>(File.ReadAllText(file)));
+                RoleInfos.Add(CustomYaml.Deserializer.Deserialize<CustomRoleInfo>(File.ReadAllText(file)));
             }
 
         }
         else
         {
             Directory.CreateDirectory(Dir);
-            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), YamlConfigParser.Serializer.Serialize(CreateTemplate()));
+            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), CustomYaml.Serializer.Serialize(CreateTemplate()));
         }
         Main.Instance.RolesLoader.RoleInfos = [.. Main.Instance.RolesLoader.RoleInfos.OrderBy(x=>x.SpawnChance)];
     }
@@ -85,10 +85,10 @@ public class RolesLoader
             Location = new()
             {
                 UseDefault = false,
-                LocationSpawnPriority = LocationSpawnPriority.SpawnZone,
+                Priority = LocationSpawnPriority.SpawnZone,
                 SpawnRooms = [RoomName.EzOfficeStoried, RoomName.EzEvacShelter, RoomName.HczArmory],
                 SpawnZones = [FacilityZone.Entrance],
-                ExludeSpawnRooms = [RoomName.Pocket]
+                ExludeRooms = [RoomName.Pocket]
             },
             Advanced = new()
             {

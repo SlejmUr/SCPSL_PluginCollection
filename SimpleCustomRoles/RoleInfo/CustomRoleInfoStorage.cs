@@ -67,14 +67,14 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         Timing.CallDelayed(1, ()=>
         {
-            switch (Role.Location.LocationSpawnPriority)
+            switch (Role.Location.Priority)
             {
                 case LocationSpawnPriority.None:
                     break;
                 case LocationSpawnPriority.SpawnZone:
                     if (Role.Location.SpawnZones.Count > 0)
                     {
-                        var tp = Room.Get(Role.Location.SpawnZones.RandomItem()).Where(x => !Role.Location.ExludeSpawnRooms.Contains(x.Name)).ToList().RandomItem();
+                        var tp = Room.Get(Role.Location.SpawnZones.RandomItem()).Where(x => !Role.Location.ExludeRooms.Contains(x.Name)).ToList().RandomItem();
                         Owner.Position = tp.AdjustRoomPosition() + Role.Location.OffsetPosition;
                     }
                     break;

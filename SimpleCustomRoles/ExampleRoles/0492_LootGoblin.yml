@@ -1,16 +1,16 @@
 rolename: 0492_LootGoblin
-display_rolename: 049-2 Loot Goblin
-display_color: '#ff0000'
-spawn_chance: 10000
-spawn_amount: 1
-role_type: ScpSpecific
-role_to_spawn: Scp0492
-replace_role: Scp0492
+displayRolename: 049-2 Loot Goblin
+displayColor: '#ff0000'
+spawnChance: 10000
+spawnAmount: 1
+roleType: ScpSpecific
+roleToSpawn: Scp0492
+replaceRole: Scp0492
 hint:
   broadcast: <size=40>You got a <color=#fc0335>mythically rare</color> role!</size>\n <color=#ff0000><b>SCP-049-2 - Loot Goblin</b></color>!\n<size=30>A bag full of loot has made you much louder, but your horde gives you strength!</size>
-  broadcast_duration: 15
+  broadcastDuration: 15
   hint: You have an immense amount of Hume Shield and movement speed but significantly lower maximum hitpoints, a smaller size, loud footsteps and you drop a horde of treasure when you die.
-  hint_duration: 15
+  hintDuration: 15
 health:
   health:
     value: 150
@@ -20,11 +20,11 @@ health:
     math: Add
 effects:
 - removable: false
-  effect_name: MovementBoost
+  effectName: MovementBoost
   duration: 0
   intensity: 80
 - removable: false
-  effect_name: SinkHole
+  effectName: SinkHole
   duration: 0
   intensity: 1
 inventory:
@@ -43,10 +43,10 @@ inventory:
     Ammo12gauge: 20
     Ammo762x39: 100
     Ammo44cal: 20
-scp_specific:
+scpSpecific:
   scp0492:
-    can_spawn_if_no_custom094: true
-    chance_for_spawn: 150
+    canSpawnIfNoCustom094: true
+    chanceForSpawn: 150
 advanced:
   scale:
     x: 0.50

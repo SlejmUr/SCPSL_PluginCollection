@@ -1,51 +1,51 @@
 rolename: ClassD_Electrified
-display_rolename: Electrified
-display_color: 'orange'
-spawn_chance: 200 #800
-spawn_amount: 1
-role_to_spawn: ClassD
-replace_role: ClassD
+displayRolename: Electrified
+displayColor: 'orange'
+spawnChance: 200 #800
+spawnAmount: 1
+roleToSpawn: ClassD
+replaceRole: ClassD
 hint:
   broadcast: <size=40>You got a <color=#9f21ff>rare</color> role!</size>\n <color=orange><b>Class D - Electrified</b></color>!\n<size=30>You've been tased for insubordination so many times, you developed an immunity.</size>
-  broadcast_duration: 15
+  broadcastDuration: 15
   hint: You're completely immune to electrical damage effects including from Teslas, Micro and the Particle Disruptor.
-  hint_duration: 15
+  hintDuration: 15
 advanced:
   damager:
-    damage_received:
+    damageReceived:
       ?
-        damage_type: Universal
-        damage_sub_type: UniversalSubType
-        sub_type: Tesla
+        damageType: Universal
+        damageSubType: UniversalSubType
+        subType: Tesla
       : value: 0
         math: Set
       ?
-        damage_type: MicroHid
-        damage_sub_type: MicroHidFiringMode
-        sub_type: PrimaryFire
+        damageType: MicroHid
+        damageSubType: MicroHidFiringMode
+        subType: PrimaryFire
       : value: 0
         math: Set
       ?
-        damage_type: MicroHid
-        damage_sub_type: MicroHidFiringMode
-        sub_type: ChargeFire
+        damageType: MicroHid
+        damageSubType: MicroHidFiringMode
+        subType: ChargeFire
       : value: 0
         math: Set
       ?
-        damage_type: MicroHid
-        damage_sub_type: MicroHidFiringMode
-        sub_type: BrokenFire
+        damageType: MicroHid
+        damageSubType: MicroHidFiringMode
+        subType: BrokenFire
       : value: 0
         math: Set
       ?
-        damage_type: Disruptor
-        damage_sub_type: Disruptor_FiringState
-        sub_type: FiringRapid
+        damageType: Disruptor
+        damageSubType: Disruptor_FiringState
+        subType: FiringRapid
       : value: 0
         math: Set
       ?
-        damage_type: Disruptor
-        damage_sub_type: Disruptor_FiringState
-        sub_type: FiringSingle
+        damageType: Disruptor
+        damageSubType: Disruptor_FiringState
+        subType: FiringSingle
       : value: 0
         math: Set
