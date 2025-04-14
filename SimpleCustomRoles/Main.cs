@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using MEC;
 using Respawning;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.RoleInfo;
@@ -31,7 +32,7 @@ internal class Main : Plugin<Config>
         Instance = this;
         HelperTxts.WriteAll();
         RolesLoader = new RolesLoader();
-        Logic.Init();
+        Timing.CallDelayed(5, Logic.Init);
 
         Exiled.Events.Handlers.Server.WaitingForPlayers += CreateAndInit_Handler.WaitingForPlayers;
         Exiled.Events.Handlers.Server.RoundStarted += CreateAndInit_Handler.RoundStarted;
