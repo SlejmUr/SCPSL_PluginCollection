@@ -89,6 +89,9 @@ public class SpawnWaveSpecific
 
     [Description("Should skip the minimum check.")]
     public bool SkipMinimumCheck { get; set; } = false;
+
+    [Description("Removing from the spawnable list.")]
+    public bool RemoveAfterSpawn { get; set; } = false;
 }
 public class Inventory
 {

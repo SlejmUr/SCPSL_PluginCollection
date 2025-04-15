@@ -30,16 +30,18 @@ internal class CreateAndInit_Handler
             if (!item.SpawnWaveSpecific.SkipMinimumCheck && item.SpawnWaveSpecific.MinimumTeamMemberRequired > players.Count)
                 continue;
 
-            var referenceHub = players.Where(x => x.roleManager.CurrentRole.RoleTypeId == item.RoleToReplace).GetRandomValue();
+            var referenceHub = players.GetRandomValue(x => x.roleManager.CurrentRole.RoleTypeId == item.RoleToReplace);
 
             var player = Player.List.FirstOrDefault(x => x.ReferenceHub == referenceHub);
             if (player == null)
                 continue;
+
             if (Main.Instance.Config.Debug)
                 Log.Info("Player choosen: " + player.UserId);
             // set the player as a role
             RoleSetter.SetFromCMD(player, item);
-            tmp.Add(item);
+            if (item.SpawnWaveSpecific.RemoveAfterSpawn)
+                tmp.Add(item);
         }
         // remove
         foreach (var item in tmp)
@@ -145,7 +147,7 @@ internal class CreateAndInit_Handler
                     IsSpawning = true;
                     if (item.RoleType == CustomRoleType.SPC_Specific)
                         Main.Instance.SPC_SpecificRoles.Add(item);
-                    if (item.RoleType == CustomRoleType.SPC_Specific)
+                    if (item.RoleType == CustomRoleType.InWave)
                         Main.Instance.InWaveRoles.Add(item);
                     else
                         Main.Instance.RegularRoles.Add(item);
