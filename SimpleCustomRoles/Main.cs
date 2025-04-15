@@ -36,6 +36,7 @@ internal class Main : Plugin<Config>
 
         Exiled.Events.Handlers.Server.WaitingForPlayers += CreateAndInit_Handler.WaitingForPlayers;
         Exiled.Events.Handlers.Server.RoundStarted += CreateAndInit_Handler.RoundStarted;
+        Exiled.Events.Handlers.Server.RoundEnded += CreateAndInit_Handler.RoundEnded;
 
         Exiled.Events.Handlers.Player.Escaping += TheHandler.Escaping;
         Exiled.Events.Handlers.Player.Died += TheHandler.Died;
@@ -73,6 +74,7 @@ internal class Main : Plugin<Config>
 
         Exiled.Events.Handlers.Server.WaitingForPlayers -= CreateAndInit_Handler.WaitingForPlayers;
         Exiled.Events.Handlers.Server.RoundStarted -= CreateAndInit_Handler.RoundStarted;
+        Exiled.Events.Handlers.Server.RoundEnded += CreateAndInit_Handler.RoundEnded;
 
         Exiled.Events.Handlers.Player.Escaping -= TheHandler.Escaping;
         Exiled.Events.Handlers.Player.Died -= TheHandler.Died;

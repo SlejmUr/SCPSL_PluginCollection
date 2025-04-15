@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Extensions;
 using Exiled.API.Features;
+using Exiled.Events.EventArgs.Server;
 using MEC;
 using Respawning.Waves;
 using SimpleCustomRoles.RoleInfo;
@@ -8,6 +9,11 @@ namespace SimpleCustomRoles.Handler;
 
 internal class CreateAndInit_Handler
 {
+    public static void RoundEnded(RoundEndedEventArgs ev)
+    {
+        FixSpy.Stop();
+    }
+
     public static void RespawnManager_ServerOnRespawned(SpawnableWaveBase wave, List<ReferenceHub> players)
     {
         if (players.Count == 0)
@@ -136,10 +142,8 @@ internal class CreateAndInit_Handler
                 int chance = item.SpawnChance;
                 if (Main.Instance.Config.UsePlayerPercent)
                 {
-                    Log.Debug($"Basic chance: {chance}");
                     float chance_mulitplier = ((float)Server.PlayerCount / (float)Server.MaxPlayerCount);
                     chance = (int)(chance * chance_mulitplier);
-                    Log.Debug($"Final chance: {chance}");
                 }
                 chance = (int)((float)chance * Main.Instance.Config.SpawnRateMultiplier);
                 if (random <= chance)
@@ -169,8 +173,7 @@ internal class CreateAndInit_Handler
             }
             if (player == null)
                 continue;
-            if (Main.Instance.Config.Debug)
-                Log.Info("Player Selected to spawn: " + player.UserId);
+            Log.Debug("Player Selected to spawn: " + player.UserId);
             RoleSetter.SetCustomInfoToPlayer(player, item);
         }
         Main.Instance.RegularRoles.Clear();
@@ -181,5 +184,6 @@ internal class CreateAndInit_Handler
             {
                 Round.IsLocked = false;
             });
+        FixSpy.StartSync();
     }
 }

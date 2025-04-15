@@ -198,6 +198,7 @@ public class RoleSetter
         {
             Timing.CallDelayed(2.5f, () =>
             {
+                FixSpy.PlayerToSpyRole.Add(player, customRoleInfo.Advanced.RoleAppearance);
                 player.ChangeAppearance(customRoleInfo.Advanced.RoleAppearance);
                 Log.Debug("Role Appearance should have changed!");
             });
@@ -281,6 +282,7 @@ public class RoleSetter
             player.CustomInfo = custominfo;
         }
         UserIdToOldCustomInfo.Remove(player.UserId);
+        FixSpy.PlayerToSpyRole.Remove(player);
 
         Main.Instance.PlayerCustomRole.Remove(player.UserId);
     }
