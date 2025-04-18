@@ -196,12 +196,7 @@ public class RoleSetter
         //  Appearance
         if (customRoleInfo.Advanced.RoleAppearance != PlayerRoles.RoleTypeId.None)
         {
-            Timing.CallDelayed(2.5f, () =>
-            {
-                FixSpy.PlayerToSpyRole.Add(player, customRoleInfo.Advanced.RoleAppearance);
-                player.ChangeAppearance(customRoleInfo.Advanced.RoleAppearance);
-                Log.Debug("Role Appearance should have changed!");
-            });
+            FixSpy.PlayerToSpyRole.Add(player, (customRoleInfo.Advanced.RoleAppearance, []));
         }
 
 

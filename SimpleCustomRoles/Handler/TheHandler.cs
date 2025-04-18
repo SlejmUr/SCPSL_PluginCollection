@@ -161,6 +161,11 @@ public class TheHandler
     {
         if (!Main.Instance.PlayerCustomRole.TryGetValue(args.Player.UserId, out var role))
             return;
+
+        // fix that some roles can escape despite nothing is set here.
+        if (role.Advanced.Escaping.CanEscape && role.Advanced.Escaping.RoleNameAfterEscape.Count == 0 && role.Advanced.Escaping.RoleAfterEscape.Count == 0)
+            return;
+
         // short check if can escape.
         args.IsAllowed = role.Advanced.Escaping.CanEscape;
         if (!args.IsAllowed)
