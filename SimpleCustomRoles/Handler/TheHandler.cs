@@ -180,10 +180,19 @@ public class TheHandler
         // set to custom role to the type we want
         if (role.Advanced.Escaping.RoleNameAfterEscape.TryGetValue(args.EscapeScenario, out var rolename) && !string.IsNullOrEmpty(rolename))
         {
-            Timing.CallDelayed(2.5f, () =>
+            CustomRoleInfo customRoleInfo = null;
+            if (Main.Instance.RolesLoader.RoleInfos.Any(x => x.RoleName == rolename))
+                customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == rolename);
+            if (customRoleInfo == null)
             {
-                var escapeRole = Main.Instance.EscapeRoles.FirstOrDefault(x => x.RoleName == rolename);
-                RoleSetter.SetFromCMD(args.Player, escapeRole);
+                Log.Error("that sucks");
+                return;
+            }
+                
+            args.NewRole = customRoleInfo.RoleToSpawnAs;
+            Timing.CallDelayed(0.5f, () =>
+            {
+                RoleSetter.SetFromCMD(args.Player, customRoleInfo);
             });
         }
     }
