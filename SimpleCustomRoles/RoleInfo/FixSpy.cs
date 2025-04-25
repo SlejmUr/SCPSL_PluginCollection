@@ -10,7 +10,6 @@ namespace SimpleCustomRoles.RoleInfo;
 internal class FixSpy
 {
     static Dictionary<Player, (RoleTypeId role, List<Player> players)> PlayerToSpyRole = [];
-    static object locker = new();
     static CoroutineHandle handle;
 
     public static void StartSync()
@@ -25,7 +24,7 @@ internal class FixSpy
 
     public static void AddPlayer(Player player, RoleTypeId role)
     {
-        lock (locker)
+        lock (PlayerToSpyRole)
         {
             PlayerToSpyRole.Add(player, (role, []));
         }
@@ -33,7 +32,7 @@ internal class FixSpy
 
     public static void RemovePlayer(Player player)
     {
-        lock (locker)
+        lock (PlayerToSpyRole)
         {
             PlayerToSpyRole.Remove(player);
         }
@@ -41,7 +40,7 @@ internal class FixSpy
 
     public static void ForceSync(Player player)
     {
-        lock (locker)
+        lock (PlayerToSpyRole)
         {
             for (int i = 0; i < PlayerToSpyRole.Count; i++)
             {
@@ -59,7 +58,7 @@ internal class FixSpy
         yield return 1f;
         while (true)
         {
-            lock (locker)
+            lock (PlayerToSpyRole)
             {
                 for (int i = 0; i < PlayerToSpyRole.Count; i++)
                 {
@@ -72,6 +71,7 @@ internal class FixSpy
                         playersToSync = [.. playersToSync.Except(kv.Value.players)];
                     if (playersToSync.Count == 0)
                         continue;
+                    //Log.Info("Sync to Ids: " + string.Join(", ", playersToSync.Select(x=>x.Id)));
                     kv.Key.ChangeAppearance(kv.Value.role, playersToSync);
                     kv.Value.players.AddRange(playersToSync);
                     PlayerToSpyRole[kv.Key] = kv.Value;
