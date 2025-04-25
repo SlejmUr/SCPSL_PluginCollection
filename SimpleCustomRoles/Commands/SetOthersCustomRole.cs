@@ -87,7 +87,7 @@ public class SetOthersCustomRole : ICommand
                 return false;
             }
             RoleSetter.SetFromCMD(player, role);
-            response = $"You set {player.Id} as a role: {rolename}[{role.DisplayRoleName}]!";
+            response = $"You set {player.Id} as a role: {rolename}[{role.DisplayInfo.RARoleName}]!";
             return true;
         }
         

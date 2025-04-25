@@ -11,14 +11,8 @@ public class CustomRoleInfo
     [Description("Role name, can be the name of the file, just be different then others. REQUIRED (DONT USE SPACE!)")]
     public string RoleName { get; set; }
 
-    [Description("Role display name")]
-    public string DisplayRoleName { get; set; } = string.Empty;
-
-    [Description("Role display color")]
-    public string RoleDisplayColorHex { get; set; } = "#ffffff";
-
-    [Description("Can the role display")]
-    public bool RoleCanDisplay { get; set; } = true;
+    [Description("Role Display Information")]
+    public DisplayInfo DisplayInfo { get; set; } = new();
 
     [Description("REQUIRED! Role spawning chance. 0 means NEVER, min 1, max 10000 [10 000] (so 0.01 = 1, 60 = 6000 [6 000])")]
     public int SpawnChance { get; set; } = 0;
@@ -129,8 +123,27 @@ public class HintStuff
 
     [Description("Suggestion: Set as 15, so when you spawned most of the UI is gonna get obscured. After 10 or 8 second it will be removed/hidden.")]
     public ushort SpawnBroadcastToAllDuration { get; set; } = 0;
-
 }
+
+public class DisplayInfo
+{
+    [Description("Can the role display")]
+    public bool RoleCanDisplay { get; set; } = true;
+
+    [Description("Role area name")]
+    public string AreaRoleName { get; set; } = string.Empty;
+
+    [Description("Role RA name")]
+    public string RARoleName { get; set; } = string.Empty;
+
+    [Description("Role Spectator name")]
+    public string SpectatorRoleName { get; set; } = string.Empty;
+
+    [Description("Role color")]
+    public string ColorHex { get; set; } = "#ffffff";
+}
+
+
 public class ValueSetter
 {
     public float Value { get; set; } = 0;

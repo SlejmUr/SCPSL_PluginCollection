@@ -9,7 +9,7 @@ namespace SimpleCustomRoles.Handler;
 
 internal class CreateAndInit_Handler
 {
-    public static void RoundEnded(RoundEndedEventArgs ev)
+    public static void RoundEnded(RoundEndedEventArgs _)
     {
         FixSpy.Stop();
     }

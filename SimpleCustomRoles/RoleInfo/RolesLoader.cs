@@ -75,7 +75,14 @@ public class RolesLoader
         return new()
         {
             RoleName = "Temp",
-            RoleDisplayColorHex = "#ffffff",
+            DisplayInfo = new()
+            {
+                ColorHex = "#ffffff",
+                RoleCanDisplay = true,
+                AreaRoleName = "TEMPORARY",
+                RARoleName = "Temp",
+                SpectatorRoleName = "Temp"
+            },
             RoleType = CustomRoleType.Regular,
             SpawnAmount = 1,
             SpawnChance = 0,
@@ -303,7 +310,6 @@ public class RolesLoader
                     ]
                 }
             },
-            DisplayRoleName = "TEMPORARY",
             SpawnWaveSpecific = new() 
             { 
                 MinimumTeamMemberRequired = 3,

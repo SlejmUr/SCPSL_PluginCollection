@@ -11,6 +11,13 @@ public class TheHandler
     {
         if (args.Reason == Exiled.API.Enums.SpawnReason.ForceClass)
             RoleSetter.UnSetCustomInfoToPlayer(args.Player);
+        if (args.Reason == Exiled.API.Enums.SpawnReason.Escaped)
+            RoleSetter.UnSetCustomInfoToPlayer(args.Player, true);
+        if (args.Reason != Exiled.API.Enums.SpawnReason.Destroyed)
+            Timing.CallDelayed(0.1f, ()=> 
+        {
+            FixSpy.ForceSync(args.Player);
+        });
     }
 
     public static void Hurting(HurtingEventArgs args)
@@ -58,9 +65,9 @@ public class TheHandler
             args.Player.ClearBroadcasts();
 
         // show broadcast if has newtarget and can be displayed
-        if (args.NewTarget != null && Main.Instance.PlayerCustomRole.TryGetValue(args.NewTarget.UserId, out var role) && role.RoleCanDisplay)
+        if (args.NewTarget != null && Main.Instance.PlayerCustomRole.TryGetValue(args.NewTarget.UserId, out var role) && role.DisplayInfo.RoleCanDisplay)
         {
-            Exiled.API.Features.Broadcast broadcast = new($"\nThis user has a special role: <color={role.RoleDisplayColorHex}>{role.DisplayRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
+            Exiled.API.Features.Broadcast broadcast = new($"\nThis user has a special role: <color={role.DisplayInfo.ColorHex}>{role.DisplayInfo.SpectatorRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
             args.Player.Broadcast(broadcast, false);
         }
     }

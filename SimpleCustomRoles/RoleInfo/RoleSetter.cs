@@ -55,7 +55,7 @@ public class RoleSetter
         return false;
     }
 
-    static Dictionary<string, string> UserIdToOldCustomInfo = [];
+    static readonly Dictionary<string, string> UserIdToOldCustomInfo = [];
 
     public static void SetCustomInfoToPlayer(Player player, CustomRoleInfo customRoleInfo)
     {
@@ -196,7 +196,7 @@ public class RoleSetter
         //  Appearance
         if (customRoleInfo.Advanced.RoleAppearance != PlayerRoles.RoleTypeId.None)
         {
-            FixSpy.PlayerToSpyRole.Add(player, (customRoleInfo.Advanced.RoleAppearance, []));
+            FixSpy.AddPlayer(player, customRoleInfo.Advanced.RoleAppearance);
         }
 
 
@@ -246,8 +246,8 @@ public class RoleSetter
 
         UserIdToOldCustomInfo.Add(player.UserId, custominfo);
 
-        if (customRoleInfo.RoleCanDisplay)
-            player.CustomInfo += $"{customRoleInfo.DisplayRoleName}";
+        if (customRoleInfo.DisplayInfo.RoleCanDisplay)
+            player.CustomInfo += $"{customRoleInfo.DisplayInfo.AreaRoleName}";
 
         Main.Instance.PlayerCustomRole.Add(player.UserId, customRoleInfo);
 
@@ -259,7 +259,7 @@ public class RoleSetter
     {
         if (!Main.Instance.PlayerCustomRole.ContainsKey(player.UserId))
             return;
-
+        FixSpy.RemovePlayer(player);
         player.UniqueRole = string.Empty;
         player.IsBypassModeEnabled = false;
         player.Scale = UnityEngine.Vector3.one;
@@ -277,8 +277,6 @@ public class RoleSetter
             player.CustomInfo = custominfo;
         }
         UserIdToOldCustomInfo.Remove(player.UserId);
-        FixSpy.PlayerToSpyRole.Remove(player);
-
         Main.Instance.PlayerCustomRole.Remove(player.UserId);
     }
 
