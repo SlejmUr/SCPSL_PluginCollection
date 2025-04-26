@@ -1,35 +1,40 @@
-﻿using LabApi.Events.CustomHandlers;
+﻿using LabApi.Events.Arguments.ServerEvents;
+using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
 using MEC;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles.Handler;
 
 internal class ServerHandler : CustomEventsHandler
 {
+    public override void OnServerRoundEnded(RoundEndedEventArgs ev)
+    {
+        AppearanceSync.Stop();
+    }
+
+
     public static void ReloadRoles()
     {
         Main.Instance.RegularRoles = [];
         Main.Instance.InWaveRoles = [];
-        Main.Instance.AfterDeathRoles = [];
         Main.Instance.ScpSpecificRoles = [];
         Main.Instance.RolesLoader.Load();
         foreach (var item in Main.Instance.RolesLoader.RoleInfos)
         {
             if (item.RoleType == CustomRoleType.AfterDead)
             {
-                Main.Instance.AfterDeathRoles.Add(item);
                 continue;
             }
-            for (int i = 0; i < item.SpawnAmount; i++)
+            for (int i = 0; i < item.Spawn.SpawnAmount; i++)
             {
                 if (item.RoleType == CustomRoleType.ScpSpecific)
                     Main.Instance.ScpSpecificRoles.Add(item);
                 if (item.RoleType == CustomRoleType.InWave)
                     Main.Instance.InWaveRoles.Add(item);
             }
-
         }
     }
 
@@ -37,7 +42,6 @@ internal class ServerHandler : CustomEventsHandler
     {
         Main.Instance.RegularRoles = [];
         Main.Instance.InWaveRoles = [];
-        Main.Instance.AfterDeathRoles = [];
         Main.Instance.ScpSpecificRoles = [];
         Main.Instance.EscapeRoles = [];
         Main.Instance.RolesLoader.Load();
@@ -46,6 +50,7 @@ internal class ServerHandler : CustomEventsHandler
 
     public override void OnServerRoundStarted()
     {
+        AppearanceSync.Start();
         if (Main.Instance.Config.IsPaused)
             return;
 
@@ -61,8 +66,6 @@ internal class ServerHandler : CustomEventsHandler
         {
             if (item.RoleType == CustomRoleType.AfterDead)
             {
-                CL.Debug($"After Death Role added: " + item.Rolename, Main.Instance.Config.Debug);
-                Main.Instance.AfterDeathRoles.Add(item);
                 continue;
             }
             if (item.RoleType == CustomRoleType.Escape)
@@ -71,7 +74,7 @@ internal class ServerHandler : CustomEventsHandler
                 Main.Instance.EscapeRoles.Add(item);
                 continue;
             }
-            for (int i = 0; i < item.SpawnAmount; i++)
+            for (int i = 0; i < item.Spawn.SpawnAmount; i++)
             {
                 bool IsSpawning = false;
                 var random = RandomGenerator.GetInt16(1, 10000, true);
@@ -80,15 +83,15 @@ internal class ServerHandler : CustomEventsHandler
                     CL.Debug($"Role has been no longer spawn: {item.Rolename} (Reason: Player limited)", Main.Instance.Config.Debug);
                     continue;
                 }
-                int chance = item.SpawnChance;
-                if (Main.Instance.Config.UsePlayerPercent && !item.DenyChance)
+                int chance = item.Spawn.SpawnChance;
+                if (Main.Instance.Config.UsePlayerPercent && !item.Spawn.DenyChance)
                 {
                     CL.Debug($"Basic chance: {chance}", Main.Instance.Config.Debug);
                     float chance_mulitplier = ((float)Server.PlayerCount / (float)Server.MaxPlayers);
                     chance = (int)(chance * chance_mulitplier);
                     CL.Debug($"Final chance: {chance}", Main.Instance.Config.Debug);
                 }
-                if (!item.DenyChance)
+                if (!item.Spawn.DenyChance)
                     chance = (int)((float)chance * Main.Instance.Config.SpawnRateMultiplier);
                 if (random <= chance)
                 {

@@ -1,6 +1,5 @@
 ﻿using CommandSystem;
 using SimpleCustomRoles.Helpers;
-using SimpleCustomRoles.RoleInfo;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -9,7 +8,7 @@ public class ShowCurCustomRole : ICommand
 {
     public string Command => "scrcur";
 
-    public string[] Aliases => ["simplecustomrolecurrently", "scr_current", "scr_match"];
+    public string[] Aliases => ["simplecustomrolecurrently", "scr_current", "scr_cur"];
 
     public string Description => "List currently what player is which role.";
 
@@ -22,21 +21,19 @@ public class ShowCurCustomRole : ICommand
             response = "You dont have permission!";
             return false;
         }
-        response = "Currently Playing roles:\n";
+        
         var players = CustomRoleHelpers.GetPlayers();
         if (players.Count() == 0)
         {
-            response += $"There is no Custom Roles\n";
+            response = $"There is no Custom Roles.";
+            return true;
         }
-        else
+        response = "Currently Playing roles:";
+        foreach (var player in players)
         {
-            foreach (var player in players)
-            {
-                if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-                    response += $"{role.Rolename} [{role.DisplayRolename}]: [Id]{player.PlayerId} [Name]{player.Nickname}\n";
-            }
+            if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
+                response += $"\n{role.Rolename} [{role.Display.RARoleName}]: [Id]{player.PlayerId} [Name]{player.Nickname}";
         }
-
         return true;
     }
 }

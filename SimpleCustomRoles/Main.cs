@@ -1,10 +1,10 @@
 ﻿using LabApi.Events.CustomHandlers;
 using LabApi.Features;
 using LabApi.Loader.Features.Plugins;
-using Respawning;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.SSS;
 
 namespace SimpleCustomRoles;
@@ -16,16 +16,15 @@ internal class Main : Plugin<Config>
     #region Plugin Info
     public override string Author => "SlejmUr";
     public override string Name => "SimpleCustomRoles";
-    public override Version Version => new(0, 4, 1);
+    public override Version Version => new(0, 5, 0);
     public override string Description => "Add simple YAML Support for creating custom roles.";
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
     #endregion
     public RolesLoader RolesLoader;
-    public List<CustomRoleInfo> RegularRoles;
-    public List<CustomRoleInfo> InWaveRoles;
-    public List<CustomRoleInfo> AfterDeathRoles;
-    public List<CustomRoleInfo> ScpSpecificRoles;
-    public List<CustomRoleInfo> EscapeRoles;
+    public List<CustomRoleBaseInfo> RegularRoles;
+    public List<CustomRoleBaseInfo> InWaveRoles;
+    public List<CustomRoleBaseInfo> ScpSpecificRoles;
+    public List<CustomRoleBaseInfo> EscapeRoles;
 
     private ServerHandler serverHandler;
     private PlayerHandler playerHandler;
@@ -64,8 +63,6 @@ internal class Main : Plugin<Config>
 
         scp330Handler = new();
         CustomHandlersManager.RegisterEventsHandler(scp330Handler);
-
-        WaveManager.OnWaveSpawned += PlayerHandler.RespawnManager_ServerOnRespawned;
     }
 
     public override void Disable()
@@ -90,8 +87,6 @@ internal class Main : Plugin<Config>
 
         CustomHandlersManager.RegisterEventsHandler(scp330Handler);
         scp330Handler = null;
-
-        WaveManager.OnWaveSpawned -= PlayerHandler.RespawnManager_ServerOnRespawned;
         Logic.UnInit();
         RolesLoader.Clear();
         RolesLoader = null;

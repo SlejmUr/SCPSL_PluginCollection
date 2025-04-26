@@ -7,7 +7,7 @@ public class ListCustomRoles : ICommand
 {
     public string Command => "listscr";
 
-    public string[] Aliases => ["listsimplecustomrole"];
+    public string[] Aliases => ["listsimplecustomrole", "scr_list"];
 
     public string Description => "List the Custom Role Names";
     public bool SanitizeResponse => true;
@@ -16,7 +16,7 @@ public class ListCustomRoles : ICommand
         response = "Roles: \n";
         foreach (var item in Main.Instance.RolesLoader.RoleInfos)
         {
-            response += $"{item.Rolename} [{item.DisplayRolename}], ";
+            response += $"{item.Rolename} [{item.Display.RARoleName}], ";
         }
         response = response.Remove(response.Length - 2);
         return true;

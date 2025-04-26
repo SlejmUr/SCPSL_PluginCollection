@@ -10,7 +10,7 @@ public class SetMyCustomRole : ICommand
 {
     public string Command => "setscr";
 
-    public string[] Aliases => ["setsimplecustomrole"];
+    public string[] Aliases => ["setsimplecustomrole", "scr_set"];
 
     public string Description => "Set your custom role with a given roleName";
 

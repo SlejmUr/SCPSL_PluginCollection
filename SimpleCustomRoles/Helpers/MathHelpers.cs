@@ -1,9 +1,20 @@
-﻿using SimpleCustomRoles.RoleInfo;
+﻿using SimpleCustomRoles.RoleYaml;
+using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles.Helpers;
 
 public static class MathHelpers
 {
+    public static void MathWithValue(this MathValue mathValue, ref float inValue)
+    {
+        inValue = mathValue.Math.MathWithFloat(inValue, mathValue.Value);
+    }
+
+    public static void MathWithValue(this MathValueInt mathValue, ref int inValue)
+    {
+        inValue = mathValue.Math.MathWithInt(inValue, mathValue.Value);
+    }
+
     public static float MathWithFloat(this MathOption mathOption, float inFloat, float myValue)
     {
         return mathOption switch

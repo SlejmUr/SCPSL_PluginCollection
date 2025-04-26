@@ -5,8 +5,7 @@ using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp3114;
 using PlayerRoles.PlayableScps.Scp939;
 using PlayerStatsSystem;
-using SimpleCustomRoles.Helpers;
-using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles;
 
@@ -15,9 +14,9 @@ internal class HelperTxts
     static string Dir => Path.Combine(Path.Combine(Main.Instance.GetConfigDirectory().FullName, "Roles"), "HelpTXT");
     static readonly Dictionary<string, string> TxtPair = new()
     {
-        { "DamageType", string.Join("\r\n", Enum.GetNames(typeof(DamageHelper.DamageType))) },
-        { "DamageSubType", string.Join("\r\n", Enum.GetNames(typeof(DamageHelper.SubType))) },
-        { "UniversalDamageSubType", string.Join("\r\n", Enum.GetNames(typeof(DamageHelper.UniversalSubType))) },
+        { "DamageType", string.Join("\r\n", Enum.GetNames(typeof(DamageType))) },
+        { "DamageSubType", string.Join("\r\n", Enum.GetNames(typeof(DamageSubType))) },
+        { "UniversalDamageSubType", string.Join("\r\n", Enum.GetNames(typeof(DamageUniversalType))) },
         { "ItemType", string.Join("\r\n", Enum.GetNames(typeof(ItemType))) },
         { "Scp096DamageType", string.Join("\r\n", Enum.GetNames(typeof(Scp096DamageHandler.AttackType))) },
         { "Scp049DamageType", string.Join("\r\n", Enum.GetNames(typeof(Scp049DamageHandler.AttackType))) },

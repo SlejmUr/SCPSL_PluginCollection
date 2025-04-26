@@ -10,17 +10,21 @@ namespace SimpleCustomRoles.Helpers;
 /// </summary>
 internal class ScaleHelper
 {
-    public static void SetScale(Player player, Vector3 value)
+    public static void SetScale(Player player, Vector3 value, bool IsFake = true)
     {
         if (value == GetScale(player))
             return;
 
         try
         {
+            Vector3 original = GetScale(player);
             player.ReferenceHub.transform.localScale = value;
 
             foreach (Player target in Player.List)
                 NetworkServer.SendSpawnMessage(player.ReferenceHub.networkIdentity, target.Connection);
+
+            if (IsFake)
+                player.ReferenceHub.transform.localScale = original;
         }
         catch (Exception exception)
         {

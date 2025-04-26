@@ -1,5 +1,4 @@
-﻿using Hints;
-using LabApi.Features.Wrappers;
+﻿using LabApi.Features.Wrappers;
 using SimpleCustomRoles.Helpers;
 using UserSettings.ServerSpecific;
 
@@ -37,21 +36,19 @@ internal class Logic
    
     private static void ServerOnSettingValueReceived(ReferenceHub hub, ServerSpecificSettingBase @base)
     {
-        if (!CustomRoleHelpers.TryGetCustomRole(Player.Get(hub), out var customRoleInfo))
+        Player player = Player.Get(hub);
+        if (!CustomRoleHelpers.TryGetCustomRole(player, out var customRoleInfo))
             return;
 
         if (@base is SSKeybindSetting { SyncIsPressed : true } keybindSetting && keybindSetting.SettingId == showRolekb.SettingId)
         {
             if (!string.IsNullOrEmpty(customRoleInfo.Hint.Hint)) // role does not have any spawning hints
             {
-                hub.hints.Show(new TextHint(customRoleInfo.Hint.Hint,
-                [
-                    new StringHintParameter(customRoleInfo.Hint.Hint)
-                ], null, customRoleInfo.Hint.HintDuration));
+                player.SendHint(customRoleInfo.Hint.Hint, customRoleInfo.Hint.HintDuration);
             }
             if (!string.IsNullOrEmpty(customRoleInfo.Hint.Broadcast)) // role does not have any broadcast hints
             {
-                Broadcast.Singleton.TargetAddElement(hub.connectionToClient, customRoleInfo.Hint.Broadcast, customRoleInfo.Hint.BroadcastDuration, Broadcast.BroadcastFlags.Normal);
+                player.SendBroadcast(customRoleInfo.Hint.Broadcast, customRoleInfo.Hint.BroadcastDuration);
             }
         }
             

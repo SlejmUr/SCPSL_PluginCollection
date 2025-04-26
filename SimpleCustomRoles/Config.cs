@@ -7,4 +7,5 @@ public class Config
     public ushort SpectatorBroadcastTime { get; set; } = 7;
     public bool UsePlayerPercent { get; set; }
     public float SpawnRateMultiplier { get; set; } = 1f;
+    public string CustomItemCommand { get; set; }
 }

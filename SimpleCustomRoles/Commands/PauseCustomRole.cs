@@ -7,7 +7,7 @@ public class PauseCustomRole : ICommand
 {
     public string Command => "pausescr";
 
-    public string[] Aliases => ["pausecustomrole"];
+    public string[] Aliases => ["pausecustomrole", "scr_pause"];
 
     public string Description => "Pause or resume custom roles";
 

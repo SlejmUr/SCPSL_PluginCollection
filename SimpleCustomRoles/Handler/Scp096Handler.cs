@@ -9,36 +9,35 @@ public class Scp096Handler : CustomEventsHandler
     public override void OnScp096AddingTarget(Scp096AddingTargetEventArgs ev)
     {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
-            ev.IsAllowed = role.Advanced.CanTrigger096;
+            ev.IsAllowed = role.Extra.Trigger096;
     }
 
     public override void OnScp096PryingGate(Scp096PryingGateEventArgs ev)
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
             return;
-        if (role.ScpSpecific.Scp096.DoorToNotPryOn.Contains(ev.Gate.DoorName))
-        {
-            ev.IsAllowed = false;
+        ev.IsAllowed = role.Scp.Scp096.CanPry;
+        if (!ev.IsAllowed)
             return;
-        }
-        ev.IsAllowed = role.ScpSpecific.Scp096.CanPry;
+        if (role.Scp.Scp096.DoorToNotPryOn.Contains(ev.Gate.DoorName))
+            ev.IsAllowed = false;
     }
 
     public override void OnScp096Charging(Scp096ChargingEventArgs ev)
     {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
-            ev.IsAllowed = role.ScpSpecific.Scp096.CanCharge;
+            ev.IsAllowed = role.Scp.Scp096.CanCharge;
     }
 
     public override void OnScp096TryingNotToCry(Scp096TryingNotToCryEventArgs ev)
     {   
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
-            ev.IsAllowed = role.ScpSpecific.Scp096.CanTryingNotToCry;
+            ev.IsAllowed = role.Scp.Scp096.CanTryingNotToCry;
     }
 
     public override void OnScp096Enraging(Scp096EnragingEventArgs ev)
     {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
-            ev.InitialDuration = role.ScpSpecific.Scp096.Enraging.Math.MathWithFloat(ev.InitialDuration, role.ScpSpecific.Scp096.Enraging.Value);
+            ev.InitialDuration = role.Scp.Scp096.Enraging.Math.MathWithFloat(ev.InitialDuration, role.Scp.Scp096.Enraging.Value);
     }
 }

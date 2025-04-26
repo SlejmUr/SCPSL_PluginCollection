@@ -1,5 +1,4 @@
 ﻿using CommandSystem;
-using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
 using SimpleCustomRoles.Helpers;
 using Utils;
@@ -11,7 +10,7 @@ public class SetOthersCustomRole : ICommand
 {
     public string Command => "setoscr";
 
-    public string[] Aliases => ["setotherssimplecustomrole"];
+    public string[] Aliases => ["setotherssimplecustomrole", "scr_seto"];
 
     public string Description => "Set others custom role with a given roleName\n Usage: setoscr RoleName PlayerId.\nTo set others back use '.' as a name";
 
@@ -86,7 +85,7 @@ public class SetOthersCustomRole : ICommand
                 return false;
             }
             CustomRoleHelpers.SetFromCMD(player, role);
-            response = $"You set {player.PlayerId} as a role: {rolename}[{role.DisplayRolename}]!";
+            response = $"You set {player.PlayerId} as a role: {rolename}[{role.Display.RARoleName}]!";
             return true;
         }
         

@@ -2,31 +2,50 @@
 using LabApi.Features.Wrappers;
 using MEC;
 using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.RoleYaml;
 
 namespace SimpleCustomRoles.Helpers;
 
 public static class CustomRoleHelpers
 {
-    public static bool IsShouldSpawn(CustomRoleInfo roleInfo)
+    public static bool IsShouldSpawn(CustomRoleBaseInfo roleInfo)
     {
-        if (roleInfo.MinimumPlayers == -1 && roleInfo.MaximumPlayers == -1)
+        if (roleInfo.Spawn.MinimumPlayers == -1 && roleInfo.Spawn.MaximumPlayers == -1)
             return true;
-        if (roleInfo.MinimumPlayers == -1 && roleInfo.MaximumPlayers >= Server.PlayerCount)
+        if (roleInfo.Spawn.MinimumPlayers == -1 && roleInfo.Spawn.MaximumPlayers >= Server.PlayerCount)
             return true;
-        if (roleInfo.MinimumPlayers <= Server.PlayerCount && roleInfo.MaximumPlayers >= Server.PlayerCount)
+        if (roleInfo.Spawn.MinimumPlayers <= Server.PlayerCount && roleInfo.Spawn.MaximumPlayers >= Server.PlayerCount)
             return true;
-        if (roleInfo.MinimumPlayers <= Server.PlayerCount && roleInfo.MaximumPlayers == -1)
+        if (roleInfo.Spawn.MinimumPlayers <= Server.PlayerCount && roleInfo.Spawn.MaximumPlayers == -1)
             return true;
         return false;
     }
 
-    public static void SetFromCMD(Player player, CustomRoleInfo customRoleInfo)
+    public static bool SetNewRole(Player player, NewRoleInfo newRoleInfo)
+    {
+        if (newRoleInfo.RoleType != PlayerRoles.RoleTypeId.None)
+        {
+            player.SetRole(newRoleInfo.RoleType, PlayerRoles.RoleChangeReason.RemoteAdmin, newRoleInfo.Flags);
+            return true;
+        }
+        CustomRoleBaseInfo customRoleInfo = null;
+        if (!string.IsNullOrEmpty(newRoleInfo.Name))
+            customRoleInfo = Main.Instance.RolesLoader.RoleInfos.Where(x => x.Rolename == newRoleInfo.Name).FirstOrDefault();
+        else if (newRoleInfo.Random.Count != 0)
+            customRoleInfo = Main.Instance.RolesLoader.RoleInfos.Where(x => x.Rolename == newRoleInfo.Random.RandomItem()).FirstOrDefault();
+        if (customRoleInfo == null)
+            return false;
+        SetFromCMD(player, customRoleInfo);
+        return true;
+    }
+
+    public static void SetFromCMD(Player player, CustomRoleBaseInfo customRoleInfo)
     {
         UnSetCustomInfoToPlayer(player);
         Timing.CallDelayed(0.5f, () => { SetCustomInfoToPlayer(player, customRoleInfo); });
     }
 
-    public static void SetCustomInfoToPlayer(Player player, CustomRoleInfo customRoleInfo)
+    public static void SetCustomInfoToPlayer(Player player, CustomRoleBaseInfo customRoleInfo)
     {
         if (player == null)
             return;
@@ -41,15 +60,19 @@ public static class CustomRoleHelpers
          CL.Info("SetCustomInfoToPlayer: " + player.UserId + " Role: " + customRoleInfo.Rolename + " Success");
     }
 
-    public static void UnSetCustomInfoToPlayer(Player player)
+    public static void UnSetCustomInfoToPlayer(Player player, bool dontResetRole = false)
     {
         if (player == null)
             return;
         if (Contains(player))
+        {
+            CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player).DontResetRole = dontResetRole;
             CustomDataStore.Destroy<CustomRoleInfoStorage>(player);
+        }
+            
     }
 
-    public static bool TryGetCustomRole(Player player, out CustomRoleInfo customRoleInfo)
+    public static bool TryGetCustomRole(Player player, out CustomRoleBaseInfo customRoleInfo)
     {
         customRoleInfo = null;
         if (player == null)

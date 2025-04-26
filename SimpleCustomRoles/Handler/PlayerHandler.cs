@@ -1,12 +1,11 @@
 ﻿using LabApi.Events.Arguments.PlayerEvents;
+using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
 using MEC;
-using Respawning.Waves;
 using SimpleCustomRoles.Helpers;
-using SimpleCustomRoles.RoleInfo;
-using UnityEngine;
-using static SimpleCustomRoles.Helpers.DamageHelper;
+using SimpleCustomRoles.RoleYaml;
+using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles.Handler;
 
@@ -15,40 +14,41 @@ public class PlayerHandler : CustomEventsHandler
     public override void OnPlayerChangingRole(PlayerChangingRoleEventArgs ev)
     {
         CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
+        if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
+            return;
+        AppearanceSync.ForceSync(ev.Player);
     }
 
     public override void OnPlayerDroppingItem(PlayerDroppingItemEventArgs ev)
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
             return;
-        if (!role.Advanced.CannotDropItems.Contains(ev.Item.Type))
+        if (!role.Deniable.Items.TryGetValue(ev.Item.Type, out var deniable))
             return;
-        ev.IsAllowed = false;
+        ev.IsAllowed = deniable.CanDrop;
     }
 
     public override void OnPlayerHurting(PlayerHurtingEventArgs ev)
     {
-        if (ev.Target == null)
+        if (ev.Attacker == null)
             return;
-        if (!CustomRoleHelpers.TryGetCustomRole(ev.Target, out var role))
+        if (!CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var role))
             return;
-        CustomRoleInfo attackerRole = null;
-        float Damage = GetDamageValue(ev.DamageHandler);
-        var damageType = GetDamageType(ev.DamageHandler);
-        if (ev.Player != null && ev.Player != ev.Target)
+        CustomRoleBaseInfo attackerRole = null;
+        float Damage = ev.DamageHandler.GetDamageValue();
+        DamageType damageType = ev.DamageHandler.GetDamageType();
+        if (ev.Player != null && ev.Player != ev.Attacker)
         {
             if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out attackerRole))
                 return;
-            if (!attackerRole.Advanced.Damager.DamageSent.Any(x => x.Key.DamageType == damageType))
+            if (!attackerRole.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType))
                 return;
-            Damage = CalculateDamage(attackerRole.Advanced.Damager.DamageSent, ev.DamageHandler, Damage, damageType);
+            Damage = attackerRole.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
         }
-        if (role.Advanced.Damager.DamageReceived.Any(x => x.Key.DamageType == damageType))
-            Damage = CalculateDamage(role.Advanced.Damager.DamageReceived, ev.DamageHandler, Damage, damageType);
+        if (role.Damage.DamageReceived.Any(x => x.Key.DamageType == damageType))
+            Damage = role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
         if (attackerRole != null)
-            CommandHelper.RunCommand(attackerRole.Events.OnDealDamage, $"{ev.Player.PlayerId} {ev.Target.PlayerId} {damageType} {Damage}");
-        CommandHelper.RunCommand(role.Events.OnReceiveDamage, $"{ev.Target.PlayerId} {(ev.Player != null ? ev.Player.PlayerId : 0)} {damageType} {Damage}");
-        SetDamageValue(ev.DamageHandler, Damage);
+        ev.DamageHandler.SetDamageValue(Damage);
     }
 
 
@@ -63,9 +63,9 @@ public class PlayerHandler : CustomEventsHandler
         }
         if (ev.NewTarget != null && CustomRoleHelpers.TryGetCustomRole(ev.NewTarget, out var role))
         {
-            if (!role.CanDisplay)
+            if (!role.Display.RoleCanDisplay)
                 return;
-            Server.SendBroadcast(ev.Player, $"\nThis user has a special role: <color={role.DisplayColor}>{role.DisplayRolename}</color>", Main.Instance.Config.SpectatorBroadcastTime);
+            Server.SendBroadcast(ev.Player, $"\nThis user has a special role: <color={role.Display.ColorHex}>{role.Display.SpectatorRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
         }
     }
 
@@ -73,12 +73,14 @@ public class PlayerHandler : CustomEventsHandler
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
             return;
-        if (role.Advanced.DeniedUsingItems.Contains(ev.Item.Type))
+        if (!role.Deniable.Items.TryGetValue(ev.UsableItem.Type, out var deniable))
+            return;
+        if (!deniable.CanUse)
         {
             ev.IsAllowed = false;
             return;
         }
-        if (ev.Item.Type != ItemType.SCP500)
+        if (ev.UsableItem.Type != ItemType.SCP500)
             return;
         Timing.CallDelayed(3f, () =>
         {
@@ -94,37 +96,22 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerDeath(PlayerDeathEventArgs ev)
     {
-        if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var died_playerRole))
-            CommandHelper.RunCommand(died_playerRole.Events.OnDied, $"{ev.Player.PlayerId} {(ev.Attacker != null ? ev.Attacker.PlayerId : 0)} {GetDamageType(ev.DamageHandler)} {GetDamageValue(ev.DamageHandler)}");
         CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         if (ev.Attacker == null)
             return;
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var role))
             return;
-        CommandHelper.RunCommand(role.Events.OnKill, $"{ev.Player.PlayerId} {(ev.Attacker != null ? ev.Attacker.PlayerId : 0)} {GetDamageType(ev.DamageHandler)} {GetDamageValue(ev.DamageHandler)}");
-        if (!role.Advanced.DeadBy.IsConfigurated)
+        if (role.KillerToNewRole.Count == 0)
             return;
-        if (role.Advanced.DeadBy.AfterDeath != PlayerRoles.RoleTypeId.None)
-            ev.Player.SetRole(role.Advanced.DeadBy.AfterDeath, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.None);
-        else
-        {
-            CustomRoleInfo customRoleInfo = null;
-            if (!string.IsNullOrEmpty(role.Advanced.DeadBy.RoleName))
-                customRoleInfo = Main.Instance.AfterDeathRoles.Where(x => x.Rolename == role.Advanced.DeadBy.RoleName).FirstOrDefault();
-            else if (role.Advanced.DeadBy.Random.Count != 0)
-                customRoleInfo = Main.Instance.AfterDeathRoles.Where(x => x.Rolename == role.Advanced.DeadBy.Random.RandomItem()).FirstOrDefault();
-            if (customRoleInfo == null)
-                return;
-            CustomRoleHelpers.SetCustomInfoToPlayer(ev.Player, customRoleInfo);
-        }
-    }
 
-    public override void OnPlayerDying(PlayerDyingEventArgs ev)
-    {
-        if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var dying_playerRole))
+        var kv = role.KillerToNewRole.Where(x=>
+        x.Key.KillerCustom == role.Rolename ||
+        x.Key.KillerRole == ev.Attacker.Role ||
+        x.Key.KillerTeam == ev.Attacker.Team
+        );
+        if (!kv.Any())
             return;
-        var damageType = GetDamageType(ev.DamageHandler);
-        Server.RunCommand($"{dying_playerRole.Events.OnDying} {ev.Player.PlayerId} {(ev.Attacker != null ? ev.Attacker.PlayerId : 0)} {damageType}");
+        CustomRoleHelpers.SetNewRole(ev.Player, kv.FirstOrDefault().Value);
     }
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
@@ -132,58 +119,44 @@ public class PlayerHandler : CustomEventsHandler
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
             return;
         
-        if (!role.Advanced.Escaping.CanEscape)
+        if (!role.Escape.CanEscape)
         {
-            ev.IsAllowed = role.Advanced.Escaping.CanEscape;
+            ev.IsAllowed = role.Escape.CanEscape;
             return;
         }
         CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
-        if (role.Advanced.Escaping.RoleAfterEscape.TryGetValue(ev.EscapeScenario, out var roleTypeId) && roleTypeId != PlayerRoles.RoleTypeId.None)
-            ev.NewRole = roleTypeId;
-        if (role.Advanced.Escaping.RoleNameAfterEscape.TryGetValue(ev.EscapeScenario, out var rolename) && !string.IsNullOrEmpty(rolename))
+        if (!role.Escape.ScenarioToRole.TryGetValue(ev.EscapeScenario, out var roleInfo))
+            return;
+        ev.NewRole = roleInfo.RoleType;
+        Timing.CallDelayed(1.5f, () =>
         {
-            Timing.CallDelayed(2.5f, () =>
-            {
-                var escapeRole = Main.Instance.EscapeRoles.FirstOrDefault(x => x.Rolename == rolename);
-                if (escapeRole == default)
-                    return;
-                CustomRoleHelpers.SetCustomInfoToPlayer(ev.Player, escapeRole);
-            });
-        }
+            CustomRoleHelpers.SetNewRole(ev.Player, roleInfo);
+        });
     }
 
-    public static void RespawnManager_ServerOnRespawned(SpawnableWaveBase wave, List<ReferenceHub> players)
+    public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
     {
-        if (players.Count == 0)
+        if (ev.Players.Count == 0)
             return;
-        List<CustomRoleInfo> tmp = [];
-
-        foreach (var item in players)
+        List<CustomRoleBaseInfo> tmp = [];
+        foreach (var item in ev.Players)
         {
-            CustomRoleHelpers.UnSetCustomInfoToPlayer(Player.Get(item));
+            CustomRoleHelpers.UnSetCustomInfoToPlayer(item);
         }
-
-        foreach (var item in Main.Instance.InWaveRoles.Where(x=>x.SpawnWave.Faction == wave.TargetFaction && x.RoleType == CustomRoleType.InWave))
+        foreach (var item in Main.Instance.InWaveRoles.Where(x => x.Wave.Faction == ev.Wave.Faction && x.RoleType == CustomRoleType.InWave))
         {
-
-            if (item.SpawnWave.SkipCheck || item.SpawnWave.MinRequired > players.Count)
+            if (item.Wave.SkipCheck || item.Wave.MinRequired > ev.Players.Count)
                 continue;
-
-            var referenceHub = players.Where(x => x.roleManager.CurrentRole.RoleTypeId == item.ReplaceRole).ToList().RandomItem();
-            CustomRoleHelpers.SetCustomInfoToPlayer(Player.Get(referenceHub), item);
+            var list = ev.Players.Where(x => x.Role == item.ReplaceRole).ToList();
+            if (list.Count == 0)
+                continue;
+            CustomRoleHelpers.SetCustomInfoToPlayer(list.RandomItem(), item);
             tmp.Add(item);
         }
 
         foreach (var item in tmp)
         {
             Main.Instance.InWaveRoles.Remove(item);
-        }
-
-        foreach (var item in CustomDataStoreManagerExtended.GetPlayers<CustomRoleInfoStorage>())
-        {
-            if (!CustomRoleHelpers.TryGetCustomRole(item, out var role))
-                continue;
-            CommandHelper.RunCommand(role.Events.OnSpawnWave, $"{item.PlayerId} {role.Rolename} {wave.TargetFaction} {players.Count}");
         }
     }
 }

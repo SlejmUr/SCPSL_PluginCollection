@@ -2,104 +2,30 @@
 using PlayerRoles.PlayableScps.Scp3114;
 using PlayerRoles.PlayableScps.Scp939;
 using PlayerStatsSystem;
-using SimpleCustomRoles.RoleInfo;
-using static SimpleCustomRoles.Helpers.DamageHelper;
-using static SimpleCustomRoles.RoleInfo.Damager;
+using SimpleCustomRoles.RoleYaml;
+using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles.Helpers;
 
-public class DamageHelper
+public static class DamageHelper
 {
-    public enum DamageType
-    {
-        None = 0,
-        Recontainment,
-        Firearm,
-        Warhead,
-        Universal,
-        Scp,
-        Scp096,
-        Scp049,
-        MicroHid,
-        Custom,
-        Explosion,
-        Scp018,
-        Disruptor,
-        Jailbird,
-        Scp939,
-        Scp3114,
-        Scp1507,
-        Scp956,
-        Snowball
-    }
 
-    public enum SubType
+    public static Dictionary<DamageSubType, Type> SubTypeToType = new()
     {
-        None = 0,
-        UniversalSubType,
-        WeaponType,
-        AmmoType,
-        Scp069_AttackType,
-        Scp049_AttackType,
-        MicroHidFiringMode,
-        ExplosionType,
-        Disruptor_FiringState,
-        Scp939_AttackType,
-        Scp3114_AttackType,
-    }
-
-    public enum UniversalSubType
-    {
-        None = -1,
-        Recontained,
-        Warhead,
-        Scp049,
-        Unknown,
-        Asphyxiated,
-        Bleeding,
-        Falldown,
-        PocketDecay,
-        Decontamination,
-        Poisoned,
-        Scp207,
-        SeveredHands,
-        MicroHID,
-        Tesla,
-        Explosion,
-        Scp096,
-        Scp173,
-        Scp939Lunge,
-        Zombie,
-        BulletWounds,
-        Crushed,
-        UsedAs106Bait,
-        FriendlyFireDetector,
-        Hypothermia,
-        CardiacArrest,
-        Scp939Other,
-        Scp3114Slap,
-        MarshmallowMan,
-        Scp1344,
-        Scp1507Peck,
-
-    }
-
-    public static Dictionary<SubType, Type> SubTypeToType = new()
-    {
-        { SubType.None, null },
-        { SubType.UniversalSubType, typeof(UniversalSubType) },
-        { SubType.WeaponType, typeof(ItemType) },
-        { SubType.AmmoType, typeof(ItemType) },
-        { SubType.Scp069_AttackType, typeof(Scp096DamageHandler.AttackType) },
-        { SubType.Scp049_AttackType, typeof(Scp049DamageHandler.AttackType) },
-        { SubType.MicroHidFiringMode, typeof(InventorySystem.Items.MicroHID.Modules.MicroHidFiringMode) },
-        { SubType.ExplosionType, typeof(ExplosionType) },
-        { SubType.Disruptor_FiringState, typeof(InventorySystem.Items.Firearms.Modules.DisruptorActionModule.FiringState) },
-        { SubType.Scp939_AttackType, typeof(Scp939DamageType) },
-        { SubType.Scp3114_AttackType, typeof(Scp3114DamageHandler.HandlerType) },
+        { DamageSubType.None, null },
+        { DamageSubType.UniversalSubType, typeof(DamageUniversalType) },
+        { DamageSubType.WeaponType, typeof(ItemType) },
+        { DamageSubType.AmmoType, typeof(ItemType) },
+        { DamageSubType.Scp069_AttackType, typeof(Scp096DamageHandler.AttackType) },
+        { DamageSubType.Scp049_AttackType, typeof(Scp049DamageHandler.AttackType) },
+        { DamageSubType.MicroHidFiringMode, typeof(InventorySystem.Items.MicroHID.Modules.MicroHidFiringMode) },
+        { DamageSubType.ExplosionType, typeof(ExplosionType) },
+        { DamageSubType.Disruptor_FiringState, typeof(InventorySystem.Items.Firearms.Modules.DisruptorActionModule.FiringState) },
+        { DamageSubType.Scp939_AttackType, typeof(Scp939DamageType) },
+        { DamageSubType.Scp3114_AttackType, typeof(Scp3114DamageHandler.HandlerType) },
     };
 
-    public static DamageType GetDamageType(DamageHandlerBase handlerBase)
+    public static DamageType GetDamageType(this DamageHandlerBase handlerBase)
     {
         switch (handlerBase)
         {
@@ -147,7 +73,7 @@ public class DamageHelper
         }
     }
 
-    public static float GetDamageValue(DamageHandlerBase handlerBase)
+    public static float GetDamageValue(this DamageHandlerBase handlerBase)
     {
         if (handlerBase is StandardDamageHandler standardDamage)
         {
@@ -156,7 +82,7 @@ public class DamageHelper
         return -1;
     }
 
-    public static void SetDamageValue(DamageHandlerBase handlerBase, float damage)
+    public static void SetDamageValue(this DamageHandlerBase handlerBase, float damage)
     {
         if (handlerBase is StandardDamageHandler standardDamage)
         {
@@ -164,64 +90,64 @@ public class DamageHelper
         }
     }
 
-    public static object GetObjectBySubType(DamageHandlerBase handlerBase, SubType subType)
+    public static object GetObjectBySubType(this DamageHandlerBase handlerBase, DamageSubType subType)
     {
         switch (handlerBase)
         {
             case FirearmDamageHandler firearm:
                 {
-                    if (subType == SubType.AmmoType)
+                    if (subType == DamageSubType.AmmoType)
                         return firearm.AmmoType;
-                    if (subType == SubType.WeaponType)
+                    if (subType == DamageSubType.WeaponType)
                         return firearm.WeaponType;
                 }
                 return null;
             case Scp096DamageHandler scp096Damage:
                 {
-                    if (subType == SubType.Scp069_AttackType)
+                    if (subType == DamageSubType.Scp069_AttackType)
                         return scp096Damage._attackType;
                 }
                 return null;
             case Scp049DamageHandler scp049Damage:
                 {
-                    if (subType == SubType.Scp049_AttackType)
+                    if (subType == DamageSubType.Scp049_AttackType)
                         return scp049Damage.DamageSubType;
                 }
                 return null;
             case MicroHidDamageHandler microHidDamage:
                 {
-                    if (subType == SubType.MicroHidFiringMode)
+                    if (subType == DamageSubType.MicroHidFiringMode)
                         return microHidDamage.FiringMode;
                 }
                 return null;
             case ExplosionDamageHandler explosionDamage:
                 {
-                    if (subType == SubType.ExplosionType)
+                    if (subType == DamageSubType.ExplosionType)
                         return explosionDamage.ExplosionType;
                 }
                 return null;
             case DisruptorDamageHandler disruptorDamage:
                 {
-                    if (subType == SubType.Disruptor_FiringState)
+                    if (subType == DamageSubType.Disruptor_FiringState)
                         return disruptorDamage.FiringState;
                 }
                 return null;
             case Scp939DamageHandler scp939Damage:
                 {
-                    if (subType == SubType.Scp939_AttackType)
+                    if (subType == DamageSubType.Scp939_AttackType)
                         return scp939Damage.Scp939DamageType;
                 }
                 return null;
             case Scp3114DamageHandler scp3114Damage:
                 {
-                    if (subType == SubType.Scp939_AttackType)
+                    if (subType == DamageSubType.Scp939_AttackType)
                         return scp3114Damage.Subtype;
                 }
                 return null;
             case UniversalDamageHandler universalDamage:
                 {
-                    if (subType == SubType.UniversalSubType)
-                        return (UniversalSubType)(int)universalDamage.TranslationId;
+                    if (subType == DamageSubType.UniversalSubType)
+                        return (DamageUniversalType)(int)universalDamage.TranslationId;
                 }
                 return null;
             default:
@@ -230,7 +156,7 @@ public class DamageHelper
     }
 
 
-    public static float CalculateDamage(Dictionary<DamageMaker, ValueSetter> dict, DamageHandlerBase damageHandlerBase, float baseDamage, DamageType damageType)
+    public static float CalculateDamage(this Dictionary<DamageMaker, MathValue> dict, DamageHandlerBase damageHandlerBase, float baseDamage, DamageType damageType)
     {
         float newDamage = baseDamage;
         foreach (var item in dict.
