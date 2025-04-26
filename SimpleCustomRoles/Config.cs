@@ -1,4 +1,6 @@
-﻿namespace SimpleCustomRoles;
+﻿using System.ComponentModel;
+
+namespace SimpleCustomRoles;
 
 public class Config
 {
@@ -7,5 +9,8 @@ public class Config
     public ushort SpectatorBroadcastTime { get; set; } = 7;
     public bool UsePlayerPercent { get; set; }
     public float SpawnRateMultiplier { get; set; } = 1f;
-    public string CustomItemCommand { get; set; }
+
+    [Description("For CustomItemsAPI use \"/lci give {0} {1}\" for exiled use \"/ci give {1} {0}\"")]
+    public string CustomItemCommand { get; set; } = "/lci give {0} {1}";
+    public bool CustomItemUseName { get; set; } = true;
 }

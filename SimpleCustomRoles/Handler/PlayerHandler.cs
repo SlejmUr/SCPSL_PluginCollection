@@ -46,7 +46,7 @@ public class PlayerHandler : CustomEventsHandler
             Damage = attackerRole.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
         }
         if (role.Damage.DamageReceived.Any(x => x.Key.DamageType == damageType))
-            Damage = role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
+            Damage = role.Damage.DamageReceived.CalculateDamage(ev.DamageHandler, Damage, damageType);
         if (attackerRole != null)
         ev.DamageHandler.SetDamageValue(Damage);
     }

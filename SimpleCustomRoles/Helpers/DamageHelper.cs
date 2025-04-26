@@ -159,16 +159,15 @@ public static class DamageHelper
     public static float CalculateDamage(this Dictionary<DamageMaker, MathValue> dict, DamageHandlerBase damageHandlerBase, float baseDamage, DamageType damageType)
     {
         float newDamage = baseDamage;
-        foreach (var item in dict.
-               Where(x => x.Key.DamageType == damageType).
-               Select(x => x.Key.DamageSubType))
+        var DamageTypeEnum = dict.Where(x => x.Key.DamageType == damageType);
+        foreach (var item in
+               DamageTypeEnum.Select(x => x.Key.DamageSubType))
         {
             var obj = GetObjectBySubType(damageHandlerBase, item);
             if (obj == null)
                 continue;
-            var sent = dict.
-                Where(x => x.Key.DamageType == damageType && x.Key.DamageSubType == item).
-                Where(x => x.Key.SubType.ToString() == obj.ToString());
+            var sent = DamageTypeEnum.
+                Where(x => x.Key.DamageSubType == item && x.Key.SubType.ToString() == obj.ToString());
             if (sent.Any())
             {
                 var first = sent.First();

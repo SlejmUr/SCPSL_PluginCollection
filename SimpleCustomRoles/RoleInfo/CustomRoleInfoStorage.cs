@@ -139,6 +139,21 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
                     bag.AddCandies(Role.Candy.Candies);
                 }
             }
+            if (Main.Instance.Config.CustomItemUseName)
+            {
+                foreach (var item in Role.Inventory.CustomNames)
+                {
+                    Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
+                }
+            }
+            else
+            {
+                foreach (var item in Role.Inventory.CustomIds)
+                {
+                    Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
+                }
+            }
+            
         });
     }
 

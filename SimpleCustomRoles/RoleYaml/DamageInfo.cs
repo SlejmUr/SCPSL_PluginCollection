@@ -1,5 +1,4 @@
-﻿using SimpleCustomRoles.RoleInfo;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace SimpleCustomRoles.RoleYaml;
 
