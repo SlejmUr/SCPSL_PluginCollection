@@ -40,7 +40,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         Role = null;
         Owner.IsBypassEnabled = false;
-        ScaleHelper.SetScale(Owner, Vector3.one);
+        //ScaleHelper.SetScale(Owner, Vector3.one);
         Owner.Position += Vector3.up;
         if (!DontResetRole)
         {
@@ -196,6 +196,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     private void SetFpc()
     {
         // Scale
+        /*
         if (Role.Fpc.Scale != Vector3.one)
         {
             Timing.CallDelayed(3.5f, () =>
@@ -203,6 +204,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
                 ScaleHelper.SetScale(Owner, Role.Fpc.Scale);
             });
         }
+        */
         // Todo: FakeScale
 
         //  Appearance
