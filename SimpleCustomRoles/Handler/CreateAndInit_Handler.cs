@@ -72,14 +72,12 @@ internal class CreateAndInit_Handler
         Main.Instance.RegularRoles = [];
         Main.Instance.PlayerCustomRole = [];
         Main.Instance.InWaveRoles = [];
-        Main.Instance.AfterDeathRoles = [];
         Main.Instance.SPC_SpecificRoles = [];
         Main.Instance.RolesLoader.Load();
         foreach (var item in Main.Instance.RolesLoader.RoleInfos)
         {
             if (item.RoleType == CustomRoleType.AfterDead)
             {
-                Main.Instance.AfterDeathRoles.Add(item);
                 continue;
             }
             for (int i = 0; i < item.SpawnAmount; i++)
@@ -97,7 +95,6 @@ internal class CreateAndInit_Handler
         Main.Instance.PlayerCustomRole = [];
         Main.Instance.RegularRoles = [];
         Main.Instance.InWaveRoles = [];
-        Main.Instance.AfterDeathRoles = [];
         Main.Instance.SPC_SpecificRoles = [];
         Main.Instance.EscapeRoles = [];
         Main.Instance.RolesLoader.Load();
@@ -122,8 +119,6 @@ internal class CreateAndInit_Handler
         {
             if (item.RoleType == CustomRoleType.AfterDead)
             {
-                Log.Debug($"After Death Role added: " + item.RoleName);
-                Main.Instance.AfterDeathRoles.Add(item);
                 continue;
             }
             if (item.RoleType == CustomRoleType.Escape)

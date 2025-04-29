@@ -131,22 +131,25 @@ public class TheHandler
         if (role.Advanced.DeadBy.RoleAfterKilled != PlayerRoles.RoleTypeId.None)
         {
             args.Player.Role.Set(role.Advanced.DeadBy.RoleAfterKilled, PlayerRoles.RoleSpawnFlags.None);
+            args.Player.Position = args.Attacker.Position;
             return;
         }
 
         if (!string.IsNullOrEmpty(role.Advanced.DeadBy.RoleNameToRespawnAs))
         {
-            var customRoleInfo = Main.Instance.AfterDeathRoles.FirstOrDefault(x => x.RoleName == role.Advanced.DeadBy.RoleNameToRespawnAs);
+            var customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == role.Advanced.DeadBy.RoleNameToRespawnAs);
             if (customRoleInfo == null)
                 return;
             RoleSetter.SetFromCMD(args.Player, customRoleInfo);
+            Timing.CallDelayed(0.35f, () => args.Player.Position = args.Attacker.Position);
         }
         else if (role.Advanced.DeadBy.RoleNameRandom.Count != 0)
         {
-            var customRoleInfo = Main.Instance.AfterDeathRoles.FirstOrDefault(x => x.RoleName == role.Advanced.DeadBy.RoleNameRandom.RandomItem());
+            var customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == role.Advanced.DeadBy.RoleNameRandom.RandomItem());
             if (customRoleInfo == null)
                 return;
             RoleSetter.SetFromCMD(args.Player, customRoleInfo);
+            Timing.CallDelayed(0.35f, () => args.Player.Position = args.Attacker.Position);
         }
     }
 

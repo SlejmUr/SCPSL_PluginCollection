@@ -24,7 +24,6 @@ internal class Main : Plugin<Config>
     public Dictionary<string, CustomRoleInfo> PlayerCustomRole;
     public List<CustomRoleInfo> RegularRoles;
     public List<CustomRoleInfo> InWaveRoles;
-    public List<CustomRoleInfo> AfterDeathRoles;
     public List<CustomRoleInfo> SPC_SpecificRoles;
     public List<CustomRoleInfo> EscapeRoles;
     public override void OnEnabled()
