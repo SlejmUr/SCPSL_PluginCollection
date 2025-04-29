@@ -55,11 +55,13 @@ internal class ServerHandler : CustomEventsHandler
             return;
 
         // Round lock for certain roles.
-        bool do_lock = false;
         if (!Round.IsLocked)
         {
             Round.IsLocked = true;
-            do_lock = true;
+            Timing.CallDelayed(5, () =>
+            {
+                Round.IsLocked = false;
+            });
         }
 
         foreach (var item in Main.Instance.RolesLoader.RoleInfos)
@@ -129,12 +131,5 @@ internal class ServerHandler : CustomEventsHandler
             CustomRoleHelpers.SetCustomInfoToPlayer(player, item);
         }
         Main.Instance.RegularRoles.Clear();
-
-        // if locked by us remove the lock
-        if (do_lock)
-            Timing.CallDelayed(5, () =>
-            {
-                Round.IsLocked = false;
-            });
     }
 }
