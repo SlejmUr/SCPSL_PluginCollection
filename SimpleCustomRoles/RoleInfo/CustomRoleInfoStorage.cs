@@ -1,6 +1,7 @@
 ﻿using InventorySystem;
 using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Extensions;
 using MEC;
 using PlayerRoles.FirstPersonControl;
 using PlayerRoles.PlayableScps.Scp106;
@@ -46,7 +47,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         {
             Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.All);
             Owner.ChangeAppearance(Owner.Role);
-            AppearanceSync.RemovePlayer(Owner);
+            AppearanceSyncExtension.RemovePlayer(Owner);
         }
 
         if (string.IsNullOrEmpty(OldCustomInfo))
@@ -178,7 +179,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
             // this time seems good I guess.
             Timing.CallDelayed(3f, () =>
             {
-                Owner.EnableEffect(EffectHelper.GetEffectFromName(Owner, effect.EffectName), effect.Intensity, effect.Duration);
+                Owner.EnableEffect(effect.EffectName, effect.Intensity, effect.Duration);
             });
         }
         Owner.IsBypassEnabled = Role.Extra.Bypass;
@@ -212,7 +213,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         {
             Timing.CallDelayed(3.5f, () =>
             {
-                AppearanceSync.AddPlayer(Owner, Role.Fpc.Appearance);
+                AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
             });
         }
         // Voice Channel

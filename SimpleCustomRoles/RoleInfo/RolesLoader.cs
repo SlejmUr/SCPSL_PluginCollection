@@ -1,4 +1,5 @@
-﻿using LabApi.Loader;
+﻿using InventorySystem.Items.Usables.Scp330;
+using LabApi.Loader;
 using SimpleCustomRoles.RoleYaml;
 
 namespace SimpleCustomRoles.RoleInfo;
@@ -13,8 +14,7 @@ public class RolesLoader
         RoleInfos = [];
         if (Directory.Exists(Dir))
         {
-            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), HelperTxts.TheYML_PRE_Comment + "\n" + CustomYaml.Serializer.Serialize(CreateTemplate()));
-            File.WriteAllText(Path.Combine(Dir, "Template.yml"), CustomYaml.Serializer.Serialize(CreateTemplate()));
+            File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), CustomYaml.Serializer.Serialize(CreateTemplate()));
             foreach (var file in Directory.GetFiles(Dir))
             {
                 if (file.Contains(".disable") || file.Contains(".d"))
@@ -42,6 +42,103 @@ public class RolesLoader
 
     public CustomRoleBaseInfo CreateTemplate()
     {
-        return new();
+        return new()
+        {
+            Effects =
+            [
+                new()
+                {
+                    EffectName = "test",
+                    Duration = 5,
+                    Intensity = 55,
+                    Removable = true,
+                }
+            ],
+            Inventory = new()
+            {
+                Ammos = new()
+                {
+                    { ItemType.Ammo12gauge, 40 },
+                    { ItemType.Ammo44cal, 40 },
+                },
+                Items =
+                [
+                    ItemType.ArmorCombat,
+                    ItemType.GunE11SR
+                ]
+            },
+            Candy = new()
+            {
+                Candies =
+                [
+                    CandyKindID.Red,
+                    CandyKindID.Pink
+                ]
+            },
+            Deniable = new()
+            {
+                Items = new()
+                {
+                    {
+                        ItemType.GunE11SR,
+                        new()
+                        {
+                            CanDrop = true,
+                            CanUse = true,
+                        }
+                    },
+                    {
+                        ItemType.GunFSP9,
+                        new()
+                        {
+                            CanDrop = true,
+                            CanUse = false,
+                        }
+                    }
+                },
+                Candies = new()
+                {
+                    {
+                        CandyKindID.Pink,
+                        new()
+                        {
+                            CanDrop = true,
+                            CanUse = true,
+                        }
+                    },
+                }
+            },
+            Escape = new()
+            {
+                CanEscape = true,
+                ConfigToRole = new()
+                {
+                    {   
+                        new()
+                        { 
+                            EscapeRole = PlayerRoles.RoleTypeId.Scp173,
+                            ShouldBeCuffer = true,
+                        },
+                        new()
+                        {
+                            RoleType =  PlayerRoles.RoleTypeId.ClassD
+                        }
+                    }
+                }
+            },
+            KillerToNewRole = new()
+            {
+                {
+                    new()
+                    {
+                        KillerRole = PlayerRoles.RoleTypeId.Scp106
+                    },
+                    new()
+                    {
+                        RoleType =  PlayerRoles.RoleTypeId.ClassD
+                    }
+                }
+            }
+        };
     }
 }

@@ -33,7 +33,7 @@ public class TempShowEffect : ICommand
         response = "Your effects: \n";
         foreach (var effect in player.ActiveEffects)
         {
-            string effectName = EffectHelper.GetEffectNameFromType(player, effect).ToString();
+            string effectName = effect.ToString();
             response += effectName + $" (d: {effect.Duration} i:{effect.Intensity})" + "\n";
         }
         return true;

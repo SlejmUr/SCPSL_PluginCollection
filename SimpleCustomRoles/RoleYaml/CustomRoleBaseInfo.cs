@@ -11,6 +11,7 @@ public class CustomRoleBaseInfo
     public RoleTypeId RoleToSpawn { get; set; } = RoleTypeId.None;
     public RoleTypeId ReplaceRole { get; set; } = RoleTypeId.None;
     public Team ReplaceTeam { get; set; } = Team.Dead;
+    public string Rolegroup { get; set; } = string.Empty;
     public SpawnInfo Spawn { get; set; } = new();
     public DisplayInfo Display { get; set; } = new();
     public WaveInfo Wave { get; set; } = new();

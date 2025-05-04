@@ -9,4 +9,9 @@
 	<ItemGroup>
 	  <Folder Include="ExampleRoles\" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="LabApiExtensions">
+	    <HintPath>..\3rdpartyRef\LabApiExtensions.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
 </Project>

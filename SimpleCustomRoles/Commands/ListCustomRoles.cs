@@ -13,12 +13,11 @@ public class ListCustomRoles : ICommand
     public bool SanitizeResponse => true;
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        response = "Roles: \n";
+        response = "Roles:";
         foreach (var item in Main.Instance.RolesLoader.RoleInfos)
         {
-            response += $"{item.Rolename} [{item.Display.RARoleName}], ";
+            response += $"\n{item.Rolename} [{item.Display.RARoleName}]";
         }
-        response = response.Remove(response.Length - 2);
         return true;
     }
 }

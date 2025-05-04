@@ -2,6 +2,8 @@
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Enums;
+using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleYaml;
@@ -16,7 +18,7 @@ public class PlayerHandler : CustomEventsHandler
         CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
             return;
-        AppearanceSync.ForceSync(ev.Player);
+        AppearanceSyncExtension.ForceSync(ev.Player);
     }
 
     public override void OnPlayerDroppingItem(PlayerDroppingItemEventArgs ev)
@@ -88,7 +90,7 @@ public class PlayerHandler : CustomEventsHandler
             {
                 if (effect.Removable)
                     continue;
-                ev.Player.EnableEffect(EffectHelper.GetEffectFromName(ev.Player, effect.EffectName), effect.Intensity, effect.Duration);
+                ev.Player.EnableEffect(effect.EffectName, effect.Intensity, effect.Duration);
                 CL.Debug($"(Used 500) Effect {effect.EffectName}", Main.Instance.Config.Debug);
             }
         });
@@ -111,26 +113,41 @@ public class PlayerHandler : CustomEventsHandler
         );
         if (!kv.Any())
             return;
-        CustomRoleHelpers.SetNewRole(ev.Player, kv.FirstOrDefault().Value);
+        if (CustomRoleHelpers.SetNewRole(ev.Player, kv.FirstOrDefault().Value))
+        {
+            Timing.CallDelayed(0.8f, () =>
+            {
+                ev.Player.Position = ev.Attacker.Position;
+            });
+        }
     }
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
-            return;
-        
+        {
+            if (Main.Instance.Config.EscapeConfigs.Count == 0 )
+                return;
+            var found = Main.Instance.Config.EscapeConfigs.FirstOrDefault(x=>x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
+            if (found.Value == PlayerRoles.RoleTypeId.None)
+                return;
+            ev.IsAllowed = true;
+            ev.NewRole = found.Value;
+        }
+
         if (!role.Escape.CanEscape)
         {
             ev.IsAllowed = role.Escape.CanEscape;
             return;
         }
         CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
-        if (!role.Escape.ScenarioToRole.TryGetValue(ev.EscapeScenario, out var roleInfo))
+        var found2 = role.Escape.ConfigToRole.FirstOrDefault(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
+        if (found2.Value == null)
             return;
-        ev.NewRole = roleInfo.RoleType;
+        ev.NewRole = found2.Value.RoleType;
         Timing.CallDelayed(1.5f, () =>
         {
-            CustomRoleHelpers.SetNewRole(ev.Player, roleInfo);
+            CustomRoleHelpers.SetNewRole(ev.Player, found2.Value);
         });
     }
 

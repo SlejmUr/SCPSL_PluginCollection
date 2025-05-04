@@ -1,8 +1,10 @@
 ﻿using LabApi.Events.CustomHandlers;
 using LabApi.Features;
+using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.Helpers;
+using SimpleCustomRoles.RoleGroup;
 using SimpleCustomRoles.RoleInfo;
 using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.SSS;
@@ -16,10 +18,11 @@ internal class Main : Plugin<Config>
     #region Plugin Info
     public override string Author => "SlejmUr";
     public override string Name => "SimpleCustomRoles";
-    public override Version Version => new(0, 5, 0);
+    public override Version Version => new(0, 5, 1);
     public override string Description => "Add simple YAML Support for creating custom roles.";
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
     #endregion
+
     public RolesLoader RolesLoader;
     public List<CustomRoleBaseInfo> RegularRoles;
     public List<CustomRoleBaseInfo> InWaveRoles;
@@ -33,6 +36,8 @@ internal class Main : Plugin<Config>
     private Scp096Handler scp096Handler;
     private Scp173Handler scp173Handler;
     private Scp330Handler scp330Handler;
+
+    public List<RoleBaseGroup> RoleGroups = [];
 
 
     public override void Enable()
@@ -91,5 +96,15 @@ internal class Main : Plugin<Config>
         RolesLoader.Clear();
         RolesLoader = null;
         Instance = null;
+    }
+
+    public override void LoadConfigs()
+    {
+        base.LoadConfigs();
+        var list = this.LoadConfig<List<RoleBaseGroup>>("RoleGroups.yml");
+        if (list != null)
+            RoleGroups = list;
+        else
+            RoleGroups = [];
     }
 }

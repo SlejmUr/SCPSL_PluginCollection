@@ -1,6 +1,7 @@
 ﻿using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleInfo;
@@ -12,7 +13,7 @@ internal class ServerHandler : CustomEventsHandler
 {
     public override void OnServerRoundEnded(RoundEndedEventArgs ev)
     {
-        AppearanceSync.Stop();
+        AppearanceSyncExtension.Stop();
     }
 
 
@@ -50,7 +51,7 @@ internal class ServerHandler : CustomEventsHandler
 
     public override void OnServerRoundStarted()
     {
-        AppearanceSync.Start();
+        AppearanceSyncExtension.Start();
         if (Main.Instance.Config.IsPaused)
             return;
 
@@ -113,6 +114,10 @@ internal class ServerHandler : CustomEventsHandler
         foreach (var item in Main.Instance.RegularRoles)
         {
             Player player = null;
+
+            if (GroupHelper.CanSpawn(item.Rolegroup))
+                continue;
+
             if (item.ReplaceRole == PlayerRoles.RoleTypeId.None && item.ReplaceTeam != PlayerRoles.Team.Dead)
             {
                 var list = Player.List.Where(x => x.Team == item.ReplaceTeam && CustomRoleHelpers.Contains(x)).ToList();

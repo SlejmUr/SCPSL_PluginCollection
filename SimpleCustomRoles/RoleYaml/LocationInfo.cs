@@ -26,5 +26,5 @@ public class LocationInfo
     public Vector3 ExactPosition { get; set; } = Vector3.one;
 
     [Description("Offset by all Spawn Position (Except when Default is True).")]
-    public Vector3 OffsetPosition { get; set; } = Vector3.one;
+    public Vector3 OffsetPosition { get; set; } = Vector3.zero;
 }

@@ -1,4 +1,4 @@
-﻿using SimpleCustomRoles.RoleYaml.Enums;
+﻿using LabApiExtensions.Enums;
 using System.ComponentModel;
 
 namespace SimpleCustomRoles.RoleYaml;
