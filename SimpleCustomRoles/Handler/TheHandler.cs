@@ -137,19 +137,35 @@ public class TheHandler
 
         if (!string.IsNullOrEmpty(role.Advanced.DeadBy.RoleNameToRespawnAs))
         {
-            var customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == role.Advanced.DeadBy.RoleNameToRespawnAs);
+            var customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName.Equals(role.Advanced.DeadBy.RoleNameToRespawnAs));
             if (customRoleInfo == null)
+            {
+                Log.Info($"Custom role not found as {role.Advanced.DeadBy.RoleNameToRespawnAs}");
                 return;
+            }
             RoleSetter.SetFromCMD(args.Player, customRoleInfo);
-            Timing.CallDelayed(0.35f, () => args.Player.Position = args.Attacker.Position);
+            Timing.CallDelayed(0.8f, () =>
+            {
+                args.Player.Position = args.Attacker.Position;
+            });
+
+            return;
         }
-        else if (role.Advanced.DeadBy.RoleNameRandom.Count != 0)
+        if (role.Advanced.DeadBy.RoleNameRandom.Count != 0)
         {
-            var customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName == role.Advanced.DeadBy.RoleNameRandom.RandomItem());
+            var rolename = role.Advanced.DeadBy.RoleNameRandom.RandomItem();
+            var customRoleInfo = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.RoleName.Equals(rolename));
             if (customRoleInfo == null)
+            {
+                Log.Info($"Custom role not found as {rolename}");
                 return;
+            }
             RoleSetter.SetFromCMD(args.Player, customRoleInfo);
-            Timing.CallDelayed(0.35f, () => args.Player.Position = args.Attacker.Position);
+            Timing.CallDelayed(0.8f, () =>
+            {
+                args.Player.Position = args.Attacker.Position;
+            });
+
         }
     }
 
