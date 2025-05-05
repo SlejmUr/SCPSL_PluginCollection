@@ -122,13 +122,17 @@ public class PlayerHandler : CustomEventsHandler
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
         {
-            if (Main.Instance.Config.EscapeConfigs.Count == 0 )
+            if (Main.Instance.Config.EscapeConfigs.Count == 0)
+                return;
+            if (Main.Instance.Config.EscapeConfigs.Count(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role) == 0)
                 return;
             var found = Main.Instance.Config.EscapeConfigs.FirstOrDefault(x=>x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
             if (found.Value == PlayerRoles.RoleTypeId.None)
                 return;
             ev.IsAllowed = true;
             ev.NewRole = found.Value;
+            ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
+            return;
         }
 
         if (!role.Escape.CanEscape)

@@ -57,7 +57,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     public override void OnInstanceDestroyed()
     {
-        CL.Info("RESET!");
         Reset();
     }
 
@@ -65,13 +64,11 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         if (Role.Location.UseDefault)
         {
-            if (Owner.Role != Role.RoleToSpawn)
-                Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
+            Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
         }
         else
         {
-            if (Owner.Role != Role.RoleToSpawn)
-                Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.None);
+            Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.None);
             MoveToLocation();
         }
     }

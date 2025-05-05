@@ -83,7 +83,9 @@ public static class CustomRoleHelpers
 
     public static bool Contains(Player player)
     {
-        return TryGetCustomRole(player, out var role) && role != null;
+        if (!TryGetCustomRole(player, out var role))
+            return false;
+        return role != null;
     }
 
     public static IEnumerable<Player> GetPlayers()
