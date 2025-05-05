@@ -15,9 +15,10 @@ public class PlayerHandler : CustomEventsHandler
 {
     public override void OnPlayerChangingRole(PlayerChangingRoleEventArgs ev)
     {
-        CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
             return;
+        if (ev.ChangeReason != PlayerRoles.RoleChangeReason.RemoteAdmin)
+            CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         AppearanceSyncExtension.ForceSync(ev.Player);
     }
 
@@ -32,24 +33,19 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerHurting(PlayerHurtingEventArgs ev)
     {
-        if (ev.Attacker == null)
-            return;
-        if (!CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var role))
-            return;
-        CustomRoleBaseInfo attackerRole = null;
         float Damage = ev.DamageHandler.GetDamageValue();
         DamageType damageType = ev.DamageHandler.GetDamageType();
-        if (ev.Player != null && ev.Player != ev.Attacker)
+
+        if (ev.Attacker != null && CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var attacker_role))
         {
-            if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out attackerRole))
-                return;
-            if (!attackerRole.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType))
-                return;
-            Damage = attackerRole.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
+            if (attacker_role.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType))
+                Damage = attacker_role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);  
         }
-        if (role.Damage.DamageReceived.Any(x => x.Key.DamageType == damageType))
-            Damage = role.Damage.DamageReceived.CalculateDamage(ev.DamageHandler, Damage, damageType);
-        if (attackerRole != null)
+        if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var player_role))
+        {
+            if (player_role.Damage.DamageReceived.Any(x => x.Key.DamageType == damageType))
+                Damage = player_role.Damage.DamageReceived.CalculateDamage(ev.DamageHandler, Damage, damageType);
+        }
         ev.DamageHandler.SetDamageValue(Damage);
     }
 

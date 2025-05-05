@@ -25,13 +25,13 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
             return;
         SpawnToPostion();
         SetInventory();
-        SetStats();
-        SetCommon();
-        SetFpc();
         SetHints();
-        SetCustomInfo();
-        Timing.CallDelayed(4f, () =>
+        Timing.CallDelayed(2.1f, () => 
         {
+            SetStats();
+            SetCommon();
+            SetFpc();
+            SetCustomInfo();
             SetExtraFpc();
             SetScpRoleInfos();
         });
@@ -57,6 +57,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     public override void OnInstanceDestroyed()
     {
+        CL.Info("RESET!");
         Reset();
     }
 
@@ -177,41 +178,45 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         foreach (var effect in Role.Effects)
         {
             // this time seems good I guess.
-            Timing.CallDelayed(3f, () =>
-            {
-                Owner.EnableEffect(effect.EffectName, effect.Intensity, effect.Duration);
-            });
+            Owner.EnableEffect(effect.EffectName, effect.Intensity, effect.Duration);
         }
         Owner.IsBypassEnabled = Role.Extra.Bypass;
-        Timing.CallDelayed(3f, () =>
+        if (Role.Extra.OpenDoorsNextToSpawn)
         {
             if (Owner.Room == null)
                 return;
+
             foreach (var door in Owner.Room.Doors)
             {
                 door.IsOpened = true;
             }
-        });
+        }
     }
 
     private void SetFpc()
     {
         // Scale
-        /*
+        
         if (Role.Fpc.Scale != Vector3.one)
         {
-            Timing.CallDelayed(3.5f, () =>
+            Timing.CallDelayed(0.5f, () =>
             {
                 ScaleHelper.SetScale(Owner, Role.Fpc.Scale);
             });
         }
-        */
-        // Todo: FakeScale
+
+        if (Role.Fpc.FakeScale != Vector3.one)
+        {
+            Timing.CallDelayed(0.8f, () =>
+            {
+                ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale);
+            });
+        }
 
         //  Appearance
         if (Role.Fpc.Appearance != PlayerRoles.RoleTypeId.None)
         {
-            Timing.CallDelayed(3.5f, () =>
+            Timing.CallDelayed(0.5f, () =>
             {
                 AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
             });
@@ -219,7 +224,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         // Voice Channel
         if (Role.Fpc.VoiceChatChannel != VoiceChat.VoiceChatChannel.None)
         {
-            Timing.CallDelayed(3.5f, () =>
+            Timing.CallDelayed(0.5f, () =>
             {
                 if (Owner.VoiceModule != null)
                     Owner.VoiceModule.CurrentChannel = Role.Fpc.VoiceChatChannel;

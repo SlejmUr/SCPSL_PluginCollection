@@ -13,15 +13,19 @@ public static class DamageHelper
     {
         float newDamage = baseDamage;
         var DamageTypeEnum = dict.Where(x => x.Key.DamageType == damageType);
-        if (!DamageTypeEnum.Any())
+        if (DamageTypeEnum.Count() == 0)
+        {
             return newDamage;
+        }
+            
 
-        if (!DamageTypeEnum.Select(x => x.Key.DamageSubType).Any())
+        if (DamageTypeEnum.Any(x => x.Key.DamageSubType == DamageSubType.None))
         {
             var damageFirst = DamageTypeEnum.FirstOrDefault();
             if (damageFirst.Value == default)
+            {
                 return newDamage;
-
+            }
             return damageFirst.Value.Math.MathWithFloat(newDamage, damageFirst.Value.Value);
         }
 
