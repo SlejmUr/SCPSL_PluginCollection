@@ -26,7 +26,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         SpawnToPostion();
         SetInventory();
         SetHints();
-        Timing.CallDelayed(2.1f, () => 
+        Timing.CallDelayed(2.4f, () => 
         {
             SetStats();
             SetCommon();
@@ -64,11 +64,13 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         if (Role.Location.UseDefault)
         {
-            Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
+            if (Owner.Role != Role.RoleToSpawn)
+                Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
         }
         else
         {
-            Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.None);
+            if (Owner.Role != Role.RoleToSpawn)
+                Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.None);
             MoveToLocation();
         }
     }
@@ -112,7 +114,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     private void SetInventory()
     {
-        Timing.CallDelayed(2f, () =>
+        Timing.CallDelayed(2.3f, () =>
         {
             if (Role.Inventory.Clear)
                 Owner.ClearInventory(true, true);
