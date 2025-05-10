@@ -25,7 +25,7 @@ public static class CustomRoleHelpers
     {
         if (newRoleInfo.RoleType != PlayerRoles.RoleTypeId.None)
         {
-            player.SetRole(newRoleInfo.RoleType, PlayerRoles.RoleChangeReason.RemoteAdmin, newRoleInfo.Flags);
+            player.SetRole(newRoleInfo.RoleType, PlayerRoles.RoleChangeReason.None, newRoleInfo.Flags);
             return true;
         }
         CustomRoleBaseInfo customRoleInfo = null;

@@ -11,7 +11,7 @@ public class LocationInfo
     public bool UseDefault { get; set; } = true;
 
     [Description("Prioritize where you spawn from below set values. See LocationSpawnPrioritys.txt")]
-    public LocationSpawnPriority Priority { get; set; } = LocationSpawnPriority.FullRandom;
+    public LocationSpawnPriority Priority { get; set; } = LocationSpawnPriority.None;
 
     [Description("Zone List to Spawn in. Check FacilityZone.txt")]
     public List<FacilityZone> SpawnZones { get; set; }

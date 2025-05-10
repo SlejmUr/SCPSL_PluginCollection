@@ -1,4 +1,6 @@
 ﻿using InventorySystem;
+using InventorySystem.Items.Firearms;
+using InventorySystem.Items.Firearms.Modules;
 using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
 using LabApiExtensions.Extensions;
@@ -23,36 +25,21 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         if (Role == null)
             return;
-        SpawnToPostion();
-        SetInventory();
-        SetHints();
-        Timing.CallDelayed(2.4f, () => 
-        {
-            SetStats();
-            SetCommon();
-            SetFpc();
-            SetCustomInfo();
-            SetExtraFpc();
-            SetScpRoleInfos();
-        });
+        Timing.RunCoroutine(ApplyCor());
     }
 
     public void Reset()
     {
         Role = null;
         Owner.IsBypassEnabled = false;
-        //ScaleHelper.SetScale(Owner, Vector3.one);
+        ScaleHelper.SetScale(Owner, Vector3.one);
+        AppearanceSyncExtension.RemovePlayer(Owner);
         Owner.Position += Vector3.up;
-        if (!DontResetRole)
-        {
-            Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.All);
-            Owner.ChangeAppearance(Owner.Role);
-            AppearanceSyncExtension.RemovePlayer(Owner);
-        }
-
         if (string.IsNullOrEmpty(OldCustomInfo))
             OldCustomInfo = string.Empty;
         Owner.CustomInfo = OldCustomInfo;
+        if (!DontResetRole)
+            Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
     }
 
     public override void OnInstanceDestroyed()
@@ -60,102 +47,110 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Reset();
     }
 
+    internal IEnumerator<float> ApplyCor()
+    {
+        yield return Timing.WaitForSeconds(0.2f);
+        SpawnToPostion();
+        yield return Timing.WaitForSeconds(0.3f);
+        MoveToLocation();
+        yield return Timing.WaitForSeconds(0.5f);
+        SetInventory();
+        SetHints();
+        yield return Timing.WaitForSeconds(0.2f);
+        SetStats();
+        yield return Timing.WaitForSeconds(0.2f);
+        SetCommon();
+        SetFpc();
+        SetCustomInfo();
+        SetExtraFpc();
+        SetScpRoleInfos();
+        CL.Debug("Succes!");
+    }
+
     private void SpawnToPostion()
     {
-        if (Role.Location.UseDefault)
-        {
-            if (Owner.Role != Role.RoleToSpawn)
-                Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.UseSpawnpoint);
-        }
-        else
-        {
-            if (Owner.Role != Role.RoleToSpawn)
-                Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.RemoteAdmin, PlayerRoles.RoleSpawnFlags.None);
-            MoveToLocation();
-        }
+        Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
     }
 
     private void MoveToLocation()
     {
-        Timing.CallDelayed(1, ()=>
+        switch (Role.Location.Priority)
         {
-            switch (Role.Location.Priority)
-            {
-                case LocationSpawnPriority.None:
-                    break;
-                case LocationSpawnPriority.SpawnZone:
-                    if (Role.Location.SpawnZones.Count > 0)
-                    {
-                        var tp = Room.Get(Role.Location.SpawnZones.RandomItem()).Where(x => !Role.Location.ExludeRooms.Contains(x.Name)).ToList().RandomItem();
-                        Owner.Position = tp.AdjustRoomPosition() + Role.Location.OffsetPosition;
-                    }
-                    break;
-                case LocationSpawnPriority.SpawnRoom:
-                    if (Role.Location.SpawnRooms.Count > 0)
-                    {
-                        var tp = Room.Get(Role.Location.SpawnRooms.RandomItem()).ToList().RandomItem();
-                        Owner.Position = tp.AdjustRoomPosition() + Role.Location.OffsetPosition;
-                    }
-                    break;
-                case LocationSpawnPriority.ExactPosition:
-                    if (Role.Location.ExactPosition != Vector3.zero)
-                    {
-                        Owner.Position = Role.Location.ExactPosition;
-                    }
-                    break;
-                case LocationSpawnPriority.FullRandom:
-                    Owner.Position = Room.List.ToList().RandomItem().AdjustRoomPosition() + Role.Location.OffsetPosition;
-                    break;
-                default:
-                    break;
-            }
-        });
+            case LocationSpawnPriority.None:
+                break;
+            case LocationSpawnPriority.SpawnZone:
+                if (Role.Location.SpawnZones.Count > 0)
+                {
+                    var tp = Room.Get(Role.Location.SpawnZones.RandomItem()).Where(x => !Role.Location.ExludeRooms.Contains(x.Name)).ToList().RandomItem();
+                    Owner.Position = tp.AdjustRoomPosition() + Role.Location.OffsetPosition;
+                }
+                break;
+            case LocationSpawnPriority.SpawnRoom:
+                if (Role.Location.SpawnRooms.Count > 0)
+                {
+                    var tp = Room.Get(Role.Location.SpawnRooms.RandomItem()).ToList().RandomItem();
+                    Owner.Position = tp.AdjustRoomPosition() + Role.Location.OffsetPosition;
+                }
+                break;
+            case LocationSpawnPriority.ExactPosition:
+                if (Role.Location.ExactPosition != Vector3.zero)
+                    Owner.Position = Role.Location.ExactPosition;
+                break;
+            case LocationSpawnPriority.FullRandom:
+                Owner.Position = Room.List.ToList().RandomItem().AdjustRoomPosition() + Role.Location.OffsetPosition;
+                break;
+            default:
+                break;
+        }
     }
 
     private void SetInventory()
     {
-        Timing.CallDelayed(2.3f, () =>
+        if (Role.Inventory.Clear)
         {
-            if (Role.Inventory.Clear)
-                Owner.ClearInventory(true, true);
-            foreach (var item in Role.Inventory.Items)
+            Owner.Inventory.UserInventory.ReserveAmmo.Clear();
+            Owner.Inventory.UserInventory.Items.Clear();
+        }
+        foreach (var item in Role.Inventory.Items)
+        {
+            var itemBase = Owner.Inventory.ServerAddItem(item, InventorySystem.Items.ItemAddReason.StartingItem);
+            if (itemBase is Firearm firearm && firearm.TryGetModule(out IPrimaryAmmoContainerModule ammo))
             {
-                Owner.Inventory.ServerAddItem(item, InventorySystem.Items.ItemAddReason.StartingItem);
+                ammo.ServerModifyAmmo(ammo.AmmoMax);
             }
-            foreach (var ammo in Role.Inventory.Ammos)
-            {
-                Owner.SetAmmo(ammo.Key, ammo.Value);
-            }
+        }
+        foreach (var ammo in Role.Inventory.Ammos)
+        {
+            Owner.SetAmmo(ammo.Key, ammo.Value);
+        }
 
-            if (Role.Candy.Candies.Count != 0)
+        if (Role.Candy.Candies.Count != 0)
+        {
+            if (Owner.Items.Any(x => x is Scp330Item))
             {
-                if (Owner.Items.Any(x => x is Scp330Item))
-                {
-                    Scp330Item bag = (Scp330Item)Owner.Items.FirstOrDefault(x => x is Scp330Item);
-                    bag.AddCandies(Role.Candy.Candies);
-                }
-                else if (!Owner.IsInventoryFull)
-                {
-                    Scp330Item bag = (Scp330Item)Owner.AddItem(ItemType.SCP330, InventorySystem.Items.ItemAddReason.StartingItem);
-                    bag.AddCandies(Role.Candy.Candies);
-                }
+                Scp330Item bag = (Scp330Item)Owner.Items.FirstOrDefault(x => x is Scp330Item);
+                bag.AddCandies(Role.Candy.Candies);
             }
-            if (Main.Instance.Config.CustomItemUseName)
+            else if (!Owner.IsInventoryFull)
             {
-                foreach (var item in Role.Inventory.CustomNames)
-                {
-                    Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
-                }
+                Scp330Item bag = (Scp330Item)Owner.AddItem(ItemType.SCP330, InventorySystem.Items.ItemAddReason.StartingItem);
+                bag.AddCandies(Role.Candy.Candies);
             }
-            else
+        }
+        if (Main.Instance.Config.CustomItemUseName)
+        {
+            foreach (var item in Role.Inventory.CustomNames)
             {
-                foreach (var item in Role.Inventory.CustomIds)
-                {
-                    Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
-                }
+                Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
             }
-            
-        });
+        }
+        else
+        {
+            foreach (var item in Role.Inventory.CustomIds)
+            {
+                Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
+            }
+        }
     }
 
     private void SetStats()
@@ -198,36 +193,24 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         
         if (Role.Fpc.Scale != Vector3.one)
         {
-            Timing.CallDelayed(0.5f, () =>
-            {
-                ScaleHelper.SetScale(Owner, Role.Fpc.Scale);
-            });
+            ScaleHelper.SetScale(Owner, Role.Fpc.Scale);
         }
 
         if (Role.Fpc.FakeScale != Vector3.one)
         {
-            Timing.CallDelayed(0.8f, () =>
-            {
-                ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale);
-            });
+            ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale);
         }
 
         //  Appearance
         if (Role.Fpc.Appearance != PlayerRoles.RoleTypeId.None)
         {
-            Timing.CallDelayed(0.5f, () =>
-            {
-                AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
-            });
+            AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
         }
         // Voice Channel
         if (Role.Fpc.VoiceChatChannel != VoiceChat.VoiceChatChannel.None)
         {
-            Timing.CallDelayed(0.5f, () =>
-            {
-                if (Owner.VoiceModule != null)
-                    Owner.VoiceModule.CurrentChannel = Role.Fpc.VoiceChatChannel;
-            });
+            if (Owner.VoiceModule != null)
+                Owner.VoiceModule.CurrentChannel = Role.Fpc.VoiceChatChannel;
         }
     }
 

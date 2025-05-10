@@ -17,7 +17,7 @@ public class PlayerHandler : CustomEventsHandler
     {
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
             return;
-        if (ev.ChangeReason != PlayerRoles.RoleChangeReason.RemoteAdmin)
+        if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
             CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         AppearanceSyncExtension.ForceSync(ev.Player);
     }
