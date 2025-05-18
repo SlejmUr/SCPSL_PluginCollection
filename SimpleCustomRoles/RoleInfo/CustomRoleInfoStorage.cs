@@ -111,8 +111,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         if (Role.Inventory.Clear)
         {
-            Owner.Inventory.UserInventory.ReserveAmmo.Clear();
-            Owner.Inventory.UserInventory.Items.Clear();
+            Owner.ClearInventory();
         }
         foreach (var item in Role.Inventory.Items)
         {

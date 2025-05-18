@@ -7,8 +7,6 @@ namespace SimpleCustomRoles.RoleYaml;
 
 public class LocationInfo
 {
-    [Description("Should use Default spawn.")]
-    public bool UseDefault { get; set; } = true;
 
     [Description("Prioritize where you spawn from below set values. See LocationSpawnPrioritys.txt")]
     public LocationSpawnPriority Priority { get; set; } = LocationSpawnPriority.None;
