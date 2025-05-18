@@ -42,7 +42,7 @@ public static class CustomRoleHelpers
     public static void SetFromCMD(Player player, CustomRoleBaseInfo customRoleInfo)
     {
         UnSetCustomInfoToPlayer(player);
-        Timing.CallDelayed(0.5f, () => { SetCustomInfoToPlayer(player, customRoleInfo); });
+        Timing.CallDelayed(0.1f, () => { SetCustomInfoToPlayer(player, customRoleInfo); });
     }
 
     public static void SetCustomInfoToPlayer(Player player, CustomRoleBaseInfo customRoleInfo)

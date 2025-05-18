@@ -140,12 +140,12 @@ public class PlayerHandler : CustomEventsHandler
             ev.IsAllowed = role.Escape.CanEscape;
             return;
         }
-        CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         var found2 = role.Escape.ConfigToRole.FirstOrDefault(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
         if (found2.Value == null)
             return;
         ev.NewRole = found2.Value.RoleType;
-        Timing.CallDelayed(1.5f, () =>
+        ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
+        Timing.CallDelayed(0.5f, () =>
         {
             CustomRoleHelpers.SetNewRole(ev.Player, found2.Value);
         });

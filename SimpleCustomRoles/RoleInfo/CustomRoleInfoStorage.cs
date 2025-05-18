@@ -39,7 +39,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
             OldCustomInfo = string.Empty;
         Owner.CustomInfo = OldCustomInfo;
         if (!DontResetRole)
-            Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
+            Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.None);
     }
 
     public override void OnInstanceDestroyed()
@@ -69,7 +69,10 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     private void SpawnToPostion()
     {
-        Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
+        if (Role.RoleToSpawn == PlayerRoles.RoleTypeId.Scp0492)
+            Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.None);
+        else
+            Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
     }
 
     private void MoveToLocation()
@@ -88,7 +91,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
             case LocationSpawnPriority.SpawnRoom:
                 if (Role.Location.SpawnRooms.Count > 0)
                 {
-                    var tp = Room.Get(Role.Location.SpawnRooms.RandomItem()).ToList().RandomItem();
+                    var tp = Room.Get(Role.Location.SpawnRooms.RandomItem()).ToList().FirstOrDefault();
                     Owner.Position = tp.AdjustRoomPosition() + Role.Location.OffsetPosition;
                 }
                 break;

@@ -23,7 +23,7 @@ public class LocationInfo
     public List<RoomName> ExludeRooms { get; set; }
 
     [Description("Exact Position with Vector3.")]
-    public Vector3 ExactPosition { get; set; } = Vector3.one;
+    public Vector3 ExactPosition { get; set; } = Vector3.zero;
 
     [Description("Offset by all Spawn Position (Except when Default is True).")]
     public Vector3 OffsetPosition { get; set; } = Vector3.zero;
