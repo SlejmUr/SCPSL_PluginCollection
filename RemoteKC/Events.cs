@@ -7,22 +7,32 @@ internal class Events
 {
     internal static void InteractingDoor(PlayerInteractingDoorEventArgs ev)
     {
-        ev.CanOpen = PermissionCheck.HasKeycardPermission(ev.Door, ev.Player);
+        if (ev.Door.IsLocked)
+            return;
+        if (ev.CanOpen != true && ev.IsAllowed)
+            ev.CanOpen = PermissionCheck.HasKeycardPermission(ev.Door, ev.Player);
     }
 
     internal static void InteractingLocker(PlayerInteractingLockerEventArgs ev)
     {
-        ev.CanOpen = PermissionCheck.HasKeycardPermission(ev.Chamber, ev.Player);
+        if (ev.CanOpen != true)
+            ev.CanOpen = PermissionCheck.HasKeycardPermission(ev.Chamber, ev.Player);
     }
 
     internal static void UnlockingGenerator(PlayerUnlockingGeneratorEventArgs ev)
     {
-        ev.IsAllowed = PermissionCheck.HasKeycardPermission(ev.Generator, ev.Player);
+        if (ev.IsAllowed != true && PermissionCheck.HasKeycardPermission(ev.Generator, ev.Player))
+        {
+            ev.Generator.Base.IsUnlocked = true;
+            ev.Generator.Base._deniedStopwatch.Restart();
+            ev.IsAllowed = false;
+        }
     }
 
     internal static void UnlockingWarheadButton(PlayerUnlockingWarheadButtonEventArgs ev)
     {
-        ev.IsAllowed = PermissionCheck.HasPlayerPermission(ev.Player, WarheadButton.Button);
+        if (ev.IsAllowed != true)
+            ev.IsAllowed = PermissionCheck.HasPlayerPermission(ev.Player, WarheadButton.Button);
     }
 }
 
