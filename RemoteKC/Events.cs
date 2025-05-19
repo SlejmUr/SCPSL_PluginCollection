@@ -43,7 +43,7 @@ public class WarheadButton : IDoorPermissionRequester
 {
     public static WarheadButton Button { get; set; } = new();
 
-    public DoorPermissionsPolicy PermissionsPolicy => new DoorPermissionsPolicy(DoorPermissionFlags.AlphaWarhead, false, false);
+    public DoorPermissionsPolicy PermissionsPolicy => new(DoorPermissionFlags.AlphaWarhead, false, false);
 
     public string RequesterLogSignature => "WarheadButton";
 }

@@ -2,6 +2,7 @@
 using LabApi.Features.Wrappers;
 using RemoteAdmin;
 using SimpleCustomRoles.Helpers;
+using SimpleCustomRoles.RoleInfo;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -39,7 +40,7 @@ public class SetMyCustomRole : ICommand
             response = "Must be coming from Player!";
             return false;
         }
-        var role = Main.Instance.RolesLoader.RoleInfos.Where(x => x.Rolename == name).FirstOrDefault();
+        var role = RolesLoader.RoleInfos.Where(x => x.Rolename == name).FirstOrDefault();
         if (role == null)
         {
             response = $"Role with name {name} not exist!";

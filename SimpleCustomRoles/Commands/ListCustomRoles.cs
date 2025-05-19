@@ -1,4 +1,5 @@
 ﻿using CommandSystem;
+using SimpleCustomRoles.RoleInfo;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -14,7 +15,7 @@ public class ListCustomRoles : ICommand
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
         response = "Roles:";
-        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
+        foreach (var item in RolesLoader.RoleInfos)
         {
             response += $"\n{item.Rolename} [{item.Display.RARoleName}]";
         }

@@ -32,7 +32,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         Role = null;
         Owner.IsBypassEnabled = false;
-        ScaleHelper.SetScale(Owner, Vector3.one);
+        ScaleHelper.SetScale(Owner, Vector3.one, false);
         AppearanceSyncExtension.RemovePlayer(Owner);
         Owner.Position += Vector3.up;
         if (string.IsNullOrEmpty(OldCustomInfo))
@@ -128,16 +128,17 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
         if (Role.Candy.Candies.Count != 0)
         {
+            Scp330Item bag = null;
             if (Owner.Items.Any(x => x is Scp330Item))
             {
-                Scp330Item bag = (Scp330Item)Owner.Items.FirstOrDefault(x => x is Scp330Item);
-                bag.AddCandies(Role.Candy.Candies);
+                bag = (Scp330Item)Owner.Items.FirstOrDefault(x => x is Scp330Item);
             }
             else if (!Owner.IsInventoryFull)
             {
-                Scp330Item bag = (Scp330Item)Owner.AddItem(ItemType.SCP330, InventorySystem.Items.ItemAddReason.StartingItem);
-                bag.AddCandies(Role.Candy.Candies);
+                bag = (Scp330Item)Owner.AddItem(ItemType.SCP330, InventorySystem.Items.ItemAddReason.StartingItem);
             }
+            bag?.SetCandies(Role.Candy.Candies);
+            // TODO: Fix many candies addition
         }
         if (Main.Instance.Config.CustomItemUseName)
         {
@@ -195,12 +196,12 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         
         if (Role.Fpc.Scale != Vector3.one)
         {
-            ScaleHelper.SetScale(Owner, Role.Fpc.Scale);
+            ScaleHelper.SetScale(Owner, Role.Fpc.Scale, false);
         }
 
         if (Role.Fpc.FakeScale != Vector3.one)
         {
-            ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale);
+            ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale, true);
         }
 
         //  Appearance

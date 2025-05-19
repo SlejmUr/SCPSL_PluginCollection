@@ -1,6 +1,7 @@
 ﻿using CommandSystem;
 using LabApi.Features.Wrappers;
 using SimpleCustomRoles.Helpers;
+using SimpleCustomRoles.RoleInfo;
 using Utils;
 
 namespace SimpleCustomRoles.Commands;
@@ -78,7 +79,7 @@ public class SetOthersCustomRole : ICommand
         }
         else
         {
-            var role = Main.Instance.RolesLoader.RoleInfos.FirstOrDefault(x => x.Rolename == rolename);
+            var role = RolesLoader.RoleInfos.FirstOrDefault(x => x.Rolename == rolename);
             if (role == default)
             {
                 response = $"Role with name {rolename} not exist!";
