@@ -12,26 +12,19 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		EXILED Release|Any CPU = EXILED Release|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Debug|Any CPU.ActiveCfg = Release|Any CPU
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Debug|Any CPU.Build.0 = Release|Any CPU
-		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.EXILED Release|Any CPU.ActiveCfg = EXILED Release|Any CPU
-		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.EXILED Release|Any CPU.Build.0 = EXILED Release|Any CPU
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.EXILED Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.EXILED Release|Any CPU.Build.0 = Release|Any CPU
 		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.EXILED Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.EXILED Release|Any CPU.Build.0 = Release|Any CPU
 		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
