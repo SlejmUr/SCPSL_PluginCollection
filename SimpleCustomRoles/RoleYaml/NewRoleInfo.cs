@@ -8,4 +8,9 @@ public class NewRoleInfo
     public RoleTypeId RoleType { get; set; } = RoleTypeId.None;
     public string Name { get; set; } = string.Empty;
     public List<string> Random { get; set; } = [];
+
+    public override string ToString()
+    {
+        return $"Flags: {Flags} RoleType: {RoleType} Name: {Name}, Randoms: {Random.Count}";
+    }
 }

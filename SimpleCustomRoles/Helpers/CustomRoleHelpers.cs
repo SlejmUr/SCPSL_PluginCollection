@@ -22,11 +22,11 @@ public static class CustomRoleHelpers
         return false;
     }
 
-    public static bool SetNewRole(Player player, NewRoleInfo newRoleInfo)
+    public static bool SetNewRole(Player player, NewRoleInfo newRoleInfo, bool AsEscaped = false)
     {
         if (newRoleInfo.RoleType != PlayerRoles.RoleTypeId.None)
         {
-            player.SetRole(newRoleInfo.RoleType, PlayerRoles.RoleChangeReason.None, newRoleInfo.Flags);
+            player.SetRole(newRoleInfo.RoleType, AsEscaped ? PlayerRoles.RoleChangeReason.Escaped : PlayerRoles.RoleChangeReason.None, newRoleInfo.Flags);
             return true;
         }
         CustomRoleBaseInfo customRoleInfo = null;

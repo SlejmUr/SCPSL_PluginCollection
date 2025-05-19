@@ -8,6 +8,7 @@ using MEC;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.RoleYaml.Enums;
+using System.Collections.Generic;
 
 namespace SimpleCustomRoles.Handler;
 
@@ -126,7 +127,7 @@ public class PlayerHandler : CustomEventsHandler
                 return;
             if (Main.Instance.Config.EscapeConfigs.Count(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role) == 0)
                 return;
-            var found = Main.Instance.Config.EscapeConfigs.FirstOrDefault(x=>x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
+            var found = Main.Instance.Config.EscapeConfigs.FirstOrDefault(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
             if (found.Value == PlayerRoles.RoleTypeId.None)
                 return;
             ev.IsAllowed = true;
@@ -137,18 +138,17 @@ public class PlayerHandler : CustomEventsHandler
 
         if (!role.Escape.CanEscape)
         {
-            ev.IsAllowed = role.Escape.CanEscape;
+            ev.IsAllowed = false;
             return;
         }
-        var found2 = role.Escape.ConfigToRole.FirstOrDefault(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
-        if (found2.Value == null)
-            return;
-        ev.NewRole = found2.Value.RoleType;
-        ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
-        Timing.CallDelayed(0.5f, () =>
+        var found2 = role.Escape.ConfigToRole.Where(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
+        if (found2.Count() == 0)
         {
-            CustomRoleHelpers.SetNewRole(ev.Player, found2.Value);
-        });
+            return;
+        }
+        var found3 = found2.Select(x => x.Value).FirstOrDefault();
+        ev.IsAllowed = false;
+        CustomRoleHelpers.SetNewRole(ev.Player, found3, true);
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
