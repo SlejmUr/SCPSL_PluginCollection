@@ -6,5 +6,4 @@ public enum CustomRoleType
     AfterDead,      // Only appears after dying
     InWave,         // Only appears inside the SpawnWave.
     ScpSpecific,    // Only appears if set by Custom SCP's.
-    Escape,         // Only appears after Players escaped.
 }

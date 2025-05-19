@@ -4,14 +4,14 @@ using SimpleCustomRoles.RoleYaml;
 
 namespace SimpleCustomRoles.RoleInfo;
 
-public class RolesLoader
+public static class RolesLoader
 {
-    public List<CustomRoleBaseInfo> RoleInfos;
-    internal string Dir = Path.Combine(Main.Instance.GetConfigDirectory().FullName, "Roles");
+    public static List<CustomRoleBaseInfo> RoleInfos = [];
+    internal static string Dir = Path.Combine(Main.Instance.GetConfigDirectory().FullName, "Roles");
 
-    public void Load()
+    public static void Load()
     {
-        RoleInfos = [];
+        RoleInfos.Clear();
         if (Directory.Exists(Dir))
         {
             File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), CustomYaml.Serializer.Serialize(CreateTemplate()));
@@ -31,16 +31,16 @@ public class RolesLoader
             Directory.CreateDirectory(Dir);
             File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), CustomYaml.Serializer.Serialize(CreateTemplate()));
         }
-        Main.Instance.RolesLoader.RoleInfos = [.. Main.Instance.RolesLoader.RoleInfos.OrderBy(x=>x.Spawn.SpawnChance)];
+        RoleInfos = [.. RoleInfos.OrderBy(x => x.Spawn.SpawnChance)];
     }
 
-    public void Clear()
+    public static void Clear()
     {
         RoleInfos.Clear();
     }
 
 
-    public CustomRoleBaseInfo CreateTemplate()
+    public static CustomRoleBaseInfo CreateTemplate()
     {
         return new()
         {

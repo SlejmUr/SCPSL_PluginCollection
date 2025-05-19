@@ -1,5 +1,6 @@
 ﻿using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.RoleInfo;
 using SimpleCustomRoles.RoleYaml;
@@ -30,9 +31,9 @@ public static class CustomRoleHelpers
         }
         CustomRoleBaseInfo customRoleInfo = null;
         if (!string.IsNullOrEmpty(newRoleInfo.Name))
-            customRoleInfo = Main.Instance.RolesLoader.RoleInfos.Where(x => x.Rolename == newRoleInfo.Name).FirstOrDefault();
+            customRoleInfo = RolesLoader.RoleInfos.Where(x => x.Rolename == newRoleInfo.Name).FirstOrDefault();
         else if (newRoleInfo.Random.Count != 0)
-            customRoleInfo = Main.Instance.RolesLoader.RoleInfos.Where(x => x.Rolename == newRoleInfo.Random.RandomItem()).FirstOrDefault();
+            customRoleInfo = RolesLoader.RoleInfos.Where(x => x.Rolename == newRoleInfo.Random.RandomItem()).FirstOrDefault();
         if (customRoleInfo == null)
             return false;
         SetFromCMD(player, customRoleInfo);

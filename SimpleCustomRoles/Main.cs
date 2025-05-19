@@ -2,8 +2,8 @@
 using LabApi.Features;
 using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
+using LabApiExtensions.Extensions;
 using SimpleCustomRoles.Handler;
-using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleGroup;
 using SimpleCustomRoles.RoleInfo;
 using SimpleCustomRoles.RoleYaml;
@@ -23,11 +23,9 @@ internal class Main : Plugin<Config>
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
     #endregion
 
-    public RolesLoader RolesLoader;
-    public List<CustomRoleBaseInfo> RegularRoles;
-    public List<CustomRoleBaseInfo> InWaveRoles;
-    public List<CustomRoleBaseInfo> ScpSpecificRoles;
-    public List<CustomRoleBaseInfo> EscapeRoles;
+    public List<CustomRoleBaseInfo> InWaveRoles = [];
+    public List<CustomRoleBaseInfo> ScpSpecificRoles = [];
+    public List<CustomRoleBaseInfo> EscapeRoles = [];
 
     private ServerHandler serverHandler;
     private PlayerHandler playerHandler;
@@ -45,7 +43,6 @@ internal class Main : Plugin<Config>
         Instance = this;
         CustomDataStoreManagerExtended.EnsureExists<CustomRoleInfoStorage>();
         HelperTxts.WriteAll();
-        RolesLoader = new();
         Logic.Init();
 
         serverHandler = new();
@@ -94,7 +91,6 @@ internal class Main : Plugin<Config>
         scp330Handler = null;
         Logic.UnInit();
         RolesLoader.Clear();
-        RolesLoader = null;
         Instance = null;
     }
 

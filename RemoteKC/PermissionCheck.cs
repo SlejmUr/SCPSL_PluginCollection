@@ -1,4 +1,5 @@
 ﻿using Interactables.Interobjects.DoorUtils;
+using InventorySystem.Items.Keycards;
 using LabApi.Features.Wrappers;
 
 namespace RemoteKC;
@@ -16,18 +17,19 @@ internal static class PermissionCheck
 
     public static bool HasPlayerPermission(Player player, IDoorPermissionRequester requester)
     {
-        DoorPermissionFlags flags = DoorPermissionFlags.None;
-
         if (player.IsBypassEnabled)
             return true;
 
-        if (player.RoleBase is IDoorPermissionProvider doorPermissionProvider)
-            flags |= doorPermissionProvider.GetPermissions(requester);
+        if (player.RoleBase is IDoorPermissionProvider doorPermissionProvider && 
+            requester.PermissionsPolicy.CheckPermissions(doorPermissionProvider.GetPermissions(requester)))
+            return true;
 
         foreach (Item item in player.Items)
-            if (item is KeycardItem keycardItem)
-                flags |= keycardItem.Base.GetPermissions(requester);
+            if (item is LabApi.Features.Wrappers.KeycardItem keycardItem && 
+                keycardItem.Base is not SingleUseKeycardItem && 
+                requester.PermissionsPolicy.CheckPermissions(keycardItem.Base.GetPermissions(requester)))
+                return true;
 
-        return requester.PermissionsPolicy.CheckPermissions(flags);
+        return false;
     }
 }

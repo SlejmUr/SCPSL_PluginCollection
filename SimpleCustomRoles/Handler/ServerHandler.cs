@@ -5,6 +5,7 @@ using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleInfo;
+using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles.Handler;
@@ -16,14 +17,12 @@ internal class ServerHandler : CustomEventsHandler
         AppearanceSyncExtension.Stop();
     }
 
-
     public static void ReloadRoles()
     {
-        Main.Instance.RegularRoles = [];
         Main.Instance.InWaveRoles = [];
         Main.Instance.ScpSpecificRoles = [];
-        Main.Instance.RolesLoader.Load();
-        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
+        RolesLoader.Load();
+        foreach (var item in RolesLoader.RoleInfos)
         {
             if (item.RoleType == CustomRoleType.AfterDead)
             {
@@ -41,11 +40,10 @@ internal class ServerHandler : CustomEventsHandler
 
     public override void OnServerWaitingForPlayers()
     {
-        Main.Instance.RegularRoles = [];
         Main.Instance.InWaveRoles = [];
         Main.Instance.ScpSpecificRoles = [];
         Main.Instance.EscapeRoles = [];
-        Main.Instance.RolesLoader.Load();
+        RolesLoader.Load();
         CL.Info("Loaded custom roles!");
     }
 
@@ -64,17 +62,11 @@ internal class ServerHandler : CustomEventsHandler
                 Round.IsLocked = false;
             });
         }
-
-        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
+        List<CustomRoleBaseInfo> RegularRoles = [];
+        foreach (var item in RolesLoader.RoleInfos)
         {
             if (item.RoleType == CustomRoleType.AfterDead)
             {
-                continue;
-            }
-            if (item.RoleType == CustomRoleType.Escape)
-            {
-                CL.Debug($"Escape Role added: " + item.Rolename, Main.Instance.Config.Debug);
-                Main.Instance.EscapeRoles.Add(item);
                 continue;
             }
             for (int i = 0; i < item.Spawn.SpawnAmount; i++)
@@ -104,14 +96,14 @@ internal class ServerHandler : CustomEventsHandler
                     if (item.RoleType == CustomRoleType.InWave)
                         Main.Instance.InWaveRoles.Add(item);
                     else
-                        Main.Instance.RegularRoles.Add(item);
+                        RegularRoles.Add(item);
                 }
                 CL.Debug($"Rolled chance: {random}/{chance} for Role {item.Rolename}. Role is " + (IsSpawning ? "" : "NOT ") + "spawning.", Main.Instance.Config.Debug);
             }
         }
 
 
-        foreach (var item in Main.Instance.RegularRoles)
+        foreach (var item in RegularRoles)
         {
             Player player = null;
 
@@ -135,6 +127,6 @@ internal class ServerHandler : CustomEventsHandler
             CL.Debug("Player Selected to spawn: " + player.UserId, Main.Instance.Config.Debug);
             CustomRoleHelpers.SetCustomInfoToPlayer(player, item);
         }
-        Main.Instance.RegularRoles.Clear();
+        RegularRoles.Clear();
     }
 }
