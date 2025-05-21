@@ -7,6 +7,9 @@ public class EffectInfo
     [Description("Effect can be removed with SCP-500.")]
     public bool Removable { get; set; } = true;
 
+    [Description("Can this effect be usable on person")]
+    public bool CanEnable { get; set; } = true;
+
     [Description("Effect Type to add into the user.")]
     public string EffectName { get; set; }
 

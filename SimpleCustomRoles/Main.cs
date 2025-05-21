@@ -1,4 +1,5 @@
-﻿using LabApi.Events.CustomHandlers;
+﻿using CustomPlayerEffects;
+using LabApi.Events.CustomHandlers;
 using LabApi.Features;
 using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
@@ -65,10 +66,16 @@ internal class Main : Plugin<Config>
 
         scp330Handler = new();
         CustomHandlersManager.RegisterEventsHandler(scp330Handler);
+
+        StatusEffectBase.OnEnabled += SubHandle.StatusEffectBase_OnEnabled;
     }
+
 
     public override void Disable()
     {
+        StatusEffectBase.OnEnabled -= SubHandle.StatusEffectBase_OnEnabled;
+
+
         CustomHandlersManager.RegisterEventsHandler(serverHandler);
         serverHandler = null;
 

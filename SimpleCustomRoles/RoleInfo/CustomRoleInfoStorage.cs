@@ -174,6 +174,8 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         foreach (var effect in Role.Effects)
         {
+            if (!effect.CanEnable)
+                continue;
             // this time seems good I guess.
             Owner.EnableEffect(effect.EffectName, effect.Intensity, effect.Duration);
         }

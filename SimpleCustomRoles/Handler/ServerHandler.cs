@@ -112,13 +112,13 @@ internal class ServerHandler : CustomEventsHandler
 
             if (item.ReplaceRole == PlayerRoles.RoleTypeId.None && item.ReplaceTeam != PlayerRoles.Team.Dead)
             {
-                var list = Player.List.Where(x => x.Team == item.ReplaceTeam && CustomRoleHelpers.Contains(x)).ToList();
+                var list = Player.ReadyList.Where(x => x.Team == item.ReplaceTeam && !CustomRoleHelpers.Contains(x)).ToList();
                 if (list.Count > 0)
                     player = list.RandomItem();
             }
             else
             {
-                var list = Player.List.Where(x => x.Role == item.ReplaceRole && CustomRoleHelpers.Contains(x)).ToList();
+                var list = Player.ReadyList.Where(x => x.Role == item.ReplaceRole && !CustomRoleHelpers.Contains(x)).ToList();
                 if (list.Count > 0)
                     player = list.RandomItem();
             }
