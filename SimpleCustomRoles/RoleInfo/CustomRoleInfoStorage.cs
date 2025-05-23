@@ -53,10 +53,12 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         SpawnToPostion();
         yield return Timing.WaitForSeconds(0.3f);
         MoveToLocation();
-        yield return Timing.WaitForSeconds(0.5f);
+        yield return Timing.WaitForSeconds(0.3f);
         SetInventory();
         SetHints();
         yield return Timing.WaitForSeconds(0.2f);
+        SetMaxStats();
+        yield return Timing.WaitForSeconds(0.1f);
         SetStats();
         yield return Timing.WaitForSeconds(0.2f);
         SetCommon();
@@ -64,7 +66,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         SetCustomInfo();
         SetExtraFpc();
         SetScpRoleInfos();
-        CL.Debug("Succes!");
     }
 
     private void SpawnToPostion()
@@ -156,17 +157,21 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         }
     }
 
-    private void SetStats()
+    private void SetMaxStats()
     {
         Owner.MaxHealth = Role.Stats.MaxHealth.Math.MathWithFloat(Owner.MaxHealth, Role.Stats.MaxHealth.Value);
-        Owner.Health = Role.Stats.Health.Math.MathWithFloat(Owner.Health, Role.Stats.Health.Value);
         Owner.MaxArtificialHealth = Role.Stats.MaxAhp.Math.MathWithFloat(Owner.MaxArtificialHealth, Role.Stats.MaxAhp.Value);
-        Owner.ArtificialHealth = Role.Stats.Ahp.Math.MathWithFloat(Owner.ArtificialHealth, Role.Stats.Ahp.Value);
         Owner.MaxHumeShield = Role.Stats.MaxHumeShield.Math.MathWithFloat(Owner.MaxHumeShield, Role.Stats.MaxHumeShield.Value);
-        Owner.HumeShield = Role.Stats.HumeShield.Math.MathWithFloat(Owner.HumeShield, Role.Stats.HumeShield.Value);
         var max = Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue;
         max = Role.Stats.MaxStamina.Math.MathWithFloat(max, Role.Stats.MaxStamina.Value);
         Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue = max;
+    }
+
+    private void SetStats()
+    {
+        Owner.Health = Role.Stats.Health.Math.MathWithFloat(Owner.Health, Role.Stats.Health.Value);
+        Owner.ArtificialHealth = Role.Stats.Ahp.Math.MathWithFloat(Owner.ArtificialHealth, Role.Stats.Ahp.Value);
+        Owner.HumeShield = Role.Stats.HumeShield.Math.MathWithFloat(Owner.HumeShield, Role.Stats.HumeShield.Value);
         Owner.Gravity = Role.Stats.Gravity;
     }
 

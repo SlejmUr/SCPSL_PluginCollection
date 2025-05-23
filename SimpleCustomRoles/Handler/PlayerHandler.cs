@@ -8,7 +8,6 @@ using MEC;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.RoleYaml.Enums;
-using System.Collections.Generic;
 
 namespace SimpleCustomRoles.Handler;
 
@@ -36,7 +35,6 @@ public class PlayerHandler : CustomEventsHandler
     {
         float Damage = ev.DamageHandler.GetDamageValue();
         DamageType damageType = ev.DamageHandler.GetDamageType();
-
         if (ev.Attacker != null && CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var attacker_role))
         {
             if (attacker_role.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType))
