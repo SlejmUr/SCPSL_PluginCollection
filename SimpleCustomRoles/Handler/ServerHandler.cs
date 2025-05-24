@@ -66,9 +66,7 @@ internal class ServerHandler : CustomEventsHandler
         foreach (var item in RolesLoader.RoleInfos)
         {
             if (item.RoleType == CustomRoleType.AfterDead)
-            {
                 continue;
-            }
             for (int i = 0; i < item.Spawn.SpawnAmount; i++)
             {
                 bool IsSpawning = false;
@@ -78,6 +76,8 @@ internal class ServerHandler : CustomEventsHandler
                     CL.Debug($"Role has been no longer spawn: {item.Rolename} (Reason: Player limited)", Main.Instance.Config.Debug);
                     continue;
                 }
+                if (GroupHelper.CanSpawn(item.Rolegroup))
+                    continue;
                 int chance = item.Spawn.SpawnChance;
                 if (Main.Instance.Config.UsePlayerPercent && !item.Spawn.DenyChance)
                 {
@@ -101,32 +101,32 @@ internal class ServerHandler : CustomEventsHandler
                 CL.Debug($"Rolled chance: {random}/{chance} for Role {item.Rolename}. Role is " + (IsSpawning ? "" : "NOT ") + "spawning.", Main.Instance.Config.Debug);
             }
         }
-
-
-        foreach (var item in RegularRoles)
-        {
-            Player player = null;
-
-            if (GroupHelper.CanSpawn(item.Rolegroup))
-                continue;
-
-            if (item.ReplaceRole == PlayerRoles.RoleTypeId.None && item.ReplaceTeam != PlayerRoles.Team.Dead)
+        List<Player> NotRoll = [];
+        Timing.CallDelayed(0.2f, () => {
+            foreach (var item in RegularRoles)
             {
-                var list = Player.ReadyList.Where(x => x.Team == item.ReplaceTeam && !CustomRoleHelpers.Contains(x)).ToList();
-                if (list.Count > 0)
-                    player = list.RandomItem();
+                Player player = null;
+
+                if (item.ReplaceRole == PlayerRoles.RoleTypeId.None && item.ReplaceTeam != PlayerRoles.Team.Dead)
+                {
+                    var list = Player.ReadyList.Where(x => x.Team == item.ReplaceTeam && !CustomRoleHelpers.Contains(x) && !NotRoll.Contains(x)).ToList();
+                    if (list.Count > 0)
+                        player = list.RandomItem();
+                }
+                else
+                {
+                    var list = Player.ReadyList.Where(x => x.Role == item.ReplaceRole && !CustomRoleHelpers.Contains(x) && !NotRoll.Contains(x)).ToList();
+                    if (list.Count > 0)
+                        player = list.RandomItem();
+                }
+                if (player == null)
+                    continue;
+
+                CL.Debug($"Player Selected to spawn: {player.UserId}", Main.Instance.Config.Debug);
+                NotRoll.Add(player);
+                CustomRoleHelpers.SetCustomInfoToPlayer(player, item);
             }
-            else
-            {
-                var list = Player.ReadyList.Where(x => x.Role == item.ReplaceRole && !CustomRoleHelpers.Contains(x)).ToList();
-                if (list.Count > 0)
-                    player = list.RandomItem();
-            }
-            if (player == null)
-                continue;
-            CL.Debug("Player Selected to spawn: " + player.UserId, Main.Instance.Config.Debug);
-            CustomRoleHelpers.SetCustomInfoToPlayer(player, item);
-        }
-        RegularRoles.Clear();
+            RegularRoles.Clear();
+        });
     }
 }

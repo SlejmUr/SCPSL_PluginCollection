@@ -52,7 +52,10 @@ public static class CustomRoleHelpers
             return;
         CL.Debug($"SetCustomInfoToPlayer: {player.UserId} Role: {customRoleInfo.Rolename}", Main.Instance.Config.Debug);
         if (Contains(player))
+        {
+            CL.Debug($"SetCustomInfoToPlayer: {player.UserId} OldRole: {CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player).Role.Rolename}", Main.Instance.Config.Debug);
             return;
+        }
 
         var roleStore = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
         roleStore.Role = customRoleInfo;
@@ -84,9 +87,7 @@ public static class CustomRoleHelpers
 
     public static bool Contains(Player player)
     {
-        if (!TryGetCustomRole(player, out var role))
-            return false;
-        return role != null;
+        return TryGetCustomRole(player, out var role) && role != null;
     }
 
     public static IEnumerable<Player> GetPlayers()
