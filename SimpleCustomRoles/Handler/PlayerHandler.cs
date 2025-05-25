@@ -166,7 +166,8 @@ public class PlayerHandler : CustomEventsHandler
             if (list.Count == 0)
                 continue;
             CustomRoleHelpers.SetCustomInfoToPlayer(list.RandomItem(), item);
-            //tmp.Add(item);
+            if (item.Wave.RemoveAfterSpawn)
+                tmp.Add(item);
         }
 
         foreach (var item in tmp)

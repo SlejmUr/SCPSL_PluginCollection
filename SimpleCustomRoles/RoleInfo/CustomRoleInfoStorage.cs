@@ -32,7 +32,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         Role = null;
         Owner.IsBypassEnabled = false;
-        ScaleHelper.SetScale(Owner, Vector3.one, false);
+        ScaleHelper.SetScale(Owner, Vector3.one, false, true);
         AppearanceSyncExtension.RemovePlayer(Owner);
         Owner.Position += Vector3.up;
         if (string.IsNullOrEmpty(OldCustomInfo))
@@ -40,11 +40,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Owner.CustomInfo = OldCustomInfo;
         if (!DontResetRole)
             Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.None);
-    }
-
-    public override void OnInstanceDestroyed()
-    {
-        Reset();
     }
 
     internal IEnumerator<float> ApplyCor()
