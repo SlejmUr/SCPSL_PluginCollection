@@ -117,6 +117,8 @@ public class PlayerHandler : CustomEventsHandler
         }
     }
 
+    public static List<Player> PlayerEscaped = [];
+
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
@@ -134,6 +136,9 @@ public class PlayerHandler : CustomEventsHandler
             return;
         }
 
+        if (PlayerEscaped.Contains(ev.Player))
+            return;
+
         if (!role.Escape.CanEscape)
         {
             ev.IsAllowed = false;
@@ -141,12 +146,14 @@ public class PlayerHandler : CustomEventsHandler
         }
         var found2 = role.Escape.ConfigToRole.Where(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role);
         if (found2.Count() == 0)
-        {
             return;
-        }
         var found3 = found2.Select(x => x.Value).FirstOrDefault();
+        if (found3 == default)
+            return;
         ev.IsAllowed = false;
-        CustomRoleHelpers.SetNewRole(ev.Player, found3, true);
+        var success = CustomRoleHelpers.SetNewRole(ev.Player, found3, true);
+        PlayerEscaped.Add(ev.Player);
+        Timing.CallDelayed(1.5f, ()=> PlayerEscaped.Remove(ev.Player));
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
