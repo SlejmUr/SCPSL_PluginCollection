@@ -20,6 +20,7 @@ public class PlayerHandler : CustomEventsHandler
         if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
             CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
         AppearanceSyncExtension.ForceSync(ev.Player);
+        PlayerEscaped.Remove(ev.Player);
     }
 
     public override void OnPlayerDroppingItem(PlayerDroppingItemEventArgs ev)
@@ -180,6 +181,10 @@ public class PlayerHandler : CustomEventsHandler
         foreach (var item in tmp)
         {
             Main.Instance.InWaveRoles.Remove(item);
+        }
+        foreach (var item in ev.Players)
+        {
+            AppearanceSyncExtension.ForceSync(item);
         }
     }
 }
