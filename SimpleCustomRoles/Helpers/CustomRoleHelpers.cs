@@ -36,7 +36,8 @@ public static class CustomRoleHelpers
             customRoleInfo = RolesLoader.RoleInfos.Where(x => x.Rolename == newRoleInfo.Random.RandomItem()).FirstOrDefault();
         if (customRoleInfo == null)
             return false;
-        SetFromCMD(player, customRoleInfo);
+        UnSetCustomInfoToPlayer(player, false);
+        Timing.CallDelayed(0.1f, () => { SetCustomInfoToPlayer(player, customRoleInfo); });
         return true;
     }
 
@@ -64,14 +65,14 @@ public static class CustomRoleHelpers
         CL.Debug($"SetCustomInfoToPlayer: {player.UserId} Role: {customRoleInfo.Rolename} Success", Main.Instance.Config.Debug);
     }
 
-    public static void UnSetCustomInfoToPlayer(Player player, bool dontResetRole = false)
+    public static void UnSetCustomInfoToPlayer(Player player, bool dontResetRole = true)
     {
         if (player == null)
             return;
         if (!Contains(player))
             return;
         var rolestorage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
-        rolestorage.DontResetRole = dontResetRole;
+        rolestorage.ResetRole = dontResetRole;
         Events.TriggerRoleRemoved(player, rolestorage.Role);
         rolestorage.Reset();
     }

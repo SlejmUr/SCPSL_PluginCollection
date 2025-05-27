@@ -20,7 +20,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 {
     public CustomRoleBaseInfo Role;
     public string OldCustomInfo = string.Empty;
-    public bool DontResetRole { get; set; }
+    public bool ResetRole { get; set; }
     public void Apply()
     {
         if (Role == null)
@@ -38,7 +38,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         if (string.IsNullOrEmpty(OldCustomInfo))
             OldCustomInfo = string.Empty;
         Owner.CustomInfo = OldCustomInfo;
-        if (!DontResetRole)
+        if (ResetRole)
             Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.None);
     }
 

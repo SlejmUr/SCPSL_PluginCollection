@@ -122,8 +122,12 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
     {
+        if (PlayerEscaped.Contains(ev.Player))
+            return;
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
         {
+            if (ev.EscapeScenario == Escape.EscapeScenarioType.Custom)
+                ev.IsAllowed = false;
             if (Main.Instance.Config.EscapeConfigs.Count == 0)
                 return;
             if (Main.Instance.Config.EscapeConfigs.Count(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role) == 0)
@@ -134,11 +138,10 @@ public class PlayerHandler : CustomEventsHandler
             ev.IsAllowed = true;
             ev.NewRole = found.Value;
             ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
+            PlayerEscaped.Add(ev.Player);
+            Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(ev.Player));
             return;
         }
-
-        if (PlayerEscaped.Contains(ev.Player))
-            return;
 
         if (!role.Escape.CanEscape)
         {
