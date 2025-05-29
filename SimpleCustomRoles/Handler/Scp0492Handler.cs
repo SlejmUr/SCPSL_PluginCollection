@@ -9,6 +9,13 @@ public class Scp0492Handler : CustomEventsHandler
     public override void OnScp0492ConsumingCorpse(Scp0492ConsumingCorpseEventArgs ev)
     {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
+        {
             ev.IsAllowed = role.Scp.Scp0492.CanConsumeCorpse;
+            if (!ev.IsAllowed)
+                return;
+            ev.HealAmount = role.Scp.Scp0492.ConsumeHealth.MathWithValue(ev.HealAmount);
+        }
+            
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CustomPlayerEffects;
+using HarmonyLib;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features;
 using LabApi.Loader;
@@ -38,6 +39,7 @@ internal class Main : Plugin<Config>
 
     public List<RoleBaseGroup> RoleGroups = [];
 
+    private Harmony Harmony;
 
     public override void Enable()
     {
@@ -68,6 +70,9 @@ internal class Main : Plugin<Config>
         CustomHandlersManager.RegisterEventsHandler(scp330Handler);
 
         StatusEffectBase.OnEnabled += SubHandle.StatusEffectBase_OnEnabled;
+
+        Harmony = new("SimpleCustomRole");
+        Harmony.PatchAll();
     }
 
 
@@ -98,6 +103,7 @@ internal class Main : Plugin<Config>
         scp330Handler = null;
         Logic.UnInit();
         RolesLoader.Clear();
+        Harmony.UnpatchAll("SimpleCustomRole");
         Instance = null;
     }
 

@@ -65,14 +65,14 @@ public static class CustomRoleHelpers
         CL.Debug($"SetCustomInfoToPlayer: {player.UserId} Role: {customRoleInfo.Rolename} Success", Main.Instance.Config.Debug);
     }
 
-    public static void UnSetCustomInfoToPlayer(Player player, bool dontResetRole = true)
+    public static void UnSetCustomInfoToPlayer(Player player, bool resetRole = true)
     {
         if (player == null)
             return;
         if (!Contains(player))
             return;
         var rolestorage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
-        rolestorage.ResetRole = dontResetRole;
+        rolestorage.ResetRole = resetRole;
         Events.TriggerRoleRemoved(player, rolestorage.Role);
         rolestorage.Reset();
     }
@@ -94,7 +94,7 @@ public static class CustomRoleHelpers
     public static List<Player> GetPlayers()
     {
         var players = CustomDataStoreManagerExtended.GetAll<CustomRoleInfoStorage>();
-        return players.Where(x=>x.Value is CustomRoleInfoStorage st && st != null && st.Role != null).Select(x=>x.Key).ToList();
+        return [.. players.Where(x=>x.Value is CustomRoleInfoStorage st && st != null && st.Role != null).Select(x=>x.Key)];
     }
 
     public static Dictionary<Player, CustomRoleBaseInfo> GetPlayerAndRoles()
@@ -106,6 +106,6 @@ public static class CustomRoleHelpers
     public static List<CustomRoleBaseInfo> GetCurrentCustomRoles()
     {
         var players = CustomDataStoreManagerExtended.GetAll<CustomRoleInfoStorage>();
-        return players.Where(x => x.Value is CustomRoleInfoStorage st && st != null && st.Role != null).Select(x => ((CustomRoleInfoStorage)x.Value).Role).ToList();
+        return [.. players.Where(x => x.Value is CustomRoleInfoStorage st && st != null && st.Role != null).Select(x => ((CustomRoleInfoStorage)x.Value).Role)];
     }
 }

@@ -6,8 +6,10 @@ using LabApi.Features.Wrappers;
 using LabApiExtensions.Extensions;
 using MEC;
 using PlayerRoles.FirstPersonControl;
+using PlayerRoles.PlayableScps.Scp049;
 using PlayerRoles.PlayableScps.Scp106;
 using PlayerRoles.PlayableScps.Scp1507;
+using PlayerRoles.PlayableScps.Scp939;
 using PlayerStatsSystem;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleYaml;
@@ -44,11 +46,11 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     internal IEnumerator<float> ApplyCor()
     {
-        yield return Timing.WaitForSeconds(0.2f);
+        yield return Timing.WaitForSeconds(0.1f);
         SpawnToPostion();
-        yield return Timing.WaitForSeconds(0.3f);
+        yield return Timing.WaitForSeconds(0.1f);
         MoveToLocation();
-        yield return Timing.WaitForSeconds(0.3f);
+        yield return Timing.WaitForSeconds(0.2f);
         SetInventory();
         SetHints();
         yield return Timing.WaitForSeconds(0.2f);
@@ -67,7 +69,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         if (Role.RoleToSpawn == PlayerRoles.RoleTypeId.Scp0492)
             Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.None);
-        else
+        else if (Owner.Role != Role.RoleToSpawn)
             Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
     }
 
@@ -160,6 +162,9 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         var max = Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue;
         max = Role.Stats.MaxStamina.Math.MathWithFloat(max, Role.Stats.MaxStamina.Value);
         Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue = max;
+#if ENABLEEFFECTHUD
+        EffectOnHUD.ShowEffects.AddHpModifier(Owner, "Custom Role", (int)(Owner.MaxHealth - Owner.Health));
+#endif
     }
 
     private void SetStats()
@@ -259,10 +264,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         }
         if (Role.Hint.BroadcastAll != string.Empty)
         {
-            Timing.CallDelayed(Role.Hint.BroadcastDuration + 0.5f, () =>
-            {
-                Server.SendBroadcast(Role.Hint.BroadcastAll, Role.Hint.BroadcastAllDuration);
-            });
+            Server.SendBroadcast(Role.Hint.BroadcastAll, Role.Hint.BroadcastAllDuration);
         }
     }
 
@@ -273,11 +275,18 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
             OldCustomInfo = Owner.CustomInfo;
 
         if (Role.Display.RoleCanDisplay)
-            Owner.CustomInfo += $"{Role.Display.AreaRoleName}";
+            Owner.CustomInfo += Role.Display.AreaRoleName;
     }
 
     private void SetScpRoleInfos()
     {
+        if (Owner.RoleBase is Scp049Role scp049Role && scp049Role != null)
+        {
+            if (scp049Role.SubroutineModule.TryGetSubroutine(out Scp049AttackAbility scp049AttackAbility))
+            {
+                Role.Scp.Scp049.AttackEffectDuration.MathWithValue(ref scp049AttackAbility._statusEffectDuration);
+            }
+        }
         if (Owner.RoleBase is Scp106Role scp106Role && scp106Role != null)
         {
             if (scp106Role.SubroutineModule.TryGetSubroutine(out Scp106Attack scp106Attack))
@@ -292,6 +301,15 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
             if (scp1507Role.SubroutineModule.TryGetSubroutine(out Scp1507AttackAbility attackAbility))
             {
                 Role.Scp.Scp1507.AttackDamage.MathWithValue(ref attackAbility._damage);
+            }
+        }
+
+        if (Owner.RoleBase is Scp939Role scp939Role && scp939Role != null)
+        {
+            if (scp939Role.SubroutineModule.TryGetSubroutine(out Scp939AmnesticCloudAbility scp939AmnesticCloudAbility))
+            {
+                Role.Scp.Scp939.CloudFailCooldown.MathWithValue(ref scp939AmnesticCloudAbility._failedCooldown);
+                Role.Scp.Scp939.CloudPlacedCooldown.MathWithValue(ref scp939AmnesticCloudAbility._placedCooldown);
             }
         }
     }

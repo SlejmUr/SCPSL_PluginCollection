@@ -5,6 +5,11 @@ namespace SimpleCustomRoles.Helpers;
 
 public static class MathHelpers
 {
+    public static float MathWithValue(this MathValue mathValue, float inValue)
+    {
+        return mathValue.Math.MathWithFloat(inValue, mathValue.Value);
+    }
+
     public static void MathWithValue(this MathValue mathValue, ref float inValue)
     {
         inValue = mathValue.Math.MathWithFloat(inValue, mathValue.Value);
@@ -13,6 +18,11 @@ public static class MathHelpers
     public static void MathWithValue(this MathValueInt mathValue, ref int inValue)
     {
         inValue = mathValue.Math.MathWithInt(inValue, mathValue.Value);
+    }
+
+    public static int MathWithValue(this MathValueInt mathValue, int inValue)
+    {
+        return mathValue.Math.MathWithInt(inValue, mathValue.Value);
     }
 
     public static float MathWithFloat(this MathOption mathOption, float inFloat, float myValue)

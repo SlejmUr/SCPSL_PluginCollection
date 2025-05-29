@@ -1,5 +1,4 @@
-﻿using InventorySystem.Items.Usables.Scp330;
-using LabApi.Events.Arguments.PlayerEvents;
+﻿using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
 using SimpleCustomRoles.Helpers;

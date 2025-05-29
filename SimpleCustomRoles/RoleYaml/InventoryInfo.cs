@@ -1,4 +1,6 @@
-﻿namespace SimpleCustomRoles.RoleYaml;
+﻿using System.ComponentModel;
+
+namespace SimpleCustomRoles.RoleYaml;
 
 public class InventoryInfo
 {
@@ -7,4 +9,6 @@ public class InventoryInfo
     public Dictionary<ItemType, ushort> Ammos { get; set; } = [];
     public List<uint> CustomIds { get; set; } = [];
     public List<string> CustomNames { get; set; } = [];
+    [Description("Disables RemoveEverythingExceedingLimits function.")]
+    public bool Keep { get; set; } = false;
 }
