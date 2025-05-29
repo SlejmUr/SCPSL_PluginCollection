@@ -15,13 +15,9 @@ internal static class Scp049SenseAbility_ServerLoseTarget
     {
         List<CodeInstruction> code = [.. instructions];
         // get the current value.
-        var inst = code.Find(x=>x.opcode == OpCodes.Ldc_R8);
+        var index = code.FindIndex(x=>x.opcode == OpCodes.Ldc_R8);
+        var inst = code[index];
         var const_value = inst.operand;
-        // remove the full code.
-        code.Remove(inst);
-
-        // find where we load field
-        int index = code.FindIndex(x=>x.opcode == OpCodes.Ldfld);
         // add after the field loaded
         code.InsertRange(index, [
             // this.Owner
@@ -29,7 +25,7 @@ internal static class Scp049SenseAbility_ServerLoseTarget
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp049Role>), nameof(StandardSubroutine<Scp049Role>.Owner))),
             
             // <value>
-            new(OpCodes.Ldc_R4, const_value),
+            new(OpCodes.Ldc_R8, const_value),
 
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049SenseAbility_ServerLoseTarget), nameof(Cooldown), [typeof(ReferenceHub), typeof(float)])),
@@ -37,6 +33,8 @@ internal static class Scp049SenseAbility_ServerLoseTarget
             // (double)
             new(OpCodes.Conv_R8)
             ]);
+
+        code.Remove(inst);
 
         return code;
     }

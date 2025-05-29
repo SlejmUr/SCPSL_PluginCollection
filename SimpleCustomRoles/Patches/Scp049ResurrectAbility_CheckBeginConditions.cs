@@ -5,8 +5,10 @@ using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
 using System.Reflection.Emit;
 using static HarmonyLib.AccessTools;
+using static PlayerList;
 
 namespace SimpleCustomRoles.Patches;
+// DISABLED FUCK IL CODE
 
 [HarmonyPatch(typeof(Scp049ResurrectAbility), nameof(Scp049ResurrectAbility.CheckBeginConditions))]
 internal static class Scp049ResurrectAbility_CheckBeginConditions
@@ -18,8 +20,6 @@ internal static class Scp049ResurrectAbility_CheckBeginConditions
         var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R4);
         var inst = code[index];
         var const_value = inst.operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -34,16 +34,18 @@ internal static class Scp049ResurrectAbility_CheckBeginConditions
             new(OpCodes.Call, Method(typeof(Scp049ResurrectAbility_CheckBeginConditions), nameof(Human), [typeof(ReferenceHub), typeof(float)])),
             ]);
 
-        var index2 = code.FindIndex(index + 1, x => x.opcode == OpCodes.Ldc_R4);
-        inst = code[index2];
-        const_value = inst.operand;
         // remove the full code.
         code.Remove(inst);
 
+        // get the current value.
+        var index2 = code.FindLastIndex(x => x.opcode == OpCodes.Ldc_R4);
+        inst = code[index2];
+        const_value = inst.operand;
+
         // add after the field loaded
-        code.InsertRange(index, [
+        code.InsertRange(index2, [
             // this.Owner
-            new(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldarg_0).MoveLabelsFrom(inst),
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp049Role>), nameof(StandardSubroutine<Scp049Role>.Owner))),
             
             // <value>
@@ -52,6 +54,9 @@ internal static class Scp049ResurrectAbility_CheckBeginConditions
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049ResurrectAbility_CheckBeginConditions), nameof(Corpse), [typeof(ReferenceHub), typeof(float)])),
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
     }

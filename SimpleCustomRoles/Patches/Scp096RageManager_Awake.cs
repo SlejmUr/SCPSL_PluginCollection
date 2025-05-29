@@ -18,8 +18,6 @@ internal static class Scp096RageManager_Awake
         var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R4);
         var inst = code[index];
         var const_value = code[index].operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -33,6 +31,9 @@ internal static class Scp096RageManager_Awake
             // DefaultActivationTime(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp096RageManager_Awake), nameof(DefaultActivationTime), [typeof(ReferenceHub), typeof(float)])),
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
     }

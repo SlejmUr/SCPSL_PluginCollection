@@ -18,8 +18,6 @@ internal static class Scp106StalkAbility_UpdateServerside
 		var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R4);
 		var inst = code[index];
 		var const_value = inst.operand;
-		// remove the full code.
-		code.Remove(inst);
 
 		// add after the field loaded
 		code.InsertRange(index, [
@@ -34,11 +32,12 @@ internal static class Scp106StalkAbility_UpdateServerside
             new(OpCodes.Call, Method(typeof(Scp106StalkAbility_UpdateServerside), nameof(StalkCostStationary), [typeof(ReferenceHub), typeof(float)])),
 			]);
 
-        index = code.FindIndex(index, x => x.opcode == OpCodes.Ldc_R4);
-        inst = code[index];
-        const_value = inst.operand;
         // remove the full code.
         code.Remove(inst);
+
+        index = code.FindIndex(index + 1, x => x.opcode == OpCodes.Ldc_R4);
+        inst = code[index];
+        const_value = inst.operand;
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -52,6 +51,9 @@ internal static class Scp106StalkAbility_UpdateServerside
             // StalkCostMoving(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp106StalkAbility_UpdateServerside), nameof(StalkCostMoving), [typeof(ReferenceHub), typeof(float)])),
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
 	}

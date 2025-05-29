@@ -9,7 +9,7 @@ using static HarmonyLib.AccessTools;
 namespace SimpleCustomRoles.Patches;
 
 [HarmonyPatch(typeof(Scp096AttackAbility), nameof(Scp096AttackAbility.ServerProcessCmd))]
-[HarmonyPatch(typeof(Scp096AttackAbility), nameof(Scp096AttackAbility.OnKeyUp))]
+[HarmonyPatch(typeof(Scp096AttackAbility), nameof(Scp096AttackAbility.OnKeyDown))]
 internal static class Scp096AttackAbility_Cooldown
 {
     internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -19,8 +19,6 @@ internal static class Scp096AttackAbility_Cooldown
         var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R8);
         var inst = code[index];
         var const_value = code[index].operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -37,6 +35,9 @@ internal static class Scp096AttackAbility_Cooldown
             // (double)
             new(OpCodes.Conv_R8)
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
     }

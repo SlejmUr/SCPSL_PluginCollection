@@ -18,8 +18,6 @@ internal static class Scp049AttackAbility_ServerProcessCmd
         var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R8);
         var inst = code[index];
         var const_value = inst.operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -33,6 +31,9 @@ internal static class Scp049AttackAbility_ServerProcessCmd
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049AttackAbility_ServerProcessCmd), nameof(Cooldown), [typeof(ReferenceHub), typeof(float)])),
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
     }

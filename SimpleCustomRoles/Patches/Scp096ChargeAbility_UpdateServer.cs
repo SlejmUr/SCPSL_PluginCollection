@@ -18,8 +18,6 @@ internal static class Scp096ChargeAbility_UpdateServer
         var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R8);
         var inst = code[index];
         var const_value = code[index].operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -36,6 +34,9 @@ internal static class Scp096ChargeAbility_UpdateServer
             // (double)
             new(OpCodes.Conv_R8)
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
     }

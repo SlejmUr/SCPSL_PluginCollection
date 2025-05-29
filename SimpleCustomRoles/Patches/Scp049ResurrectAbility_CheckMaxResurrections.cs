@@ -17,9 +17,6 @@ internal static class Scp049ResurrectAbility_CheckMaxResurrections
         // get the current value.
         var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_I4_2);
         var inst = code[index];
-        var const_value = inst.operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -28,31 +25,34 @@ internal static class Scp049ResurrectAbility_CheckMaxResurrections
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp049Role>), nameof(StandardSubroutine<Scp049Role>.Owner))),
             
             // <value>
-            new(OpCodes.Ldc_I4, const_value),
+            new(OpCodes.Ldc_I4_2),
 
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049ResurrectAbility_CheckMaxResurrections), nameof(MaxResurrection), [typeof(ReferenceHub), typeof(int)])),
             ]);
 
-        var index2 = code.FindIndex(index + 1, x => x.opcode == OpCodes.Ldc_I4_2);
+        // remove the full code.
+        code.Remove(inst);
+
+        // get the current value.
+        var index2 = code.FindLastIndex(x => x.opcode == OpCodes.Ldc_I4_2);
         inst = code[index2];
-        const_value = inst.operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
-        code.InsertRange(index, [
+        code.InsertRange(index2, [
             // this.Owner
-            new(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldarg_0),
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp049Role>), nameof(StandardSubroutine<Scp049Role>.Owner))),
             
             // <value>
-            new(OpCodes.Ldc_I4, const_value),
+            new(OpCodes.Ldc_I4_2),
 
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049ResurrectAbility_CheckMaxResurrections), nameof(MaxResurrection), [typeof(ReferenceHub), typeof(int)])),
             ]);
 
+        // remove the full code.
+        code.Remove(inst);
         return code;
     }
 

@@ -19,8 +19,6 @@ internal static class Scp049SenseAbility_ServerProcessCmd
         var index = code.FindIndex(x=>x.opcode == OpCodes.Ldc_R8);
         var inst = code[index];
         var const_value = code[index].operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -29,7 +27,7 @@ internal static class Scp049SenseAbility_ServerProcessCmd
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp049Role>), nameof(StandardSubroutine<Scp049Role>.Owner))),
             
             // <value>
-            new(OpCodes.Ldc_R4, const_value),
+            new(OpCodes.Ldc_R8, const_value),
 
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049SenseAbility_ServerProcessCmd), nameof(Cooldown), [typeof(ReferenceHub), typeof(float)])),
@@ -38,12 +36,14 @@ internal static class Scp049SenseAbility_ServerProcessCmd
             new(OpCodes.Conv_R8)
             ]);
 
-        // get the current value.
-        var index2 = code.FindIndex(index + 1, x => x.opcode == OpCodes.Ldc_R8);
-        inst = code[index2];
-        const_value = code[index2].operand;
         // remove the full code.
         code.Remove(inst);
+
+        // get the current value.
+        var index2 = code.FindLastIndex(x => x.opcode == OpCodes.Ldc_R8);
+        inst = code[index2];
+        const_value = code[index2].operand;
+
 
         // add after the field loaded
         code.InsertRange(index2, [
@@ -52,7 +52,7 @@ internal static class Scp049SenseAbility_ServerProcessCmd
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp049Role>), nameof(StandardSubroutine<Scp049Role>.Owner))),
             
             // <value>
-            new(OpCodes.Ldc_R4, const_value),
+            new(OpCodes.Ldc_R8, const_value),
 
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049SenseAbility_ServerProcessCmd), nameof(Duration), [typeof(ReferenceHub), typeof(float)])),
@@ -60,6 +60,9 @@ internal static class Scp049SenseAbility_ServerProcessCmd
             // (double)
             new(OpCodes.Conv_R8)
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
     }

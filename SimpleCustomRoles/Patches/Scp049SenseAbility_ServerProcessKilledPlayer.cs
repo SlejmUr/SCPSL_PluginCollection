@@ -18,8 +18,6 @@ internal static class Scp049SenseAbility_ServerProcessKilledPlayer
         var index = code.FindIndex(x=>x.opcode == OpCodes.Ldc_R8);
         var inst = code[index];
         var const_value = code[index].operand;
-        // remove the full code.
-        code.Remove(inst);
 
         // add after the field loaded
         code.InsertRange(index, [
@@ -28,7 +26,7 @@ internal static class Scp049SenseAbility_ServerProcessKilledPlayer
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp049Role>), nameof(StandardSubroutine<Scp049Role>.Owner))),
             
             // <value>
-            new(OpCodes.Ldc_R4, const_value),
+            new(OpCodes.Ldc_R8, const_value),
 
             // Cooldown(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp049SenseAbility_ServerProcessKilledPlayer), nameof(Cooldown), [typeof(ReferenceHub), typeof(float)])),
@@ -36,6 +34,9 @@ internal static class Scp049SenseAbility_ServerProcessKilledPlayer
             // (double)
             new(OpCodes.Conv_R8)
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
     }

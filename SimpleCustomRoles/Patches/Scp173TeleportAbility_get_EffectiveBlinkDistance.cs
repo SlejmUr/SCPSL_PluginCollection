@@ -18,8 +18,6 @@ internal static class Scp173TeleportAbility_get_EffectiveBlinkDistance
 		var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R4);
 		var inst = code[index];
 		var const_value = inst.operand;
-		// remove the full code.
-		code.Remove(inst);
 
 		// add after the field loaded
 		code.InsertRange(index, [
@@ -34,16 +32,17 @@ internal static class Scp173TeleportAbility_get_EffectiveBlinkDistance
             new(OpCodes.Call, Method(typeof(Scp173TeleportAbility_get_EffectiveBlinkDistance), nameof(BlinkDistance), [typeof(ReferenceHub), typeof(float)])),
             ]);
 
-        index = code.FindIndex(x => x.opcode == OpCodes.Br_S) + 1;
-        inst = code[index];
-        const_value = inst.operand;
         // remove the full code.
         code.Remove(inst);
+
+        index = code.FindLastIndex(x => x.opcode == OpCodes.Ldc_R4);
+        inst = code[index];
+        const_value = inst.operand;
 
         // add after the field loaded
         code.InsertRange(index, [
             // this.Owner
-            new(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldarg_0).MoveLabelsFrom(inst),
             new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp173Role>), nameof(StandardSubroutine<Scp173Role>.Owner))),
             
             // <value>
@@ -52,6 +51,9 @@ internal static class Scp173TeleportAbility_get_EffectiveBlinkDistance
             // BreakneckDistanceMultiplier(this.Owner, <value>)
             new(OpCodes.Call, Method(typeof(Scp173TeleportAbility_get_EffectiveBlinkDistance), nameof(BreakneckDistanceMultiplier), [typeof(ReferenceHub), typeof(float)])),
             ]);
+
+        // remove the full code.
+        code.Remove(inst);
 
         return code;
 	}

@@ -70,7 +70,7 @@ internal class Main : Plugin<Config>
         CustomHandlersManager.RegisterEventsHandler(scp330Handler);
 
         StatusEffectBase.OnEnabled += SubHandle.StatusEffectBase_OnEnabled;
-
+        Harmony.DEBUG = Config.Debug;
         Harmony = new("SimpleCustomRole");
         Harmony.PatchAll();
     }

@@ -18,8 +18,6 @@ internal static class Scp106StalkAbility_ServerProcessCmd
 		var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R4);
 		var inst = code[index];
 		var const_value = inst.operand;
-		// remove the full code.
-		code.Remove(inst);
 
 		// add after the field loaded
 		code.InsertRange(index, [
@@ -31,9 +29,11 @@ internal static class Scp106StalkAbility_ServerProcessCmd
             new(OpCodes.Ldc_R4, const_value),
 
             // MinVigorSubmerge(this.Owner, <value>)
-            new(OpCodes.Call, Method(typeof(Scp106StalkAbility_UpdateServerside), nameof(MinVigorSubmerge), [typeof(ReferenceHub), typeof(float)])),
+            new(OpCodes.Call, Method(typeof(Scp106StalkAbility_ServerProcessCmd), nameof(MinVigorSubmerge), [typeof(ReferenceHub), typeof(float)])),
 			]);
 
+        // remove the full code.
+        code.Remove(inst);
         return code;
 	}
 
