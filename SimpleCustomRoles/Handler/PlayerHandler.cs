@@ -61,7 +61,10 @@ public class PlayerHandler : CustomEventsHandler
         }
         if (ev.NewTarget != null && CustomRoleHelpers.TryGetCustomRole(ev.NewTarget, out var role))
         {
+            Events.TriggerRoleSpectated(ev.NewTarget, role, ev.Player);
             if (!role.Display.RoleCanDisplay)
+                return;
+            if (string.IsNullOrEmpty(role.Display.SpectatorRoleName))
                 return;
             Server.SendBroadcast(ev.Player, $"\nThis user has a special role: <color={role.Display.ColorHex}>{role.Display.SpectatorRoleName}</color>", Main.Instance.Config.SpectatorBroadcastTime);
         }
