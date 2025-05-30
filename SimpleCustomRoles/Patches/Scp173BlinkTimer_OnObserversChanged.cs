@@ -1,5 +1,6 @@
 using HarmonyLib;
 using LabApi.Features.Wrappers;
+using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp173;
 using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
@@ -25,21 +26,23 @@ internal static class Scp173BlinkTimer_OnObserversChanged
 		code.InsertRange(index, [
             // this.Owner
             new(OpCodes.Ldarg_0),
-			new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp173Role>), nameof(StandardSubroutine<Scp173Role>.Owner))),
+			new(OpCodes.Callvirt, PropertyGetter(typeof(SubroutineBase), nameof(SubroutineBase.Role))),
             
             // <value>
             new(OpCodes.Ldc_R4, const_value),
 
             // BlinkCooldown(this.Owner, <value>)
-            new(OpCodes.Call, Method(typeof(Scp173BlinkTimer_OnObserversChanged), nameof(BlinkCooldown), [typeof(ReferenceHub), typeof(float)])),
+            new(OpCodes.Call, Method(typeof(Scp173BlinkTimer_OnObserversChanged), nameof(BlinkCooldown), [typeof(PlayerRoleBase), typeof(float)])),
 			]);
 
         return code;
 	}
 
-	internal static float BlinkCooldown(ReferenceHub referenceHub, float currentValue)
+	internal static float BlinkCooldown(PlayerRoleBase roleBase, float currentValue)
 	{
-		Player player = Player.Get(referenceHub);
+		if (!roleBase.TryGetOwner(out ReferenceHub hub))
+			return currentValue;
+		Player player = Player.Get(hub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
 			return role.Scp.Scp173.BlinkCooldown.MathWithValue(currentValue);
 		return currentValue;
