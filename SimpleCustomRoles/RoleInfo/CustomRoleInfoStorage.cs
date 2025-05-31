@@ -71,6 +71,12 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
             Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.None);
         else if (Owner.Role != Role.RoleToSpawn)
             Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
+
+        if (Role.Extra.ForceSet)
+        {
+            Owner.SetRole(PlayerRoles.RoleTypeId.Spectator, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All);
+            Timing.CallDelayed(0.2f, () => Owner.SetRole(Role.RoleToSpawn, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.All));
+        }
     }
 
     private void MoveToLocation()
@@ -236,12 +242,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Role.FallDamage.Power.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.Power);
         Role.FallDamage.MaxDamage.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.MaxDamage);
         Role.FallDamage.Multiplier.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.Multiplier);
-
-        Role.Movement.CrouchSpeed.MathWithValue(ref fpcStandardRoleBase.FpcModule.CrouchSpeed);
-        Role.Movement.JumpSpeed.MathWithValue(ref fpcStandardRoleBase.FpcModule.JumpSpeed);
-        Role.Movement.SneakSpeed.MathWithValue(ref fpcStandardRoleBase.FpcModule.SneakSpeed);
-        Role.Movement.SprintSpeed.MathWithValue(ref fpcStandardRoleBase.FpcModule.SprintSpeed);
-        Role.Movement.WalkSpeed.MathWithValue(ref fpcStandardRoleBase.FpcModule.WalkSpeed);
     }
 
     private void SetHints()

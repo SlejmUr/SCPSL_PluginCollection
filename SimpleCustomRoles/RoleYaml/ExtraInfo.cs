@@ -12,4 +12,6 @@ public class ExtraInfo
 
     public bool Trigger096 { get; set; } = true;
     public bool Observe173 { get; set; } = true;
+
+    public bool ForceSet { get; set; } = false;
 }

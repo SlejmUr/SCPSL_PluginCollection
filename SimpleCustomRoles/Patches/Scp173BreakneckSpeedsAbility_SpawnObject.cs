@@ -31,20 +31,17 @@ internal static class Scp173BreakneckSpeedsAbility_SpawnObject
             new(OpCodes.Ldc_R8, const_value),
 
             // BreakneckRechargeTime(this.Owner, <value>)
-            new(OpCodes.Call, Method(typeof(Scp173BreakneckSpeedsAbility_SpawnObject), nameof(BreakneckRechargeTime), [typeof(ReferenceHub), typeof(float)])),
-
-			// (double)
-            new(OpCodes.Conv_R8)
+            new(OpCodes.Call, Method(typeof(Scp173BreakneckSpeedsAbility_SpawnObject), nameof(BreakneckRechargeTime), [typeof(ReferenceHub), typeof(double)])),
             ]);
 
         return code;
 	}
 
-	internal static float BreakneckRechargeTime(ReferenceHub referenceHub, float currentValue)
+	internal static double BreakneckRechargeTime(ReferenceHub referenceHub, double currentValue)
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp173.BreakneckRechargeTime.MathWithValue(currentValue);
+			return role.Scp.Scp173.BreakneckRechargeTime.MathWithValue((float)currentValue);
 		return currentValue;
 	}
 }

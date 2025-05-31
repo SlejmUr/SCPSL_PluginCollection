@@ -7,6 +7,7 @@ public class Scp173Info
 
 
     public MathValue BlinkCooldown { get; set; } = new();
+    public MathValue BlinkSustainTime { get; set; } = new();
 
     public MathValue BreakneckRechargeTime { get; set; } = new();
     public MathValue BreakneckStareLimit { get; set; } = new();

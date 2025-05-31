@@ -18,8 +18,15 @@ public class PlayerHandler : CustomEventsHandler
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
             return;
         if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
-            CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
-        AppearanceSyncExtension.ForceSync(ev.Player);
+            CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player, false);
+        else
+            Timing.CallDelayed(0.2f, () => AppearanceSyncExtension.ForceSync(ev.Player));
+        if (ev.NewRole == PlayerRoles.RoleTypeId.None)
+            return;
+        if (ev.NewRole == PlayerRoles.RoleTypeId.Spectator)
+            return;
+        if (ev.NewRole == PlayerRoles.RoleTypeId.Destroyed)
+            return;
         PlayerEscaped.Remove(ev.Player);
     }
 
@@ -98,7 +105,7 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerDeath(PlayerDeathEventArgs ev)
     {
-        CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player);
+        CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player, false);
         if (ev.Attacker == null)
             return;
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var role))
