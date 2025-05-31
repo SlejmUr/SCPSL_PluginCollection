@@ -79,11 +79,12 @@ public class PlayerHandler : CustomEventsHandler
         if (!deniable.CanUse)
         {
             ev.IsAllowed = false;
+            ev.UsableItem.IsUsing = false;
             return;
         }
         if (ev.UsableItem.Type != ItemType.SCP500)
             return;
-        Timing.CallDelayed(3f, () =>
+        Timing.CallDelayed(0.3f, () =>
         {
             foreach (var effect in role.Effects)
             {

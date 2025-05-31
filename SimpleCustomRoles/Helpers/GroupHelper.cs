@@ -6,19 +6,19 @@ public static class GroupHelper
     {
         if (string.IsNullOrEmpty(roleGroup))
         {
-            return false;
+            return true;
         }
         var group = Main.Instance.RoleGroups.FirstOrDefault(x => x.Name == roleGroup);
         if (group == null)
-            return false;
+            return true;
         if (group.MaxRole != -1)
         {
             var currentRoleCount = CustomRoleHelpers.GetCurrentCustomRoles().Count(x => x.Rolegroup == group.Name);
-            if (group.MaxRole == currentRoleCount)
+            if (currentRoleCount <= group.MaxRole)
             {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }

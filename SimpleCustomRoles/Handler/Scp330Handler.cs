@@ -28,9 +28,9 @@ internal class Scp330Handler : CustomEventsHandler
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
             return;
-        ev.IsAllowed = role.Candy.GlobalCanEatCandy;
         if (ev.UsableItem is not Scp330Item item)
             return;
+        ev.IsAllowed = role.Candy.GlobalCanEatCandy;
         if (item.Base.IsCandySelected && role.Deniable.Candies.TryGetValue(item.Base.Candies[item.Base.SelectedCandyId], out var deniable))
             ev.IsAllowed = deniable.CanUse;
     }
@@ -39,9 +39,9 @@ internal class Scp330Handler : CustomEventsHandler
     {
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
             return;
-        ev.IsAllowed = role.Candy.GlobalCanDropCandy;
         if (ev.Item is not Scp330Item item)
             return;
+        ev.IsAllowed = role.Candy.GlobalCanDropCandy;
         if (item.Base.IsCandySelected && role.Deniable.Candies.TryGetValue(item.Base.Candies[item.Base.SelectedCandyId], out var deniable))
             ev.IsAllowed = deniable.CanDrop;
     }
