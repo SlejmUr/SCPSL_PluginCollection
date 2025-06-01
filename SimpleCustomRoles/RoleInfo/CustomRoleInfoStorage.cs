@@ -35,7 +35,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Role = null;
         Owner.IsBypassEnabled = false;
         ScaleHelper.SetScale(Owner, Vector3.one, false, true);
-        AppearanceSyncExtension.RemovePlayer(Owner);
+        AppearanceSyncExtension.RemovePlayer(Owner, false);
         Owner.Position += Vector3.up;
         if (string.IsNullOrEmpty(OldCustomInfo))
             OldCustomInfo = string.Empty;

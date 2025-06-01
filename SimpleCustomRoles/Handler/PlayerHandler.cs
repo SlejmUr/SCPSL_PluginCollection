@@ -17,6 +17,8 @@ public class PlayerHandler : CustomEventsHandler
     {
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
             return;
+        if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Died)
+            return;
         if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
             CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player, false);
         else
