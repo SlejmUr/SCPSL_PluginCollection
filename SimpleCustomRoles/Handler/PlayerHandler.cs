@@ -15,21 +15,18 @@ public class PlayerHandler : CustomEventsHandler
 {
     public override void OnPlayerChangingRole(PlayerChangingRoleEventArgs ev)
     {
+        PlayerEscaped.Remove(ev.Player);
+        if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
+            CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player, false);
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
             return;
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Died)
             return;
-        if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
-            CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player, false);
-        else
-            Timing.CallDelayed(0.2f, () => AppearanceSyncExtension.ForceSync(ev.Player));
         if (ev.NewRole == PlayerRoles.RoleTypeId.None)
-            return;
-        if (ev.NewRole == PlayerRoles.RoleTypeId.Spectator)
             return;
         if (ev.NewRole == PlayerRoles.RoleTypeId.Destroyed)
             return;
-        PlayerEscaped.Remove(ev.Player);
+        Timing.CallDelayed(0.2f, () => AppearanceSyncExtension.ForceSync(ev.Player));
     }
 
     public override void OnPlayerDroppingItem(PlayerDroppingItemEventArgs ev)
@@ -103,6 +100,19 @@ public class PlayerHandler : CustomEventsHandler
                 CL.Debug($"(Used 500) Effect {effect.EffectName}", Main.Instance.Config.Debug);
             }
         });
+    }
+
+    public override void OnPlayerShootingWeapon(PlayerShootingWeaponEventArgs ev)
+    {
+        if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
+            return;
+        if (!role.Deniable.Items.TryGetValue(ev.FirearmItem.Type, out var deniable))
+            return;
+        if (!deniable.CanUse)
+        {
+            ev.IsAllowed = false;
+            return;
+        }
     }
 
     public override void OnPlayerDeath(PlayerDeathEventArgs ev)

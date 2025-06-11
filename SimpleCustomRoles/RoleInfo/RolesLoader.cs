@@ -88,7 +88,7 @@ public static class RolesLoader
                         }
                     },
                     {
-                        ItemType.GunFSP9,
+                        ItemType.Medkit,
                         new()
                         {
                             CanDrop = true,
@@ -136,6 +136,25 @@ public static class RolesLoader
                     new()
                     {
                         RoleType =  PlayerRoles.RoleTypeId.ClassD
+                    }
+                }
+            },
+            Damage = new()
+            {
+                DamageDealt = new()
+                {
+                    {
+                        new()
+                        { 
+                            DamageType = LabApiExtensions.Enums.DamageType.Firearm,
+                            DamageSubType = LabApiExtensions.Enums.DamageSubType.WeaponType,
+                            SubType = ItemType.GunRevolver
+                        },
+                        new()
+                        { 
+                            Math = RoleYaml.Enums.MathOption.Set,
+                            Value = 5
+                        }
                     }
                 }
             }
