@@ -81,6 +81,7 @@ internal class ServerHandler : CustomEventsHandler
                     CL.Debug($"Role has been no longer spawn: {item.Rolename} (Reason: Group limited)", Main.Instance.Config.Debug);
                     break;
                 }
+                GroupHelper.DenyCustomRoles(item.Rolegroup, ref RegularRoles);
                 int chance = item.Spawn.SpawnChance;
                 if (Main.Instance.Config.UsePlayerPercent && !item.Spawn.DenyChance)
                 {
