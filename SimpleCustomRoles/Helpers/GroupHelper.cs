@@ -1,8 +1,10 @@
-﻿namespace SimpleCustomRoles.Helpers;
+﻿using SimpleCustomRoles.RoleYaml;
+
+namespace SimpleCustomRoles.Helpers;
 
 public static class GroupHelper
 {
-    public static bool CanSpawn(string roleGroup)
+    public static bool CanSpawn(string roleGroup, ref List<CustomRoleBaseInfo> customRoles)
     {
         if (string.IsNullOrEmpty(roleGroup))
         {
@@ -13,11 +15,8 @@ public static class GroupHelper
             return true;
         if (group.MaxRole != -1)
         {
-            var currentRoleCount = CustomRoleHelpers.GetCurrentCustomRoles().Count(x => x.Rolegroup == group.Name);
-            if (currentRoleCount <= group.MaxRole)
-            {
-                return false;
-            }
+            int currentRoleCount = customRoles.Count(x => x.Rolegroup == group.Name);
+            return currentRoleCount < group.MaxRole;
         }
         return true;
     }
