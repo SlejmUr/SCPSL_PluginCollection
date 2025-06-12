@@ -24,11 +24,10 @@ internal class Events
 
     internal static void UnlockingGenerator(PlayerUnlockingGeneratorEventArgs ev)
     {
-        if (!ev.IsAllowed && PermissionCheck.HasKeycardPermission(ev.Generator, ev.Player))
+        if (!ev.CanOpen && PermissionCheck.HasKeycardPermission(ev.Generator, ev.Player))
         {
-            ev.Generator.Base.IsUnlocked = true;
-            ev.Generator.Base._deniedStopwatch.Restart();
-            ev.IsAllowed = false;
+            ev.CanOpen = true;
+            ev.IsAllowed = true;
         }
     }
 
