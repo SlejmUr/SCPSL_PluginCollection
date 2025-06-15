@@ -1,0 +1,47 @@
+name: Build SCPSL_PluginCollection
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+  workflow_dispatch:
+    # allows manual trigger
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    #LabAPI references
+    env:
+      REFERENCES_URL: https://exmod-team.github.io/SL-References/LabAPI.zip
+      REFERENCES_PATH: ${{ github.workspace }}/References
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Dotnet
+        uses: actions/setup-dotnet@v4.0.1
+
+      - name: Download References
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri ${{ env.REFERENCES_URL }} -OutFile "${{ github.workspace }}/References.zip"
+          Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
+
+      - name: Build Main
+        env:
+          SL_REFERENCES: ${{ env.REFERENCES_PATH }}
+        shell: pwsh
+        run: |
+          dotnet build -c Release -o:Main
+
+      - name: Upload Main artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCPSL_PluginCollection
+          path: Main
+          if-no-files-found: error
