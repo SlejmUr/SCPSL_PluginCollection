@@ -9,7 +9,7 @@ public class Main : Plugin<Config>
     #region Plugin Info
     public override string Author => "SlejmUr";
     public override string Name => "AntiStall";
-    public override Version Version => new Version(0, 0, 1);
+    public override Version Version => new(0, 0, 1);
 
     public override string Description => "Makes player not stalling in one place";
 

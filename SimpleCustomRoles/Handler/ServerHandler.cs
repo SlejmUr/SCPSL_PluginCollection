@@ -126,7 +126,7 @@ internal class ServerHandler : CustomEventsHandler
                 if (player == null)
                     continue;
 
-                CL.Debug($"Player Selected to spawn: {player.UserId}", Main.Instance.Config.Debug);
+                CL.Info($"Player Selected to spawn: {player.UserId} as {item.Rolename}");
                 NotRoll.Add(player);
                 CustomRoleHelpers.SetCustomInfoToPlayer(player, item);
             }
