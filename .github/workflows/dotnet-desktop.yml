@@ -16,7 +16,7 @@ jobs:
     
     #LabAPI references
     env:
-      REFERENCES_URL: https://exmod-team.github.io/SL-References/Master.zip
+      REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
       REFERENCES_PATH: ${{ github.workspace }}/References
 
     steps:
