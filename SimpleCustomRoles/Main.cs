@@ -20,7 +20,7 @@ internal class Main : Plugin<Config>
     #region Plugin Info
     public override string Author => "SlejmUr";
     public override string Name => "SimpleCustomRoles";
-    public override Version Version => new(0, 5, 2);
+    public override Version Version => new(0, 5, 3);
     public override string Description => "Add simple YAML Support for creating custom roles.";
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
     #endregion
