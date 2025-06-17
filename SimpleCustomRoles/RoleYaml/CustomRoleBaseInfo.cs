@@ -23,7 +23,6 @@ public class CustomRoleBaseInfo
     public CandyInfo Candy { get; set; } = new();
     public DeniableInfo Deniable { get; set; } = new();
     public FpcInfo Fpc { get; set; } = new();
-    public MovementInfo Movement { get; set; } = new();
     public FallDamageInfo FallDamage { get; set; } = new();
     public DamageInfo Damage { get; set; } = new();
     public EscapeInfo Escape { get; set; } = new();
