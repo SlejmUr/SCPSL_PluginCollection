@@ -5,35 +5,22 @@ VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleCustomRoles", "SimpleCustomRoles\SimpleCustomRoles.csproj", "{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPSystem", "XPSystem\XPSystem.csproj", "{A08B4A70-F12C-424E-B55A-14E7A821B74E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiStall", "AntiStall\AntiStall.csproj", "{EBCE4C31-BAE3-4031-B385-18D53314BD51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteKC", "RemoteKC\RemoteKC.csproj", "{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		EXILED Release|Any CPU = EXILED Release|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Debug|Any CPU.ActiveCfg = Release|Any CPU
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Debug|Any CPU.Build.0 = Release|Any CPU
-		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.EXILED Release|Any CPU.ActiveCfg = EXILED Release|Any CPU
-		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.EXILED Release|Any CPU.Build.0 = EXILED Release|Any CPU
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E90C8E1D-E9B3-42CD-BB76-2D93D4598076}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A08B4A70-F12C-424E-B55A-14E7A821B74E}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{A08B4A70-F12C-424E-B55A-14E7A821B74E}.Debug|Any CPU.Build.0 = Release|Any CPU
-		{A08B4A70-F12C-424E-B55A-14E7A821B74E}.EXILED Release|Any CPU.ActiveCfg = EXILED Release|Any CPU
-		{A08B4A70-F12C-424E-B55A-14E7A821B74E}.EXILED Release|Any CPU.Build.0 = EXILED Release|Any CPU
-		{A08B4A70-F12C-424E-B55A-14E7A821B74E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A08B4A70-F12C-424E-B55A-14E7A821B74E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.EXILED Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.EXILED Release|Any CPU.Build.0 = Release|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBCE4C31-BAE3-4031-B385-18D53314BD51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3120D926-CE16-4FF0-5AD3-5DBF9DADA92B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

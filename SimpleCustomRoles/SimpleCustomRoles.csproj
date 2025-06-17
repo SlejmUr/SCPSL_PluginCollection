@@ -1,66 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net48</TargetFramework>
-		<PlatformTarget>x64</PlatformTarget>
-		<OutputType>Library</OutputType>
-
 		<AssemblyName>SimpleCustomRoles</AssemblyName>
 		<RootNamespace>SimpleCustomRoles</RootNamespace>
 
-		<Configurations>Release;EXILED Release</Configurations>
-		<Platforms>AnyCPU</Platforms>
 		<Copyright>SlejmUr</Copyright>
-		<IsPackable>false</IsPackable>
-		<DebugType>none</DebugType>
-		<LangVersion>11</LangVersion>
 	</PropertyGroup>
-
-	<PropertyGroup>
-		<!-- Disable automatic generation of version attribute -->
-		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);ENABLEEFFECTHUD</DefineConstants>
 	</PropertyGroup>
-
 	<ItemGroup>
-	  <None Remove="TheYML.yml" />
-	  <None Remove="TheYML_NoComments.yml" />
+	  <Folder Include="ExampleRoles\" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <Content Include="TheYML.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="TheYML_NoComments.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="ExMod.Exiled" Version="9.1.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="Assembly-CSharp-firstpass">
-	    <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
-	    <Private>False</Private>
+		<PackageReference Include="Lib.Harmony" Version="2.2.2" />
+	  <Reference Include="LabApiExtensions">
+	    <HintPath>..\3rdpartyRef\LabApiExtensions.dll</HintPath>
 	  </Reference>
-	  <Reference Include="Mirror">
-	    <HintPath>..\References\Mirror.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="Mirror.Components">
-	    <HintPath>..\References\Mirror.Components.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="UnityEngine">
-	    <HintPath>..\References\UnityEngine.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="UnityEngine.CoreModule">
-	    <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
+		<Reference Include="EffectOnHUD" Condition="$(DefineConstants.Contains('ENABLEEFFECTHUD'))">
+			<HintPath>..\3rdpartyRef\EffectOnHUD.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 </Project>

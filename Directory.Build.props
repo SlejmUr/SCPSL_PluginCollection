@@ -1,0 +1,84 @@
+<Project>
+    <!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <OutputType>Library</OutputType>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>12</LangVersion>
+        <IsPackable>false</IsPackable>
+        <TargetFramework>net48</TargetFramework>
+        <PlatformTarget>x64</PlatformTarget>
+        <IsPackable>false</IsPackable>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	    <ImplicitUsings>enable</ImplicitUsings>
+	    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+	    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+	    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" ExcludeAssets="runtime" ReferenceOutputAssembly="false" Private="true" />
+    </ItemGroup>
+    <ItemGroup>
+	<Reference Include="Assembly-CSharp" Publicize="true">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="Assembly-CSharp-firstpass">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="CommandSystem.Core">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="Mirror" Publicize="true">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="Mirror.Components" Publicize="true">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="Pooling">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="LabApi" Publicize="true">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="Unity.TextMeshPro">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="UnityEngine">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="UnityEngine.CoreModule">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+		<Private>false</Private>
+	</Reference>
+        <Reference Include="YamlDotNet">
+		<Private>false</Private>
+	</Reference>
+    </ItemGroup>
+	<!-- Usings -->
+	<ItemGroup>
+		<Using Include="LabApi.Features.Console.Logger">
+			<Alias>CL</Alias>
+		</Using>
+	</ItemGroup>
+</Project>

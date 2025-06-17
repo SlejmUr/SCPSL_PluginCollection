@@ -1,9 +1,7 @@
 ﻿using CommandSystem;
-using Exiled.API.Features;
+using LabApi.Features.Wrappers;
 using RemoteAdmin;
-using SimpleCustomRoles.RoleInfo;
-using System;
-using System.Linq;
+using SimpleCustomRoles.Helpers;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -13,7 +11,7 @@ public class OptOutCustomRole : ICommand
 {
     public string Command => "optoutscr";
 
-    public string[] Aliases => new string[] { "optoutscr" };
+    public string[] Aliases => ["optoutscr", "scr_quit"];
 
     public string Description => "Opting out from current Custom Role";
 
@@ -21,20 +19,19 @@ public class OptOutCustomRole : ICommand
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (sender is PlayerCommandSender pcs)
+        if (sender is not PlayerCommandSender pcs)
         {
-            var player = Player.List.Where(x => x.UserId == pcs.SenderId).FirstOrDefault();
-            if (player == null)
-            {
-                response = "Must be coming from Player!";
-                return false;
-            }
-            RoleSetter.UnSetCustomInfoToPlayer(player);
-            response = "Sucessfully opted out from Custom Roles";
-            return true;
-
+            response = "Must be coming from Player!";
+            return false;
         }
-        response = "Must be coming from Player!";
-        return false;
+        var player = Player.List.Where(x => x.UserId == pcs.SenderId).FirstOrDefault();
+        if (player == null)
+        {
+            response = "Must be coming from Player!";
+            return false;
+        }
+        CustomRoleHelpers.UnSetCustomInfoToPlayer(player);
+        response = "Sucessfully opted out from Custom Roles";
+        return true;
     }
 }

@@ -1,7 +1,5 @@
 ﻿using CommandSystem;
-using Exiled.API.Features;
-using System;
-using System.Linq;
+using SimpleCustomRoles.Helpers;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -10,7 +8,7 @@ public class ShowCurCustomRole : ICommand
 {
     public string Command => "scrcur";
 
-    public string[] Aliases => new string[] { "simplecustomrolecurrently", "scr_current", "scr_match" };
+    public string[] Aliases => ["simplecustomrolecurrently", "scr_current", "scr_cur"];
 
     public string Description => "List currently what player is which role.";
 
@@ -23,21 +21,19 @@ public class ShowCurCustomRole : ICommand
             response = "You dont have permission!";
             return false;
         }
-        response = "Currently Playing roles:\n";
-        if (Main.Instance.PlayerCustomRole.Count == 0)
+        
+        var players = CustomRoleHelpers.GetPlayers();
+        if (players.Count() == 0)
         {
-            response += $"There is no Custom Roles\n";
+            response = $"There is no Custom Roles.";
+            return true;
         }
-        else
+        response = "Currently Playing roles:";
+        foreach (var player in players)
         {
-            foreach (var role in Main.Instance.PlayerCustomRole)
-            {
-                var player = Player.List.Where(x => x.UserId == role.Key).FirstOrDefault();
-                if (player != null)
-                    response += $"{role.Value.RoleName} [{role.Value.DisplayRoleName}]: [Id]{player.Id} [Name]{player.DisplayNickname}\n";
-            }
+            if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
+                response += $"\n{role.Rolename} [{role.Display.RARoleName}]: [Id]{player.PlayerId} [Name]{player.Nickname}";
         }
-
         return true;
     }
 }

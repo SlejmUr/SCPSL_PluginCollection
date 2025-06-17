@@ -1,5 +1,5 @@
 ﻿using CommandSystem;
-using System;
+using SimpleCustomRoles.RoleInfo;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -8,18 +8,17 @@ public class ListCustomRoles : ICommand
 {
     public string Command => "listscr";
 
-    public string[] Aliases => new string[] { "listsimplecustomrole" };
+    public string[] Aliases => ["listsimplecustomrole", "scr_list"];
 
     public string Description => "List the Custom Role Names";
     public bool SanitizeResponse => true;
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        response = "Roles: \n";
-        foreach (var item in Main.Instance.RolesLoader.RoleInfos)
+        response = "Roles:";
+        foreach (var item in RolesLoader.RoleInfos)
         {
-            response += $"{item.RoleName} [{item.DisplayRoleName}], ";
+            response += $"\n{item.Rolename} [{item.Display.RARoleName}]";
         }
-        response = response.Remove(response.Length - 2);
         return true;
     }
 }

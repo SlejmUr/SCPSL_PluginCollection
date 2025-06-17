@@ -1,6 +1,5 @@
 ﻿using CommandSystem;
 using SimpleCustomRoles.Handler;
-using System;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -9,7 +8,7 @@ public class ReloadCustomRoles : ICommand
 {
     public string Command => "reloadscr";
 
-    public string[] Aliases => new string[] { "reloadsimplecustomrole" };
+    public string[] Aliases => ["reloadsimplecustomrole", "scr_reload"];
 
     public string Description => "Reload the Custom Role Names";
 
@@ -22,7 +21,7 @@ public class ReloadCustomRoles : ICommand
             response = "You dont have permission!";
             return false;
         }
-        TheHandler.ReloadRoles();
+        ServerHandler.ReloadRoles();
         response = "Roles Reloaded!";
         return true;
     }

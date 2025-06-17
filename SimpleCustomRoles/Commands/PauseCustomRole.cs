@@ -1,5 +1,4 @@
 ﻿using CommandSystem;
-using System;
 
 namespace SimpleCustomRoles.Commands;
 
@@ -8,7 +7,7 @@ public class PauseCustomRole : ICommand
 {
     public string Command => "pausescr";
 
-    public string[] Aliases => new string[] { "pausecustomrole" };
+    public string[] Aliases => ["pausecustomrole", "scr_pause"];
 
     public string Description => "Pause or resume custom roles";
 
@@ -20,13 +19,13 @@ public class PauseCustomRole : ICommand
         {
             var arg0 = arguments.Array[1];
 
-            if (arg0 == "off")
+            if (arg0 == "off" || arg0 == "false" || arg0 == "0")
             {
                 Main.Instance.Config.IsPaused = true;
                 response = "Custom Roles spawn are now paused";
                 return true;
             }
-            if (arg0 == "on")
+            if (arg0 == "on" || arg0 == "true" || arg0 == "1")
             {
                 Main.Instance.Config.IsPaused = false;
                 response = "Custom Roles spawn are now resumed";
