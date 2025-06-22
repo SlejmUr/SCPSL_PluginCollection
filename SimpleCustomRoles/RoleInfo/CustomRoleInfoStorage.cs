@@ -59,6 +59,8 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         SetStats();
         yield return Timing.WaitForSeconds(0.2f);
         SetCommon();
+        yield return Timing.WaitForOneFrame;
+        yield return Timing.WaitForOneFrame;
         SetFpc();
         SetCustomInfo();
         SetExtraFpc();
@@ -209,12 +211,12 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         
         if (Role.Fpc.Scale != Vector3.one)
         {
-            ScaleHelper.SetScale(Owner, Role.Fpc.Scale, false);
+            ScaleHelper.SetScale(Owner, Role.Fpc.Scale, false, true);
         }
 
         if (Role.Fpc.FakeScale != Vector3.one)
         {
-            ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale, true);
+            ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale, true, true);
         }
 
         //  Appearance
