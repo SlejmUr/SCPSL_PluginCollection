@@ -8,7 +8,7 @@ public class Scp096Handler : CustomEventsHandler
 {
     public override void OnScp096AddingTarget(Scp096AddingTargetEventArgs ev)
     {
-        if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
+        if (CustomRoleHelpers.TryGetCustomRole(ev.Target, out var role))
             ev.IsAllowed = role.Extra.Trigger096;
     }
 
