@@ -1,10 +1,12 @@
 ﻿using InventorySystem;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.Modules;
+using LabApi.Features.Extensions;
 using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
 using LabApiExtensions.Extensions;
 using MEC;
+using PlayerRoles;
 using PlayerRoles.FirstPersonControl;
 using PlayerRoles.PlayableScps.Scp049;
 using PlayerRoles.PlayableScps.Scp106;
@@ -164,6 +166,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     private void SetMaxStats()
     {
+        var roleMaxHP = Owner.MaxHealth;
         Owner.MaxHealth = Role.Stats.MaxHealth.Math.MathWithFloat(Owner.MaxHealth, Role.Stats.MaxHealth.Value);
         Owner.MaxArtificialHealth = Role.Stats.MaxAhp.Math.MathWithFloat(Owner.MaxArtificialHealth, Role.Stats.MaxAhp.Value);
         Owner.MaxHumeShield = Role.Stats.MaxHumeShield.Math.MathWithFloat(Owner.MaxHumeShield, Role.Stats.MaxHumeShield.Value);
@@ -172,7 +175,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue = max;
 
         if (Main.Instance.Config.EffectOnHUDEnabled)
-            EffectOnHUD.ShowEffects.AddHpModifier(Owner, "Custom Role", (int)(Owner.MaxHealth - Owner.Health));
+            EffectOnHUD.ShowEffects.AddHpModifier(Owner, "Custom Role", (int)(Owner.MaxHealth - roleMaxHP));
 
     }
 
