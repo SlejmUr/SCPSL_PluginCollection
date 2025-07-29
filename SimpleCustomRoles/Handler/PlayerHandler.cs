@@ -7,11 +7,12 @@ using LabApiExtensions.Enums;
 using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.Helpers;
+using SimpleCustomRoles.RoleInfo;
 using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.RoleYaml.Enums;
+using System.Data;
 
 namespace SimpleCustomRoles.Handler;
-
 public class PlayerHandler : CustomEventsHandler
 {
     private static Dictionary<Player, Item> escapeItems = new Dictionary<Player, Item>();
@@ -200,13 +201,14 @@ public class PlayerHandler : CustomEventsHandler
         ev.IsAllowed = false;
 
         //Temporary & basic solution - the player drops everything at the escape tunnel. For some reason the player escapes twice which would overwrite everything that could save a players items when they escape. - kad
-        ev.Player.DropEverything();
+        //ev.Player.DropEverything();
 
         var success = CustomRoleHelpers.SetNewRole(ev.Player, found3, true);
 
         PlayerEscaped.Add(ev.Player);
 
         Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(ev.Player));
+
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
