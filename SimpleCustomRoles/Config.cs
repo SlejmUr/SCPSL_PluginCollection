@@ -12,6 +12,9 @@ public class Config
     public bool UsePlayerPercent { get; set; }
     public float SpawnRateMultiplier { get; set; } = 1f;
 
+    [Description("Use with Kadava's Calamity EffectOnHud plugin, updating HP modifiers to also be effected by a custom roles modified max HP")]
+    public bool EffectOnHUDEnabled { get; set; } = false;
+
     [Description("For CustomItemsAPI use \"/lci give {0} {1}\" for exiled use \"/ci give {0} {1}\"")]
     public string CustomItemCommand { get; set; } = "/lci give {0} {1}";
     public bool CustomItemUseName { get; set; } = true;
