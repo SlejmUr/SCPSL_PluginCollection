@@ -1,4 +1,5 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
+﻿using CameraShaking;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
@@ -13,6 +14,8 @@ namespace SimpleCustomRoles.Handler;
 
 public class PlayerHandler : CustomEventsHandler
 {
+    private static Dictionary<Player, Item> escapeItems = new Dictionary<Player, Item>();
+
     public override void OnPlayerChangingRole(PlayerChangingRoleEventArgs ev)
     {
         PlayerEscaped.Remove(ev.Player);
@@ -45,7 +48,7 @@ public class PlayerHandler : CustomEventsHandler
         if (ev.Attacker != null && CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var attacker_role))
         {
             if (attacker_role.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType))
-                Damage = attacker_role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);  
+                Damage = attacker_role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
         }
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var player_role))
         {
@@ -125,7 +128,7 @@ public class PlayerHandler : CustomEventsHandler
         if (role.KillerToNewRole.Count == 0)
             return;
 
-        var kv = role.KillerToNewRole.Where(x=>
+        var kv = role.KillerToNewRole.Where(x =>
         x.Key.KillerCustom == role.Rolename ||
         x.Key.KillerRole == ev.Attacker.Role ||
         x.Key.KillerTeam == ev.Attacker.Team
@@ -147,23 +150,33 @@ public class PlayerHandler : CustomEventsHandler
     {
         if (PlayerEscaped.Contains(ev.Player))
             return;
+
         if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
         {
             if (ev.EscapeScenario == Escape.EscapeScenarioType.Custom)
                 ev.IsAllowed = false;
+
             if (Main.Instance.Config.EscapeConfigs.Count == 0)
                 return;
+
             var list = Main.Instance.Config.EscapeConfigs.Where(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role).ToList();
+
             if (list.Count == 0)
                 return;
+
             var found = list.Select(x => x.Value).FirstOrDefault();
+
             if (found == PlayerRoles.RoleTypeId.None)
                 return;
+
             ev.IsAllowed = true;
             ev.NewRole = found;
             ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
+
             PlayerEscaped.Add(ev.Player);
+
             Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(ev.Player));
+
             return;
         }
 
@@ -172,16 +185,28 @@ public class PlayerHandler : CustomEventsHandler
             ev.IsAllowed = false;
             return;
         }
+
+        //variable names need work here lmao - kad
         var found2 = role.Escape.ConfigToRole.Where(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role).ToList();
+
         if (found2.Count == 0)
             return;
+
         var found3 = found2.Select(x => x.Value).FirstOrDefault();
+
         if (found3 == default)
             return;
+
         ev.IsAllowed = false;
+
+        //Temporary & basic solution - the player drops everything at the escape tunnel. For some reason the player escapes twice which would overwrite everything that could save a players items when they escape. - kad
+        ev.Player.DropEverything();
+
         var success = CustomRoleHelpers.SetNewRole(ev.Player, found3, true);
+
         PlayerEscaped.Add(ev.Player);
-        Timing.CallDelayed(1.5f, ()=> PlayerEscaped.Remove(ev.Player));
+
+        Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(ev.Player));
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
