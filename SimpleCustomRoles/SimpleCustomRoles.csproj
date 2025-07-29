@@ -15,6 +15,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Lib.Harmony" Version="2.2.2" />
+		<Reference Include="EffectOnHUD">
+		  <HintPath>C:\Users\pisto\AppData\Roaming\SCP Secret Laboratory\LabAPI\plugins\7777\EffectOnHUD.dll</HintPath>
+		</Reference>
 	  <Reference Include="LabApiExtensions">
 	    <HintPath>..\3rdpartyRef\LabApiExtensions.dll</HintPath>
 	  </Reference>

@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 References/*.dll
+ReferencePaths.props.user.template
