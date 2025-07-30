@@ -22,6 +22,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 {
     public CustomRoleBaseInfo Role;
     public string OldCustomInfo = string.Empty;
+    public List<Pickup> ItemsAfterEscaped = [];
     public bool ResetRole { get; set; }
     public void Apply()
     {
@@ -160,10 +161,18 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
                 Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
             }
         }
+
+        foreach (var item in ItemsAfterEscaped)
+        {
+            Owner.AddItem(item);
+        }
     }
 
     private void SetMaxStats()
     {
+#if ENABLEEFFECTHUD
+        float originalMaxHealth = Owner.MaxHealth;
+#endif
         Owner.MaxHealth = Role.Stats.MaxHealth.Math.MathWithFloat(Owner.MaxHealth, Role.Stats.MaxHealth.Value);
         Owner.MaxArtificialHealth = Role.Stats.MaxAhp.Math.MathWithFloat(Owner.MaxArtificialHealth, Role.Stats.MaxAhp.Value);
         Owner.MaxHumeShield = Role.Stats.MaxHumeShield.Math.MathWithFloat(Owner.MaxHumeShield, Role.Stats.MaxHumeShield.Value);
@@ -171,7 +180,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         max = Role.Stats.MaxStamina.Math.MathWithFloat(max, Role.Stats.MaxStamina.Value);
         Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue = max;
 #if ENABLEEFFECTHUD
-        EffectOnHUD.ShowEffects.AddHpModifier(Owner, "Custom Role", (int)(Owner.MaxHealth - Owner.Health));
+        EffectOnHUD.ShowEffects.AddHpModifier(Owner, "Custom Role", (int)(Owner.MaxHealth - originalMaxHealth));
 #endif
     }
 

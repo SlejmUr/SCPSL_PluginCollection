@@ -1,11 +1,13 @@
 ﻿using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
+using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
 using LabApiExtensions.Enums;
 using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.Helpers;
+using SimpleCustomRoles.RoleInfo;
 using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.RoleYaml.Enums;
 
@@ -126,9 +128,9 @@ public class PlayerHandler : CustomEventsHandler
             return;
 
         var kv = role.KillerToNewRole.Where(x=>
-        x.Key.KillerCustom == role.Rolename ||
-        x.Key.KillerRole == ev.Attacker.Role ||
-        x.Key.KillerTeam == ev.Attacker.Team
+            x.Key.KillerCustom == role.Rolename ||
+            x.Key.KillerRole == ev.Attacker.Role ||
+            x.Key.KillerTeam == ev.Attacker.Team
         );
         if (!kv.Any())
             return;
@@ -145,25 +147,26 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
     {
-        if (PlayerEscaped.Contains(ev.Player))
+        Player player = ev.Player;
+        if (PlayerEscaped.Contains(player))
             return;
-        if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
+        if (!CustomRoleHelpers.TryGetCustomRole(player, out var role))
         {
             if (ev.EscapeScenario == Escape.EscapeScenarioType.Custom)
                 ev.IsAllowed = false;
             if (Main.Instance.Config.EscapeConfigs.Count == 0)
                 return;
-            var list = Main.Instance.Config.EscapeConfigs.Where(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role).ToList();
-            if (list.Count == 0)
+            var potentialEscapeRoles = Main.Instance.Config.EscapeConfigs.Where(x => x.Key.ShouldBeCuffer == player.IsDisarmed && x.Key.EscapeRole == player.Role).ToList();
+            if (potentialEscapeRoles.Count == 0)
                 return;
-            var found = list.Select(x => x.Value).FirstOrDefault();
-            if (found == PlayerRoles.RoleTypeId.None)
+            var roleTypeToEscapeTo = potentialEscapeRoles.Select(static x => x.Value).FirstOrDefault();
+            if (roleTypeToEscapeTo == PlayerRoles.RoleTypeId.None)
                 return;
             ev.IsAllowed = true;
-            ev.NewRole = found;
+            ev.NewRole = roleTypeToEscapeTo;
             ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
-            PlayerEscaped.Add(ev.Player);
-            Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(ev.Player));
+            PlayerEscaped.Add(player);
+            Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
             return;
         }
 
@@ -172,16 +175,22 @@ public class PlayerHandler : CustomEventsHandler
             ev.IsAllowed = false;
             return;
         }
-        var found2 = role.Escape.ConfigToRole.Where(x => x.Key.ShouldBeCuffer == ev.Player.IsDisarmed && x.Key.EscapeRole == ev.Player.Role).ToList();
-        if (found2.Count == 0)
+        var potentialCustomEscapeRoles = role.Escape.ConfigToRole.Where(x => x.Key.ShouldBeCuffer == player.IsDisarmed && x.Key.EscapeRole == player.Role).ToList();
+        if (potentialCustomEscapeRoles.Count == 0)
             return;
-        var found3 = found2.Select(x => x.Value).FirstOrDefault();
-        if (found3 == default)
+        var roleToEscapeTo = potentialCustomEscapeRoles.Select(static x => x.Value).FirstOrDefault();
+        if (roleToEscapeTo == default)
             return;
         ev.IsAllowed = false;
-        var success = CustomRoleHelpers.SetNewRole(ev.Player, found3, true);
-        PlayerEscaped.Add(ev.Player);
-        Timing.CallDelayed(1.5f, ()=> PlayerEscaped.Remove(ev.Player));
+        CustomRoleInfoStorage storage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
+        foreach ( var item in player.Items.ToList())
+        {
+            storage.ItemsAfterEscaped.Add(item.DropItem());
+        }
+        var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
+        PlayerEscaped.Add(player);
+        Timing.CallDelayed(1.5f, ()=> PlayerEscaped.Remove(player));
+        Timing.CallDelayed(2.5f, storage.ItemsAfterEscaped.Clear);
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
