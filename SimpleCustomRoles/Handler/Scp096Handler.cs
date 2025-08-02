@@ -1,5 +1,6 @@
 ﻿using LabApi.Events.Arguments.Scp096Events;
 using LabApi.Events.CustomHandlers;
+using LabApiExtensions.Managers;
 using SimpleCustomRoles.Helpers;
 
 namespace SimpleCustomRoles.Handler;
@@ -38,6 +39,6 @@ public class Scp096Handler : CustomEventsHandler
     public override void OnScp096Enraging(Scp096EnragingEventArgs ev)
     {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
-            ev.InitialDuration = role.Scp.Scp096.Enraging.Math.MathWithFloat(ev.InitialDuration, role.Scp.Scp096.Enraging.Value);
+            ev.InitialDuration = role.Scp.Scp096.Enraging.MathCalculation(ev.InitialDuration);
     }
 }

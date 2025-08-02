@@ -41,7 +41,7 @@ internal static class Scp106StalkAbility_ServerProcessCmd
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp106.MinVigorSubmerge.MathWithValue(currentValue);
+			return role.Scp.Scp106.MinVigorSubmerge.MathCalculation(currentValue);
 		return currentValue;
 	}
 }

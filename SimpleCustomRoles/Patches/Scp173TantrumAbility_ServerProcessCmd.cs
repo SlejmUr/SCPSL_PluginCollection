@@ -44,7 +44,7 @@ internal static class Scp173TantrumAbility_ServerProcessCmd
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp173.TantrumCooldown.MathWithValue(currentValue);
+			return role.Scp.Scp173.TantrumCooldown.MathCalculation(currentValue);
 		return currentValue;
 	}
 }

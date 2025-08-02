@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Managers;
 using PlayerRoles.PlayableScps.Scp096;
 using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
@@ -45,7 +46,7 @@ internal static class Scp096ChargeAbility_ServerProcessCmd
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.ChargeDuration.MathWithValue(currentValue);
+            return role.Scp.Scp096.ChargeDuration.MathCalculation(currentValue);
         return currentValue;
     }
 }

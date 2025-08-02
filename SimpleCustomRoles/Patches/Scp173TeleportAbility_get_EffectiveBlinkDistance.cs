@@ -62,7 +62,7 @@ internal static class Scp173TeleportAbility_get_EffectiveBlinkDistance
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp173.BlinkDistance.MathWithValue(currentValue);
+			return role.Scp.Scp173.BlinkDistance.MathCalculation(currentValue);
 		return currentValue;
 	}
 
@@ -70,7 +70,7 @@ internal static class Scp173TeleportAbility_get_EffectiveBlinkDistance
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp173.BreakneckDistanceMultiplier.MathWithValue(currentValue);
+            return role.Scp.Scp173.BreakneckDistanceMultiplier.MathCalculation(currentValue);
         return currentValue;
     }
 }

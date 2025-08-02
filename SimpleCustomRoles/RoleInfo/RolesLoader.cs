@@ -152,7 +152,7 @@ public static class RolesLoader
                         },
                         new()
                         { 
-                            Math = RoleYaml.Enums.MathOption.Set,
+                            Math =  LabApiExtensions.Enums.MathOption.Set,
                             Value = 5
                         }
                     }

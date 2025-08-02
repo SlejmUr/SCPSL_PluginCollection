@@ -62,7 +62,7 @@ internal static class Scp106StalkAbility_UpdateServerside
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp106.StalkCostStationary.MathWithValue(currentValue);
+			return role.Scp.Scp106.StalkCostStationary.MathCalculation(currentValue);
 		return currentValue;
 	}
 
@@ -70,7 +70,7 @@ internal static class Scp106StalkAbility_UpdateServerside
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp106.StalkCostMoving.MathWithValue(currentValue);
+            return role.Scp.Scp106.StalkCostMoving.MathCalculation(currentValue);
         return currentValue;
     }
 }

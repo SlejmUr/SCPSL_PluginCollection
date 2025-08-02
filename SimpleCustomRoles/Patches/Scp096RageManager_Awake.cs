@@ -42,7 +42,7 @@ internal static class Scp096RageManager_Awake
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.DefaultActivationTime.MathWithValue(currentValue);
+            return role.Scp.Scp096.DefaultActivationTime.MathCalculation(currentValue);
         return currentValue;
     }
 }

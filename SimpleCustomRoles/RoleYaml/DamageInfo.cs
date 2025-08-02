@@ -5,8 +5,8 @@ namespace SimpleCustomRoles.RoleYaml;
 public class DamageInfo
 {
     [Description("Damage Dictionary that Player Received.")]
-    public Dictionary<DamageMaker, MathValue> DamageReceived { get; set; } = [];
+    public Dictionary<DamageMaker, MathValueFloat> DamageReceived { get; set; } = [];
 
     [Description("Damage Dictionary that Player Sent/Dealt.")]
-    public Dictionary<DamageMaker, MathValue> DamageDealt { get; set; } = [];
+    public Dictionary<DamageMaker, MathValueFloat> DamageDealt { get; set; } = [];
 }

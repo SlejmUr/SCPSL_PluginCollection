@@ -41,7 +41,7 @@ internal static class Scp106HuntersAtlasAbility_UpdateClientside
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp106.MinVigorAtlas.MathWithValue(currentValue);
+			return role.Scp.Scp106.MinVigorAtlas.MathCalculation(currentValue);
 		return currentValue;
 	}
 }

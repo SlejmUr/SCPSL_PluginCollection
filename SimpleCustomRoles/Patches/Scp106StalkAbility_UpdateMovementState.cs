@@ -82,7 +82,7 @@ internal static class Scp106StalkAbility_UpdateMovementState
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp106.MovementRange.MathWithValue(currentValue);
+			return role.Scp.Scp106.MovementRange.MathCalculation(currentValue);
 		return currentValue;
 	}
 
@@ -90,7 +90,7 @@ internal static class Scp106StalkAbility_UpdateMovementState
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp106.MovementTimer.MathWithValue(currentValue);
+            return role.Scp.Scp106.MovementTimer.MathCalculation(currentValue);
         return currentValue;
     }
 
@@ -98,7 +98,7 @@ internal static class Scp106StalkAbility_UpdateMovementState
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp106.StalkVigorRegeneration.MathWithValue(currentValue);
+            return role.Scp.Scp106.StalkVigorRegeneration.MathCalculation(currentValue);
         return currentValue;
     }
 }

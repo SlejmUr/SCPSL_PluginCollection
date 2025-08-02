@@ -41,7 +41,7 @@ internal static class Scp173BreakneckSpeedsAbility_UpdateServerside
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp173.BreakneckStareLimit.MathWithValue(currentValue);
+			return role.Scp.Scp173.BreakneckStareLimit.MathCalculation(currentValue);
 		return currentValue;
 	}
 }

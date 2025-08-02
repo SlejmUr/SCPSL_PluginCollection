@@ -2,5 +2,5 @@
 
 public class Scp1507Info
 {
-    public MathValue AttackDamage { get; set; } = new();
+    public MathValueFloat AttackDamage { get; set; } = new();
 }

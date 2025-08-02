@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Managers;
 using PlayerRoles.PlayableScps.Scp049;
 using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
@@ -45,7 +46,7 @@ internal static class Scp049SenseAbility_ServerProcessKilledPlayer
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.SenseBaseCooldown.MathWithValue(currentValue);
+            return role.Scp.Scp049.SenseBaseCooldown.MathCalculation(currentValue);
         return currentValue;
     }
 }

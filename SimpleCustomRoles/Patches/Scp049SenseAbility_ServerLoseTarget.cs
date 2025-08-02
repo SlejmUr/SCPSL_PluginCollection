@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Managers;
 using PlayerRoles.PlayableScps.Scp049;
 using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
@@ -43,7 +44,7 @@ internal static class Scp049SenseAbility_ServerLoseTarget
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.SenseTargetLostCooldown.MathWithValue(currentValue);
+            return role.Scp.Scp049.SenseTargetLostCooldown.MathCalculation(currentValue);
         return currentValue;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LabApiExtensions.Enums;
 using LabApiExtensions.Extensions;
+using LabApiExtensions.Managers;
 using PlayerStatsSystem;
 using SimpleCustomRoles.RoleYaml;
 
@@ -9,7 +10,7 @@ public static class DamageHelper
 {
     // TODO: Make log for this.
 
-    public static float CalculateDamage(this Dictionary<DamageMaker, MathValue> dict, DamageHandlerBase damageHandlerBase, float baseDamage, DamageType damageType)
+    public static float CalculateDamage(this Dictionary<DamageMaker, MathValueFloat> dict, DamageHandlerBase damageHandlerBase, float baseDamage, DamageType damageType)
     {
         float newDamage = baseDamage;
         var DamageTypeEnum = dict.Where(x => x.Key.DamageType == damageType);
@@ -26,7 +27,7 @@ public static class DamageHelper
             {
                 return newDamage;
             }
-            return damageFirst.Value.Math.MathWithFloat(newDamage, damageFirst.Value.Value);
+            return damageFirst.Value.MathCalculation(newDamage);
         }
 
         foreach (var item in DamageTypeEnum.Select(x => x.Key.DamageSubType))
@@ -41,7 +42,7 @@ public static class DamageHelper
                 var first = sent.First();
                 if (first.Value == null)
                     continue;
-                newDamage = first.Value.Math.MathWithFloat(newDamage, first.Value.Value);
+                newDamage = first.Value.MathCalculation(newDamage);
             }
         }
         return newDamage;

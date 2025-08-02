@@ -42,7 +42,7 @@ internal static class Scp173BreakneckSpeedsAbility_set_IsActive
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp173.BreakneckRechargeTime.MathWithValue((float)currentValue);
+			return role.Scp.Scp173.BreakneckRechargeTime.MathCalculation((float)currentValue);
 		return currentValue;
 	}
 }

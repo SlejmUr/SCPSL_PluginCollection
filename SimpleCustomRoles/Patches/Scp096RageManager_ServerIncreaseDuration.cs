@@ -41,7 +41,7 @@ internal static class Scp096RageManager_ServerIncreaseDuration
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.MaxRageTime.MathWithValue(currentValue);
+            return role.Scp.Scp096.MaxRageTime.MathCalculation(currentValue);
         return currentValue;
     }
 }

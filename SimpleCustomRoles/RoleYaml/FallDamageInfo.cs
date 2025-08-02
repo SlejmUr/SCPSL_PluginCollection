@@ -3,10 +3,10 @@
 public class FallDamageInfo
 {
     public bool Enabled { get; set; } = true;
-    public MathValue MinVelocity { get; set; } = new();
-    public MathValue Power { get; set; } = new();
-    public MathValue Multiplier { get; set; } = new();
-    public MathValue Absolute { get; set; } = new();
-    public MathValue ImmunityTime { get; set; } = new();
-    public MathValue MaxDamage { get; set; } = new();
+    public MathValueFloat MinVelocity { get; set; } = new();
+    public MathValueFloat Power { get; set; } = new();
+    public MathValueFloat Multiplier { get; set; } = new();
+    public MathValueFloat Absolute { get; set; } = new();
+    public MathValueFloat ImmunityTime { get; set; } = new();
+    public MathValueFloat MaxDamage { get; set; } = new();
 }

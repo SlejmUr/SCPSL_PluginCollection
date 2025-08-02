@@ -22,4 +22,8 @@
 			<HintPath>..\3rdpartyRef\EffectOnHUD.dll</HintPath>
 		</Reference>
 	</ItemGroup>
+	<ItemGroup>
+		<Using Include="LabApiExtensions.Configs" />
+		<Using Include="LabApiExtensions.Managers" />
+	</ItemGroup>
 </Project>

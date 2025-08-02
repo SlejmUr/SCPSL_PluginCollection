@@ -41,7 +41,7 @@ internal static class Scp106Attack_ReduceSinkholeCooldown
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp106.SinkholeCooldownBonus.MathWithValue(currentValue);
+			return role.Scp.Scp106.SinkholeCooldownBonus.MathCalculation(currentValue);
 		return currentValue;
 	}
 }

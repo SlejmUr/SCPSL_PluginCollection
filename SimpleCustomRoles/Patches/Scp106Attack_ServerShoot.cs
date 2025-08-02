@@ -81,14 +81,14 @@ internal static class Scp106Attack_ServerShoot
 	{
 		Player player = Player.Get(referenceHub);
 		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp106.VigorBonus.MathWithValue(currentValue);
+			return role.Scp.Scp106.VigorBonus.MathCalculation(currentValue);
 		return currentValue;
 	}
     internal static float CorrodingEffect(ReferenceHub referenceHub, float currentValue)
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp106.CorrodingEffect.MathWithValue(currentValue);
+            return role.Scp.Scp106.CorrodingEffect.MathCalculation(currentValue);
         return currentValue;
     }
 }

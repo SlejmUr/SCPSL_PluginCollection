@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Managers;
 using PlayerRoles.PlayableScps.Scp096;
 using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
@@ -64,7 +65,7 @@ internal static class Scp096RageManager_OnRageUpdate
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.CalmingShieldMultiplier.MathWithValue(currentValue);
+            return role.Scp.Scp096.CalmingShieldMultiplier.MathCalculation(currentValue);
         return currentValue;
     }
 
@@ -72,7 +73,7 @@ internal static class Scp096RageManager_OnRageUpdate
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.EnragingShieldMultiplier.MathWithValue(currentValue);
+            return role.Scp.Scp096.EnragingShieldMultiplier.MathCalculation(currentValue);
         return currentValue;
     }
 }

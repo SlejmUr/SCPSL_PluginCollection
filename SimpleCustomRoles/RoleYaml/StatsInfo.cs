@@ -4,12 +4,12 @@ namespace SimpleCustomRoles.RoleYaml;
 
 public class StatsInfo
 {
-    public MathValue Health { get; set; } = new();
-    public MathValue MaxHealth { get; set; } = new();
-    public MathValue Ahp { get; set; } = new();
-    public MathValue MaxAhp { get; set; } = new();
-    public MathValue HumeShield { get; set; } = new();
-    public MathValue MaxHumeShield { get; set; } = new();
+    public MathValueFloat Health { get; set; } = new();
+    public MathValueFloat MaxHealth { get; set; } = new();
+    public MathValueFloat Ahp { get; set; } = new();
+    public MathValueFloat MaxAhp { get; set; } = new();
+    public MathValueFloat HumeShield { get; set; } = new();
+    public MathValueFloat MaxHumeShield { get; set; } = new();
     public Vector3 Gravity { get; set; } = new Vector3(0f, -19.6f, 0f);
-    public MathValue MaxStamina { get; set; } = new();
+    public MathValueFloat MaxStamina { get; set; } = new();
 }

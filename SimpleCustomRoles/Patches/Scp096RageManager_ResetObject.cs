@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Managers;
 using PlayerRoles.PlayableScps.Scp096;
 using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
@@ -41,7 +42,7 @@ internal static class Scp096RageManager_ResetObject
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.NormalHumeRegenerationRate.MathWithValue(currentValue);
+            return role.Scp.Scp096.NormalHumeRegenerationRate.MathCalculation(currentValue);
         return currentValue;
     }
 }
