@@ -162,11 +162,23 @@ public class PlayerHandler : CustomEventsHandler
             var roleTypeToEscapeTo = potentialEscapeRoles.Select(static x => x.Value).FirstOrDefault();
             if (roleTypeToEscapeTo == PlayerRoles.RoleTypeId.None)
                 return;
+            List<Pickup> droppedItems = [];
+            foreach (var item in player.Items.ToList())
+            {
+                droppedItems.Add(item.DropItem());
+            }
             ev.IsAllowed = true;
             ev.NewRole = roleTypeToEscapeTo;
             ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
             PlayerEscaped.Add(player);
             Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
+            Timing.CallDelayed(3.5f, () => 
+            {
+                foreach (var item in droppedItems)
+                {
+                    player.AddItem(item);
+                }
+            });
             return;
         }
 
@@ -190,7 +202,7 @@ public class PlayerHandler : CustomEventsHandler
         var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
         PlayerEscaped.Add(player);
         Timing.CallDelayed(1.5f, ()=> PlayerEscaped.Remove(player));
-        Timing.CallDelayed(2.5f, storage.ItemsAfterEscaped.Clear);
+        Timing.CallDelayed(3.5f, storage.ItemsAfterEscaped.Clear);
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
