@@ -144,6 +144,7 @@ public class PlayerHandler : CustomEventsHandler
     }
 
     public static List<Player> PlayerEscaped = [];
+    public static Dictionary<Player, List<Pickup>> PlayerEscapedItems = [];
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
     {
@@ -162,12 +163,13 @@ public class PlayerHandler : CustomEventsHandler
             var roleTypeToEscapeTo = potentialEscapeRoles.Select(static x => x.Value).FirstOrDefault();
             if (roleTypeToEscapeTo == PlayerRoles.RoleTypeId.None)
                 return;
+            PlayerEscapedItems.Add(player, []);
             List<Pickup> droppedItems = [];
             foreach (var item in player.Items.ToList())
             {
                 var dropped = item.DropItem();
                 dropped.IsLocked = true;
-                droppedItems.Add(dropped);
+                PlayerEscapedItems[player].Add(dropped);
             }
             ev.IsAllowed = true;
             ev.NewRole = roleTypeToEscapeTo;
@@ -176,11 +178,12 @@ public class PlayerHandler : CustomEventsHandler
             Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
             Timing.CallDelayed(3.5f, () => 
             {
-                foreach (var item in droppedItems)
+                foreach (var item in PlayerEscapedItems[player])
                 {
                     item.Position = player.Position;
                     item.IsLocked = false;
                 }
+                PlayerEscapedItems.Remove(player);
             });
             return;
         }

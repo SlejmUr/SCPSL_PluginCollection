@@ -7,7 +7,6 @@ namespace SimpleCustomRoles.Handler;
 
 public class Scp049Handler : CustomEventsHandler
 {
-
     public override void OnScp049ResurrectingBody(Scp049ResurrectingBodyEventArgs ev)
     {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
@@ -29,7 +28,6 @@ public class Scp049Handler : CustomEventsHandler
             var random = RandomGenerator.GetInt16(1, 10000, true);
             if (random <= role.Scp.Scp0492.ChanceForSpawn)
             {
-                CL.Info("Role selected to revive");
                 Timing.CallDelayed(0.2f, () =>
                 {
                     CustomRoleHelpers.SetCustomInfoToPlayer(ev.Target, role);
