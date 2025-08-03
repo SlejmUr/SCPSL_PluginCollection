@@ -164,7 +164,10 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
         foreach (var item in ItemsAfterEscaped)
         {
-            Owner.AddItem(item);
+            item.Position = Owner.Position;
+            item.IsLocked = false;
+            if (!Owner.IsInventoryFull)
+                Owner.AddItem(item);
         }
     }
 

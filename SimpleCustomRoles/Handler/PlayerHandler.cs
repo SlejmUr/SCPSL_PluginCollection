@@ -165,7 +165,9 @@ public class PlayerHandler : CustomEventsHandler
             List<Pickup> droppedItems = [];
             foreach (var item in player.Items.ToList())
             {
-                droppedItems.Add(item.DropItem());
+                var dropped = item.DropItem();
+                dropped.IsLocked = true;
+                droppedItems.Add(dropped);
             }
             ev.IsAllowed = true;
             ev.NewRole = roleTypeToEscapeTo;
@@ -176,7 +178,8 @@ public class PlayerHandler : CustomEventsHandler
             {
                 foreach (var item in droppedItems)
                 {
-                    player.AddItem(item);
+                    item.Position = player.Position;
+                    item.IsLocked = false;
                 }
             });
             return;
@@ -197,7 +200,9 @@ public class PlayerHandler : CustomEventsHandler
         CustomRoleInfoStorage storage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
         foreach ( var item in player.Items.ToList())
         {
-            storage.ItemsAfterEscaped.Add(item.DropItem());
+            var dropped = item.DropItem();
+            dropped.IsLocked = true;
+            storage.ItemsAfterEscaped.Add(dropped);
         }
         var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
         PlayerEscaped.Add(player);
