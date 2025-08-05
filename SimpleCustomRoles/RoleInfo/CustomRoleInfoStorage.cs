@@ -50,7 +50,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         Vector3 scale = Role.Fpc.Scale;
         if (!onDefaultScale)
-            scale = Vector3;
+            scale = Vector3.one;
         ScaleHelper.SetScale(Owner, scale, false, true);
 
         onDefaultScale = !onDefaultScale;
