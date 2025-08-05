@@ -20,6 +20,7 @@ namespace SimpleCustomRoles.RoleInfo;
 
 public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 {
+    private bool onDefaultScale;
     public CustomRoleBaseInfo Role;
     public string OldCustomInfo = string.Empty;
     public List<Pickup> ItemsAfterEscaped = [];
@@ -43,6 +44,16 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Owner.CustomInfo = OldCustomInfo;
         if (ResetRole)
             Owner.SetRole(Owner.Role, PlayerRoles.RoleChangeReason.None, PlayerRoles.RoleSpawnFlags.None);
+    }
+
+    public void ChangeScale()
+    {
+        Vector3 scale = Role.Fpc.Scale;
+        if (!onDefaultScale)
+            scale = Vector3;
+        ScaleHelper.SetScale(Owner, scale, false, true);
+
+        onDefaultScale = !onDefaultScale;
     }
 
     internal IEnumerator<float> ApplyCor()

@@ -42,6 +42,7 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerHurting(PlayerHurtingEventArgs ev)
     {
+        // TODO: Rewrite this with any damage.
         float Damage = ev.DamageHandler.GetDamageValue();
         DamageType damageType = ev.DamageHandler.GetDamageType();
         if (ev.Attacker != null && CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var attacker_role))

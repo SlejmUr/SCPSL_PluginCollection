@@ -86,6 +86,16 @@ public static class CustomRoleHelpers
         return customRoleInfo is not null;
     }
 
+    
+    public static bool TryGetCustomRoleStorage(Player player, out CustomRoleInfoStorage storage)
+    {
+        storage = null;
+        if (player == null)
+            return false;
+        storage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
+        return storage.Role is not null;
+    }
+
     public static bool Contains(Player player)
     {
         return TryGetCustomRole(player, out var role) && role is not null;

@@ -20,7 +20,7 @@ internal class Main : Plugin<Config>
     #region Plugin Info
     public override string Author => "SlejmUr";
     public override string Name => "SimpleCustomRoles";
-    public override Version Version => new(0, 5, 3);
+    public override Version Version => new(0, 5, 4);
     public override string Description => "Add simple YAML Support for creating custom roles.";
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
     #endregion
@@ -30,6 +30,7 @@ internal class Main : Plugin<Config>
     public List<CustomRoleBaseInfo> EscapeRoles = [];
 
     private ServerHandler serverHandler;
+    private PocketHandler pocketHandler;
     private PlayerHandler playerHandler;
     private Scp0492Handler scp0492Handler;
     private Scp049Handler scp049Handler;
@@ -53,6 +54,9 @@ internal class Main : Plugin<Config>
 
         playerHandler = new();
         CustomHandlersManager.RegisterEventsHandler(playerHandler);
+
+        pocketHandler = new();
+        CustomHandlersManager.RegisterEventsHandler(pocketHandler);
 
         scp049Handler = new();
         CustomHandlersManager.RegisterEventsHandler(scp049Handler);
@@ -86,6 +90,9 @@ internal class Main : Plugin<Config>
 
         CustomHandlersManager.RegisterEventsHandler(playerHandler);
         playerHandler = null;
+
+        CustomHandlersManager.RegisterEventsHandler(pocketHandler);
+        pocketHandler = null;
 
         CustomHandlersManager.RegisterEventsHandler(scp049Handler);
         scp049Handler = null;
