@@ -220,12 +220,12 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         
         if (Role.Fpc.Scale != Vector3.one)
         {
-            Owner.Scale = Role.Fpc.Scale;
+            Owner.SetScale(Role.Fpc.Scale);
         }
 
         if (Role.Fpc.FakeScale != Vector3.one)
         {
-            Owner.SetFakeScale(Player.Host ,Role.Fpc.FakeScale);
+            Owner.SetFakeScale(Player.Host, Role.Fpc.FakeScale);
         }
 
         //  Appearance
