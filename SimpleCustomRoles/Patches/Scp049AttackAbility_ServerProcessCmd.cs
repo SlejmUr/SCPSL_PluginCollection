@@ -42,7 +42,7 @@ internal static class Scp049AttackAbility_ServerProcessCmd
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.AttackCooldownTime.MathWithValue(currentValue);
+            return role.Scp.Scp049.AttackCooldownTime.MathCalculation(currentValue);
         return currentValue;
     }
 }

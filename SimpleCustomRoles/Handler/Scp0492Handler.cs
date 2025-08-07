@@ -13,9 +13,9 @@ public class Scp0492Handler : CustomEventsHandler
             ev.IsAllowed = role.Scp.Scp0492.CanConsumeCorpse;
             if (!ev.IsAllowed)
                 return;
-            ev.HealAmount = role.Scp.Scp0492.ConsumeHealth.MathWithValue(ev.HealAmount);
+            ev.HealAmount = role.Scp.Scp0492.ConsumeHealth.MathCalculation(ev.HealAmount);
         }
-            
+
 
     }
 }

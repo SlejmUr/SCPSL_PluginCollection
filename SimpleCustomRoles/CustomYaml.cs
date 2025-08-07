@@ -1,7 +1,7 @@
 ﻿using LabApi.Loader.Features.Yaml.CustomConverters;
 using Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace SimpleCustomRoles;
 

@@ -3,7 +3,6 @@ using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
-using LabApiExtensions.Enums;
 using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.Helpers;
@@ -48,7 +47,7 @@ public class PlayerHandler : CustomEventsHandler
         if (ev.Attacker != null && CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var attacker_role))
         {
             if (attacker_role.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType))
-                Damage = attacker_role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);  
+                Damage = attacker_role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
         }
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var player_role))
         {
@@ -128,7 +127,7 @@ public class PlayerHandler : CustomEventsHandler
         if (role.KillerToNewRole.Count == 0)
             return;
 
-        var kv = role.KillerToNewRole.Where(x=>
+        var kv = role.KillerToNewRole.Where(x =>
             x.Key.KillerCustom == role.Rolename ||
             x.Key.KillerRole == ev.Attacker.Role ||
             x.Key.KillerTeam == ev.Attacker.Team
@@ -175,7 +174,7 @@ public class PlayerHandler : CustomEventsHandler
             ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
             PlayerEscaped.Add(player);
             Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
-            Timing.CallDelayed(3.5f, () => 
+            Timing.CallDelayed(3.5f, () =>
             {
                 foreach (var item in droppedItems)
                 {
@@ -200,7 +199,7 @@ public class PlayerHandler : CustomEventsHandler
             return;
         ev.IsAllowed = false;
         CustomRoleInfoStorage storage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
-        foreach ( var item in player.Items.ToList())
+        foreach (var item in player.Items.ToList())
         {
             var dropped = item.DropItem();
             dropped.IsLocked = true;
@@ -208,7 +207,7 @@ public class PlayerHandler : CustomEventsHandler
         }
         var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
         PlayerEscaped.Add(player);
-        Timing.CallDelayed(1.5f, ()=> PlayerEscaped.Remove(player));
+        Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
         Timing.CallDelayed(3.5f, storage.ItemsAfterEscaped.Clear);
     }
 

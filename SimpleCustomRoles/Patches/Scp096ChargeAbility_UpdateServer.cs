@@ -45,7 +45,7 @@ internal static class Scp096ChargeAbility_UpdateServer
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.ChargeCooldown.MathWithValue(currentValue);
+            return role.Scp.Scp096.ChargeCooldown.MathCalculation(currentValue);
         return currentValue;
     }
 }

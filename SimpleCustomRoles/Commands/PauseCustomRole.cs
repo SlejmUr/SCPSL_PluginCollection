@@ -31,7 +31,7 @@ public class PauseCustomRole : ICommand
                 response = "Custom Roles spawn are now resumed";
                 return true;
             }
-            
+
         }
         else
         {

@@ -4,7 +4,6 @@ using LabApi.Events.CustomHandlers;
 using LabApi.Features;
 using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
-using LabApiExtensions.Extensions;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.RoleGroup;
 using SimpleCustomRoles.RoleInfo;
@@ -108,6 +107,7 @@ internal class Main : Plugin<Config>
 
         CustomHandlersManager.RegisterEventsHandler(scp330Handler);
         scp330Handler = null;
+
         Logic.UnInit();
         RolesLoader.Clear();
         Harmony.UnpatchAll("SimpleCustomRole");

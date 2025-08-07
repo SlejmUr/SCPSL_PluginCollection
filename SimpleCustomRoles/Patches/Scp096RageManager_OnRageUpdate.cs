@@ -13,8 +13,8 @@ internal static class Scp096RageManager_OnRageUpdate
 {
     internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        
-        
+
+
         List<CodeInstruction> code = [.. instructions];
         // get the current value.
         var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R4);
@@ -64,7 +64,7 @@ internal static class Scp096RageManager_OnRageUpdate
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.CalmingShieldMultiplier.MathWithValue(currentValue);
+            return role.Scp.Scp096.CalmingShieldMultiplier.MathCalculation(currentValue);
         return currentValue;
     }
 
@@ -72,7 +72,7 @@ internal static class Scp096RageManager_OnRageUpdate
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.EnragingShieldMultiplier.MathWithValue(currentValue);
+            return role.Scp.Scp096.EnragingShieldMultiplier.MathCalculation(currentValue);
         return currentValue;
     }
 }

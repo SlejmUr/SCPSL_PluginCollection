@@ -106,7 +106,8 @@ internal class ServerHandler : CustomEventsHandler
             }
         }
         List<Player> NotRoll = [];
-        Timing.CallDelayed(0.2f, () => {
+        Timing.CallDelayed(0.2f, () =>
+        {
             foreach (var item in RegularRoles)
             {
                 Player player = null;

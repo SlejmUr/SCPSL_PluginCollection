@@ -6,5 +6,5 @@ public class Scp0492Info
     public bool CanSpawnIfNoCustom094 { get; set; } = false;
     public int ChanceForSpawn { get; set; } = 0;
 
-    public MathValue ConsumeHealth { get; set; } = new();
+    public MathValueFloat ConsumeHealth { get; set; } = new();
 }

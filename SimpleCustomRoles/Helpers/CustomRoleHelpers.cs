@@ -86,7 +86,7 @@ public static class CustomRoleHelpers
         return customRoleInfo is not null;
     }
 
-    
+
     public static bool TryGetCustomRoleStorage(Player player, out CustomRoleInfoStorage storage)
     {
         storage = null;
@@ -104,7 +104,7 @@ public static class CustomRoleHelpers
     public static List<Player> GetPlayers()
     {
         var players = CustomDataStoreManagerExtended.GetAll<CustomRoleInfoStorage>();
-        return [.. players.Where(x=>x.Value is CustomRoleInfoStorage st && st != null && st.Role != null).Select(x=>x.Key)];
+        return [.. players.Where(x => x.Value is CustomRoleInfoStorage st && st != null && st.Role != null).Select(x => x.Key)];
     }
 
     public static Dictionary<Player, CustomRoleBaseInfo> GetPlayerAndRoles()

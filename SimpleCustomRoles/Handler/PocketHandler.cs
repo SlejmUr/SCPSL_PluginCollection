@@ -1,15 +1,6 @@
 using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
-using LabApi.Features.Stores;
-using LabApi.Features.Wrappers;
-using LabApiExtensions.Enums;
-using LabApiExtensions.Extensions;
-using MEC;
 using SimpleCustomRoles.Helpers;
-using SimpleCustomRoles.RoleInfo;
-using SimpleCustomRoles.RoleYaml;
-using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles.Handler;
 
@@ -31,5 +22,5 @@ public class PocketHandler : CustomEventsHandler
         if (!ev.IsSuccessful)
             return;
         storage.ChangeScale();
-    } 
+    }
 }

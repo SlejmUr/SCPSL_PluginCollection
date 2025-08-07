@@ -15,7 +15,7 @@ internal static class Scp049SenseAbility_ServerLoseTarget
     {
         List<CodeInstruction> code = [.. instructions];
         // get the current value.
-        var index = code.FindIndex(x=>x.opcode == OpCodes.Ldc_R8);
+        var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R8);
         var inst = code[index];
         var const_value = inst.operand;
         // add after the field loaded
@@ -43,7 +43,7 @@ internal static class Scp049SenseAbility_ServerLoseTarget
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.SenseTargetLostCooldown.MathWithValue(currentValue);
+            return role.Scp.Scp049.SenseTargetLostCooldown.MathCalculation(currentValue);
         return currentValue;
     }
 }

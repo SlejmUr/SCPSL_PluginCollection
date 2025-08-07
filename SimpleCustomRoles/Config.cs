@@ -17,7 +17,7 @@ public class Config
     public bool CustomItemUseName { get; set; } = true;
 
     public Dictionary<EscapeConfig, RoleTypeId> EscapeConfigs { get; set; } = new()
-    { 
+    {
         {
             new()
             {

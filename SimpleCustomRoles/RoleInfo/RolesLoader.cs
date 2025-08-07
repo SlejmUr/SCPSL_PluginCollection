@@ -113,9 +113,9 @@ public static class RolesLoader
                 CanEscape = true,
                 ConfigToRole = new()
                 {
-                    {   
+                    {
                         new()
-                        { 
+                        {
                             EscapeRole = PlayerRoles.RoleTypeId.Scp173,
                             ShouldBeCuffer = true,
                         },
@@ -145,14 +145,14 @@ public static class RolesLoader
                 {
                     {
                         new()
-                        { 
-                            DamageType = LabApiExtensions.Enums.DamageType.Firearm,
-                            DamageSubType = LabApiExtensions.Enums.DamageSubType.WeaponType,
+                        {
+                            DamageType = DamageType.Firearm,
+                            DamageSubType = DamageSubType.WeaponType,
                             SubType = ItemType.GunRevolver
                         },
                         new()
-                        { 
-                            Math = RoleYaml.Enums.MathOption.Set,
+                        {
+                            Math = MathOption.Set,
                             Value = 5
                         }
                     }

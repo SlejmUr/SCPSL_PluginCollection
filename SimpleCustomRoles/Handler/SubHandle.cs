@@ -11,7 +11,7 @@ internal static class SubHandle
         Player player = Player.Get(@base.Hub);
         if (!CustomRoleHelpers.TryGetCustomRole(player, out var customRole))
             return;
-        var effect = customRole.Effects.FirstOrDefault(x=>x.EffectName == @base.name);
+        var effect = customRole.Effects.FirstOrDefault(x => x.EffectName == @base.name);
         if (effect == default)
             return;
         if (effect.CanEnable)

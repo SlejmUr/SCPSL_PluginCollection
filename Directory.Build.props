@@ -80,5 +80,10 @@
 		<Using Include="LabApi.Features.Console.Logger">
 			<Alias>CL</Alias>
 		</Using>
+		<Using Include="LabApiExtensions.Configs"/>
+		<Using Include="LabApiExtensions.Managers"/>
+		<Using Include="LabApiExtensions.Helpers"/>
+		<Using Include="LabApiExtensions.Enums"/>
+		<Using Include="LabApiExtensions.Extensions"/>
 	</ItemGroup>
 </Project>
