@@ -16,9 +16,11 @@ public class PlayerHandler : CustomEventsHandler
 {
     public override void OnPlayerChangingRole(PlayerChangingRoleEventArgs ev)
     {
+        ev.Player.ClearBroadcasts();
         PlayerEscaped.Remove(ev.Player);
         if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
             CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player, false);
+        /*
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
             return;
         if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Died)
@@ -28,6 +30,7 @@ public class PlayerHandler : CustomEventsHandler
         if (ev.NewRole == PlayerRoles.RoleTypeId.Destroyed)
             return;
         Timing.CallDelayed(0.2f, () => AppearanceSyncExtension.ForceSync(ev.Player));
+        */
     }
 
     public override void OnPlayerDroppingItem(PlayerDroppingItemEventArgs ev)
@@ -64,7 +67,6 @@ public class PlayerHandler : CustomEventsHandler
             return;
         if (ev.OldTarget != null && CustomRoleHelpers.Contains(ev.OldTarget))
         {
-            // todo dont clear, just queue
             ev.Player.ClearBroadcasts();
         }
         if (ev.NewTarget != null && CustomRoleHelpers.TryGetCustomRole(ev.NewTarget, out var role))
@@ -147,6 +149,7 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
     {
+        List<Pickup> droppedItems = [];
         Player player = ev.Player;
         if (PlayerEscaped.Contains(player))
             return;
@@ -162,7 +165,6 @@ public class PlayerHandler : CustomEventsHandler
             var roleTypeToEscapeTo = potentialEscapeRoles.Select(static x => x.Value).FirstOrDefault();
             if (roleTypeToEscapeTo == PlayerRoles.RoleTypeId.None)
                 return;
-            List<Pickup> droppedItems = [];
             foreach (var item in player.Items.ToList())
             {
                 var dropped = item.DropItem();
@@ -174,7 +176,7 @@ public class PlayerHandler : CustomEventsHandler
             ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
             PlayerEscaped.Add(player);
             Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
-            Timing.CallDelayed(3.5f, () =>
+            Timing.CallDelayed(2.5f, () =>
             {
                 foreach (var item in droppedItems)
                 {
@@ -203,12 +205,20 @@ public class PlayerHandler : CustomEventsHandler
         {
             var dropped = item.DropItem();
             dropped.IsLocked = true;
-            storage.ItemsAfterEscaped.Add(dropped);
+            droppedItems.Add(dropped);
         }
         var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
         PlayerEscaped.Add(player);
         Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
-        Timing.CallDelayed(3.5f, storage.ItemsAfterEscaped.Clear);
+        Timing.CallDelayed(2.5f, () =>
+        {
+            foreach (var item in droppedItems)
+            {
+                item.Position = player.Position;
+                item.IsLocked = false;
+                item.IsInUse = false;
+            }
+        });
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
@@ -236,9 +246,11 @@ public class PlayerHandler : CustomEventsHandler
         {
             Main.Instance.InWaveRoles.Remove(item);
         }
+        /*
         foreach (var item in ev.Players)
         {
             AppearanceSyncExtension.ForceSync(item);
         }
+        */
     }
 }

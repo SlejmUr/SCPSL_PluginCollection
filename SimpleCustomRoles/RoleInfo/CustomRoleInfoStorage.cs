@@ -24,7 +24,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     private bool onDefaultScale;
     public CustomRoleBaseInfo Role;
     public string OldCustomInfo = string.Empty;
-    public List<Pickup> ItemsAfterEscaped = [];
     public bool ResetRole { get; set; }
     public void Apply()
     {
@@ -38,7 +37,13 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Role = null;
         Owner.IsBypassEnabled = false;
         ScaleHelper.SetScale(Owner, Vector3.one);
-        AppearanceSyncExtension.RemovePlayer(Owner, false);
+        /*
+        foreach (var item in Player.ReadyList.Where(x => x != Owner))
+        {
+            FpcServerPositionDistributor.SendRole(item.ReferenceHub, Owner.ReferenceHub, Owner.Role);
+        }
+        */
+        //AppearanceSyncExtension.RemovePlayer(Owner, false);
         Owner.Position += Vector3.up;
         if (string.IsNullOrEmpty(OldCustomInfo))
             OldCustomInfo = string.Empty;
@@ -172,14 +177,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
                 Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
             }
         }
-
-        foreach (var item in ItemsAfterEscaped)
-        {
-            item.Position = Owner.Position;
-            item.IsLocked = false;
-            if (!Owner.IsInventoryFull)
-                Owner.AddItem(item);
-        }
     }
 
     private void SetMaxStats()
@@ -245,7 +242,13 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         //  Appearance
         if (Role.Fpc.Appearance != PlayerRoles.RoleTypeId.None)
         {
-            AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
+            /*
+            foreach (var item in Player.ReadyList.Where(x => x != Owner))
+            {
+                FpcServerPositionDistributor.SendRole(item.ReferenceHub, Owner.ReferenceHub, Role.Fpc.Appearance);
+            }
+            */
+            //AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
         }
         // Voice Channel
         if (Role.Fpc.VoiceChatChannel != VoiceChat.VoiceChatChannel.None)
