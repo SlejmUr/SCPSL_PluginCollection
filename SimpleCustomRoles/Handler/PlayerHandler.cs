@@ -149,10 +149,10 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerEscaping(PlayerEscapingEventArgs ev)
     {
-        List<Pickup> droppedItems = [];
         Player player = ev.Player;
         if (PlayerEscaped.Contains(player))
             return;
+        List<Pickup> droppedItems = [];
         if (!CustomRoleHelpers.TryGetCustomRole(player, out var role))
         {
             if (ev.EscapeScenario == Escape.EscapeScenarioType.Custom)
@@ -171,11 +171,6 @@ public class PlayerHandler : CustomEventsHandler
                 dropped.IsLocked = true;
                 droppedItems.Add(dropped);
             }
-            ev.IsAllowed = true;
-            ev.NewRole = roleTypeToEscapeTo;
-            ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
-            PlayerEscaped.Add(player);
-            Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
             Timing.CallDelayed(2.5f, () =>
             {
                 foreach (var item in droppedItems)
@@ -185,6 +180,11 @@ public class PlayerHandler : CustomEventsHandler
                     item.IsInUse = false;
                 }
             });
+            ev.IsAllowed = true;
+            ev.NewRole = roleTypeToEscapeTo;
+            ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
+            PlayerEscaped.Add(player);
+            Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
             return;
         }
 
@@ -207,9 +207,6 @@ public class PlayerHandler : CustomEventsHandler
             dropped.IsLocked = true;
             droppedItems.Add(dropped);
         }
-        var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
-        PlayerEscaped.Add(player);
-        Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
         Timing.CallDelayed(2.5f, () =>
         {
             foreach (var item in droppedItems)
@@ -219,6 +216,9 @@ public class PlayerHandler : CustomEventsHandler
                 item.IsInUse = false;
             }
         });
+        var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
+        PlayerEscaped.Add(player);
+        Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
