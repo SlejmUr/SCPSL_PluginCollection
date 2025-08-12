@@ -74,6 +74,9 @@
         <Reference Include="YamlDotNet">
 		<Private>false</Private>
 	</Reference>
+    <Reference Include="LabApiExtensions">
+	    <HintPath>..\3rdpartyRef\LabApiExtensions.dll</HintPath>
+	  </Reference>
     </ItemGroup>
 	<!-- Usings -->
 	<ItemGroup>
