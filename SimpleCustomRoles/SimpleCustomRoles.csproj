@@ -4,7 +4,7 @@
 		<Copyright>SlejmUr</Copyright>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants);ENABLEEFFECTHUD</DefineConstants>
+		<DefineConstants>$(DefineConstants);</DefineConstants>
 		<!-->DefineConstants>$(DefineConstants);ENABLEEFFECTHUD</DefineConstants-->
 	</PropertyGroup>
 	<ItemGroup>
