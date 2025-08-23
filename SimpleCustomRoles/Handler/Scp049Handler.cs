@@ -21,20 +21,21 @@ public class Scp049Handler : CustomEventsHandler
         }
 
         var list = Main.Instance.ScpSpecificRoles.Where(x => x.Scp.Scp0492.CanSpawnIfNoCustom094 == true).ToList();
-
+        CL.Debug($"Resurrecting count : {list.Count}", Main.Instance.Config.Debug);
         if (list.Count > 0)
         {
             role = list.RandomItem();
+            CL.Debug($"Resurrecting now having chance to res as: {role.Rolename}", Main.Instance.Config.Debug);
             var random = RandomGenerator.GetInt16(1, 10000, true);
             if (random <= role.Scp.Scp0492.ChanceForSpawn)
             {
+                CL.Debug($"Resurrecting: {role.Rolename}", Main.Instance.Config.Debug);
                 Timing.CallDelayed(0.2f, () =>
                 {
                     CustomRoleHelpers.SetCustomInfoToPlayer(ev.Target, role);
                 });
                 Main.Instance.ScpSpecificRoles.Remove(role);
             }
-
         }
     }
 
