@@ -18,7 +18,7 @@ public static class DamageHelper
         }
 
 
-        if (DamageTypeEnum.Any(x => x.Key.DamageSubType == DamageSubType.None))
+        if (DamageTypeEnum.Any(x => x.Key.DamageSubType is DamageSubType.None))
         {
             var damageFirst = DamageTypeEnum.FirstOrDefault();
             if (damageFirst.Value == default)

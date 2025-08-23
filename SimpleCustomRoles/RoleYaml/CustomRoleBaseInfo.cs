@@ -28,4 +28,5 @@ public class CustomRoleBaseInfo
     public ScpInfo Scp { get; set; } = new();
     public Dictionary<KillerRoleInfo, NewRoleInfo> KillerToNewRole { get; set; } = [];
     public ExtraInfo Extra { get; set; } = new();
+    public PocketInfo Pocket { get; set; } = new();
 }

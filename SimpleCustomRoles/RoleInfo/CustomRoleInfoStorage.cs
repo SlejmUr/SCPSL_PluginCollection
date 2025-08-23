@@ -3,15 +3,12 @@ using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.Modules;
 using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
-using LabApiExtensions.Extensions;
 using MEC;
-using PlayerRoles.FirstPersonControl.NetworkMessages;
 using PlayerRoles.PlayableScps.Scp049;
 using PlayerRoles.PlayableScps.Scp106;
 using PlayerRoles.PlayableScps.Scp1507;
 using PlayerRoles.PlayableScps.Scp939;
 using PlayerStatsSystem;
-using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleYaml;
 using SimpleCustomRoles.RoleYaml.Enums;
@@ -37,13 +34,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Role = null;
         Owner.IsBypassEnabled = false;
         ScaleHelper.SetScale(Owner, Vector3.one);
-        /*
-        foreach (var item in Player.ReadyList.Where(x => x != Owner))
-        {
-            FpcServerPositionDistributor.SendRole(item.ReferenceHub, Owner.ReferenceHub, Owner.Role);
-        }
-        */
-        //AppearanceSyncExtension.RemovePlayer(Owner, false);
         Owner.Position += Vector3.up;
         if (string.IsNullOrEmpty(OldCustomInfo))
             OldCustomInfo = string.Empty;
@@ -260,25 +250,27 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     private void SetHints()
     {
-        bool alreadyhaveinfo = false;
-        if (Role.Hint.Broadcast != string.Empty && Role.Hint.Hint != string.Empty)
+        bool useOriginal = true;
+        if (!string.IsNullOrEmpty(Role.Hint.Broadcast))
         {
-            alreadyhaveinfo = true;
-            Server.SendBroadcast(Owner, Role.Hint.Broadcast, Role.Hint.BroadcastDuration);
-            Owner.SendHint(Role.Hint.Hint, Role.Hint.HintDuration);
-
+            useOriginal = true;
+            Events.TriggerShowBroadcast(Owner, Role, ref useOriginal);
+            if (useOriginal)
+                Server.SendBroadcast(Owner, Role.Hint.Broadcast, Role.Hint.BroadcastDuration);
         }
-        if (Role.Hint.Broadcast != string.Empty && !alreadyhaveinfo)
+        if (!string.IsNullOrEmpty(Role.Hint.Hint))
         {
-            Server.SendBroadcast(Owner, Role.Hint.Broadcast, Role.Hint.BroadcastDuration);
+            useOriginal = true;
+            Events.TriggerShowHint(Owner, Role, ref useOriginal);
+            if (useOriginal)
+                Owner.SendHint(Role.Hint.Hint, Role.Hint.HintDuration);
         }
-        if (Role.Hint.Hint != string.Empty)
+        if (!string.IsNullOrEmpty(Role.Hint.BroadcastAll))
         {
-            Owner.SendHint(Role.Hint.Hint, Role.Hint.HintDuration);
-        }
-        if (Role.Hint.BroadcastAll != string.Empty)
-        {
-            Server.SendBroadcast(Role.Hint.BroadcastAll, Role.Hint.BroadcastAllDuration);
+            useOriginal = true;
+            Events.TriggerShowBroadcastAll(Owner, Role, ref useOriginal);
+            if (useOriginal)
+                Server.SendBroadcast(Role.Hint.BroadcastAll, Role.Hint.BroadcastAllDuration);
         }
     }
 

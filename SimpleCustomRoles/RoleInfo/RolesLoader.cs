@@ -7,7 +7,7 @@ namespace SimpleCustomRoles.RoleInfo;
 public static class RolesLoader
 {
     public static List<CustomRoleBaseInfo> RoleInfos = [];
-    internal static string Dir = Path.Combine(Main.Instance.GetConfigDirectory().FullName, "Roles");
+    internal static readonly string Dir = Path.Combine(Main.Instance.GetConfigDirectory(Main.Instance.Config.UseGlobalDir).FullName, "Roles");
 
     public static void Load()
     {

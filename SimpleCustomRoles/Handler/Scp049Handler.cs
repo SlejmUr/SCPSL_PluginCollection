@@ -37,4 +37,12 @@ public class Scp049Handler : CustomEventsHandler
 
         }
     }
+
+    public override void OnScp049StartingResurrection(Scp049StartingResurrectionEventArgs ev)
+    {
+        if (!CustomRoleHelpers.TryGetCustomRole(ev.Target, out var role))
+            return;
+        if (role.Extra.CannotRevivedByScp049)
+            ev.IsAllowed = false;
+    }
 }

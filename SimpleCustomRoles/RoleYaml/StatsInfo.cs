@@ -10,6 +10,6 @@ public class StatsInfo
     public MathValueFloat MaxAhp { get; set; } = new();
     public MathValueFloat HumeShield { get; set; } = new();
     public MathValueFloat MaxHumeShield { get; set; } = new();
-    public Vector3 Gravity { get; set; } = new Vector3(0f, -19.6f, 0f);
+    public Vector3 Gravity { get; set; } = new(0f, -19.6f, 0f);
     public MathValueFloat MaxStamina { get; set; } = new();
 }
