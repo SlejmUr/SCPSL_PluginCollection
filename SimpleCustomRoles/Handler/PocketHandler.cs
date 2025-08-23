@@ -1,27 +1,32 @@
 using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
-using LabApi.Features.Stores;
-using LabApi.Features.Wrappers;
-using LabApiExtensions.Enums;
-using LabApiExtensions.Extensions;
-using MEC;
 using SimpleCustomRoles.Helpers;
-using SimpleCustomRoles.RoleInfo;
-using SimpleCustomRoles.RoleYaml;
-using SimpleCustomRoles.RoleYaml.Enums;
 
 namespace SimpleCustomRoles.Handler;
 
 public class PocketHandler : CustomEventsHandler
 {
-    // TODO: Add feature for custom roles to always/never escape, disable to enter to pocket.
+    public override void OnPlayerEnteringPocketDimension(PlayerEnteringPocketDimensionEventArgs ev)
+    {
+        if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
+            return;
+        ev.IsAllowed = role.Pocket.CanEnter;
+    }
 
     public override void OnPlayerEnteredPocketDimension(PlayerEnteredPocketDimensionEventArgs ev)
     {
         if (!CustomRoleHelpers.TryGetCustomRoleStorage(ev.Player, out var storage))
             return;
         storage.ChangeScale();
+    }
+
+    public override void OnPlayerLeavingPocketDimension(PlayerLeavingPocketDimensionEventArgs ev)
+    {
+        if (!CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
+            return;
+        ev.IsAllowed = role.Pocket.CanExit;
+        if (ev.IsAllowed)
+            ev.IsSuccessful = role.Pocket.ForceExit;
     }
 
     public override void OnPlayerLeftPocketDimension(PlayerLeftPocketDimensionEventArgs ev)
@@ -31,5 +36,5 @@ public class PocketHandler : CustomEventsHandler
         if (!ev.IsSuccessful)
             return;
         storage.ChangeScale();
-    } 
+    }
 }

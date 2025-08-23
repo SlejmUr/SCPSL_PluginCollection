@@ -16,7 +16,7 @@ internal static class Scp049SenseAbility_ServerProcessCmd
         List<CodeInstruction> code = [.. instructions];
 
         // get the current value.
-        var index = code.FindIndex(x=>x.opcode == OpCodes.Ldc_R8);
+        var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R8);
         var inst = code[index];
         var const_value = code[index].operand;
 
@@ -71,7 +71,7 @@ internal static class Scp049SenseAbility_ServerProcessCmd
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.SenseAttemptFailCooldown.MathWithValue(currentValue);
+            return role.Scp.Scp049.SenseAttemptFailCooldown.MathCalculation(currentValue);
         return currentValue;
     }
 
@@ -79,7 +79,7 @@ internal static class Scp049SenseAbility_ServerProcessCmd
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.SenseEffectDuration.MathWithValue(currentValue);
+            return role.Scp.Scp049.SenseEffectDuration.MathCalculation(currentValue);
         return currentValue;
     }
 }

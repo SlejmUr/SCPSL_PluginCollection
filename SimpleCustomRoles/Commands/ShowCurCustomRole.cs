@@ -21,7 +21,7 @@ public class ShowCurCustomRole : ICommand
             response = "You dont have permission!";
             return false;
         }
-        
+
         var players = CustomRoleHelpers.GetPlayers();
         if (players.Count() == 0)
         {

@@ -89,6 +89,6 @@ public class SetOthersCustomRole : ICommand
             response = $"You set {player.PlayerId} as a role: {rolename}[{role.Display.RARoleName}]!";
             return true;
         }
-        
+
     }
 }

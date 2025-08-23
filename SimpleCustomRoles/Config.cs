@@ -7,6 +7,7 @@ namespace SimpleCustomRoles;
 public class Config
 {
     public bool Debug { get; set; }
+    public bool UseGlobalDir { get; set; }
     public bool IsPaused { get; set; }
     public ushort SpectatorBroadcastTime { get; set; } = 7;
     public bool UsePlayerPercent { get; set; }
@@ -17,7 +18,7 @@ public class Config
     public bool CustomItemUseName { get; set; } = true;
 
     public Dictionary<EscapeConfig, RoleTypeId> EscapeConfigs { get; set; } = new()
-    { 
+    {
         {
             new()
             {

@@ -46,7 +46,7 @@ internal static class Scp096AttackAbility_Cooldown
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp096.AttackCooldown.MathWithValue(currentValue);
+            return role.Scp.Scp096.AttackCooldown.MathCalculation(currentValue);
         return currentValue;
     }
 }

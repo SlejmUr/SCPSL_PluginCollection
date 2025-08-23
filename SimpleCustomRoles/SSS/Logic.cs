@@ -11,7 +11,7 @@ internal class Logic
 
     public static void Init()
     {
-        Settings = 
+        Settings =
         [
             new SSGroupHeader("Simple Custom Roles"),
             showRolekb = new SSKeybindSetting(null, "Show my Role Info Again", UnityEngine.KeyCode.L)
@@ -33,14 +33,14 @@ internal class Logic
         ServerSpecificSettingsSync.ServerOnSettingValueReceived -= ServerOnSettingValueReceived;
         ServerSpecificSettingsSync.SendToAll();
     }
-   
+
     private static void ServerOnSettingValueReceived(ReferenceHub hub, ServerSpecificSettingBase @base)
     {
         Player player = Player.Get(hub);
         if (!CustomRoleHelpers.TryGetCustomRole(player, out var customRoleInfo))
             return;
 
-        if (@base is SSKeybindSetting { SyncIsPressed : true } keybindSetting && keybindSetting.SettingId == showRolekb.SettingId)
+        if (@base is SSKeybindSetting { SyncIsPressed: true } keybindSetting && keybindSetting.SettingId == showRolekb.SettingId)
         {
             if (!string.IsNullOrEmpty(customRoleInfo.Hint.Hint)) // role does not have any spawning hints
             {
@@ -51,6 +51,6 @@ internal class Logic
                 player.SendBroadcast(customRoleInfo.Hint.Broadcast, customRoleInfo.Hint.BroadcastDuration);
             }
         }
-            
+
     }
 }

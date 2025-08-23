@@ -5,7 +5,6 @@ using PlayerRoles.Subroutines;
 using SimpleCustomRoles.Helpers;
 using System.Reflection.Emit;
 using static HarmonyLib.AccessTools;
-using static PlayerList;
 
 namespace SimpleCustomRoles.Patches;
 // DISABLED FUCK IL CODE
@@ -65,7 +64,7 @@ internal static class Scp049ResurrectAbility_CheckBeginConditions
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.ResurrectHumanCorpseDuration.MathWithValue(currentValue);
+            return role.Scp.Scp049.ResurrectHumanCorpseDuration.MathCalculation(currentValue);
         return currentValue;
     }
 
@@ -73,7 +72,7 @@ internal static class Scp049ResurrectAbility_CheckBeginConditions
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.ResurrectTargetCorpseDuration.MathWithValue(currentValue);
+            return role.Scp.Scp049.ResurrectTargetCorpseDuration.MathCalculation(currentValue);
         return currentValue;
     }
 }

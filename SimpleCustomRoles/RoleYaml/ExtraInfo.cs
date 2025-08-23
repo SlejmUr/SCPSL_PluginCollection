@@ -14,4 +14,6 @@ public class ExtraInfo
     public bool Observe173 { get; set; } = true;
 
     public bool ForceSet { get; set; } = false;
+
+    public bool CannotRevivedByScp049 { get; set; } = false;
 }

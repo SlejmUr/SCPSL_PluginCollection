@@ -14,7 +14,7 @@ internal class ServerHandler : CustomEventsHandler
 {
     public override void OnServerRoundEnded(RoundEndedEventArgs ev)
     {
-        AppearanceSyncExtension.Stop();
+        //AppearanceSyncExtension.Stop();
     }
 
     public static void ReloadRoles()
@@ -49,7 +49,7 @@ internal class ServerHandler : CustomEventsHandler
 
     public override void OnServerRoundStarted()
     {
-        AppearanceSyncExtension.Start();
+        //AppearanceSyncExtension.Start();
         if (Main.Instance.Config.IsPaused)
             return;
 
@@ -106,7 +106,8 @@ internal class ServerHandler : CustomEventsHandler
             }
         }
         List<Player> NotRoll = [];
-        Timing.CallDelayed(0.2f, () => {
+        Timing.CallDelayed(0.2f, () =>
+        {
             foreach (var item in RegularRoles)
             {
                 Player player = null;

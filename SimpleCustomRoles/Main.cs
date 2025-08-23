@@ -4,7 +4,6 @@ using LabApi.Events.CustomHandlers;
 using LabApi.Features;
 using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
-using LabApiExtensions.Extensions;
 using SimpleCustomRoles.Handler;
 using SimpleCustomRoles.RoleGroup;
 using SimpleCustomRoles.RoleInfo;
@@ -20,9 +19,9 @@ internal class Main : Plugin<Config>
     #region Plugin Info
     public override string Author => "SlejmUr";
     public override string Name => "SimpleCustomRoles";
-    public override Version Version => new(0, 5, 4);
+    public override Version Version => new(0, 5, 5);
     public override string Description => "Add simple YAML Support for creating custom roles.";
-    public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
+    public override Version RequiredApiVersion => LabApiProperties.CurrentVersion;
     #endregion
 
     public List<CustomRoleBaseInfo> InWaveRoles = [];
@@ -108,6 +107,7 @@ internal class Main : Plugin<Config>
 
         CustomHandlersManager.RegisterEventsHandler(scp330Handler);
         scp330Handler = null;
+
         Logic.UnInit();
         RolesLoader.Clear();
         Harmony.UnpatchAll("SimpleCustomRole");

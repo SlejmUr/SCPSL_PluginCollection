@@ -60,7 +60,7 @@ internal static class Scp049ResurrectAbility_CheckMaxResurrections
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.ResurrectMaxResurrection.MathWithValue(currentValue);
+            return role.Scp.Scp049.ResurrectMaxResurrection.MathCalculation(currentValue);
         return currentValue;
     }
 }

@@ -23,10 +23,10 @@ public class CustomRoleBaseInfo
     public CandyInfo Candy { get; set; } = new();
     public DeniableInfo Deniable { get; set; } = new();
     public FpcInfo Fpc { get; set; } = new();
-    public FallDamageInfo FallDamage { get; set; } = new();
     public DamageInfo Damage { get; set; } = new();
     public EscapeInfo Escape { get; set; } = new();
     public ScpInfo Scp { get; set; } = new();
     public Dictionary<KillerRoleInfo, NewRoleInfo> KillerToNewRole { get; set; } = [];
     public ExtraInfo Extra { get; set; } = new();
+    public PocketInfo Pocket { get; set; } = new();
 }

@@ -1,18 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<AssemblyName>SimpleCustomRoles</AssemblyName>
-		<RootNamespace>SimpleCustomRoles</RootNamespace>
-
 		<Copyright>SlejmUr</Copyright>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);</DefineConstants>
 		<!-->DefineConstants>$(DefineConstants);ENABLEEFFECTHUD</DefineConstants-->
 	</PropertyGroup>
-	<ItemGroup>
-	  <Folder Include="ExampleRoles\" />
-	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Lib.Harmony" Version="2.2.2" />
 	  <Reference Include="LabApiExtensions">

@@ -11,19 +11,19 @@ namespace SimpleCustomRoles.Patches;
 [HarmonyPatch(typeof(Scp173BreakneckSpeedsAbility), "set_IsActive")]
 internal static class Scp173BreakneckSpeedsAbility_set_IsActive
 {
-	internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-	{
-		List<CodeInstruction> code = [.. instructions];
-		// get the current value.
-		var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R8);
-		var inst = code[index];
-		var const_value = inst.operand;
+    internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    {
+        List<CodeInstruction> code = [.. instructions];
+        // get the current value.
+        var index = code.FindIndex(x => x.opcode == OpCodes.Ldc_R8);
+        var inst = code[index];
+        var const_value = inst.operand;
 
-		// add after the field loaded
-		code.InsertRange(index, [
+        // add after the field loaded
+        code.InsertRange(index, [
             // this.Owner
             new(OpCodes.Ldarg_0),
-			new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp173Role>), nameof(StandardSubroutine<Scp173Role>.Owner))),
+            new(OpCodes.Callvirt, PropertyGetter(typeof(StandardSubroutine<Scp173Role>), nameof(StandardSubroutine<Scp173Role>.Owner))),
             
             // <value>
             new(OpCodes.Ldc_R8, const_value),
@@ -36,13 +36,13 @@ internal static class Scp173BreakneckSpeedsAbility_set_IsActive
         code.Remove(inst);
 
         return code;
-	}
+    }
 
-	internal static double BreakneckRechargeTime(ReferenceHub referenceHub, double currentValue)
-	{
-		Player player = Player.Get(referenceHub);
-		if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-			return role.Scp.Scp173.BreakneckRechargeTime.MathWithValue((float)currentValue);
-		return currentValue;
-	}
+    internal static double BreakneckRechargeTime(ReferenceHub referenceHub, double currentValue)
+    {
+        Player player = Player.Get(referenceHub);
+        if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
+            return role.Scp.Scp173.BreakneckRechargeTime.MathCalculation((float)currentValue);
+        return currentValue;
+    }
 }

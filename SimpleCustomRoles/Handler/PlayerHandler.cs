@@ -3,8 +3,6 @@ using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
-using LabApiExtensions.Enums;
-using LabApiExtensions.Extensions;
 using MEC;
 using SimpleCustomRoles.Helpers;
 using SimpleCustomRoles.RoleInfo;
@@ -17,18 +15,10 @@ public class PlayerHandler : CustomEventsHandler
 {
     public override void OnPlayerChangingRole(PlayerChangingRoleEventArgs ev)
     {
+        ev.Player.ClearBroadcasts();
         PlayerEscaped.Remove(ev.Player);
-        if (ev.ChangeReason != PlayerRoles.RoleChangeReason.None)
+        if (ev.ChangeReason is not PlayerRoles.RoleChangeReason.None)
             CustomRoleHelpers.UnSetCustomInfoToPlayer(ev.Player, false);
-        if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Destroyed)
-            return;
-        if (ev.ChangeReason == PlayerRoles.RoleChangeReason.Died)
-            return;
-        if (ev.NewRole == PlayerRoles.RoleTypeId.None)
-            return;
-        if (ev.NewRole == PlayerRoles.RoleTypeId.Destroyed)
-            return;
-        Timing.CallDelayed(0.2f, () => AppearanceSyncExtension.ForceSync(ev.Player));
     }
 
     public override void OnPlayerDroppingItem(PlayerDroppingItemEventArgs ev)
@@ -42,17 +32,16 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerHurting(PlayerHurtingEventArgs ev)
     {
-        // TODO: Rewrite this with any damage.
         float Damage = ev.DamageHandler.GetDamageValue();
         DamageType damageType = ev.DamageHandler.GetDamageType();
-        if (ev.Attacker != null && CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var attacker_role))
+        if (ev.Attacker is not null && CustomRoleHelpers.TryGetCustomRole(ev.Attacker, out var attacker_role))
         {
-            if (attacker_role.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType))
-                Damage = attacker_role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);  
+            if (attacker_role.Damage.DamageDealt.Any(x => x.Key.DamageType == damageType || x.Key.DamageType == DamageType.Any))
+                Damage = attacker_role.Damage.DamageDealt.CalculateDamage(ev.DamageHandler, Damage, damageType);
         }
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var player_role))
         {
-            if (player_role.Damage.DamageReceived.Any(x => x.Key.DamageType == damageType))
+            if (player_role.Damage.DamageReceived.Any(x => x.Key.DamageType == damageType || x.Key.DamageType == DamageType.Any))
                 Damage = player_role.Damage.DamageReceived.CalculateDamage(ev.DamageHandler, Damage, damageType);
         }
         ev.DamageHandler.SetDamageValue(Damage);
@@ -61,14 +50,13 @@ public class PlayerHandler : CustomEventsHandler
 
     public override void OnPlayerChangedSpectator(PlayerChangedSpectatorEventArgs ev)
     {
-        if (ev.OldTarget == null && ev.NewTarget == null)
+        if (ev.OldTarget is null && ev.NewTarget is null)
             return;
-        if (ev.OldTarget != null && CustomRoleHelpers.Contains(ev.OldTarget))
+        if (ev.OldTarget is not null && CustomRoleHelpers.Contains(ev.OldTarget))
         {
-            // todo dont clear, just queue
             ev.Player.ClearBroadcasts();
         }
-        if (ev.NewTarget != null && CustomRoleHelpers.TryGetCustomRole(ev.NewTarget, out var role))
+        if (ev.NewTarget is not null && CustomRoleHelpers.TryGetCustomRole(ev.NewTarget, out var role))
         {
             Events.TriggerRoleSpectated(ev.NewTarget, role, ev.Player);
             if (!role.Display.RoleCanDisplay)
@@ -91,7 +79,7 @@ public class PlayerHandler : CustomEventsHandler
             ev.UsableItem.IsUsing = false;
             return;
         }
-        if (ev.UsableItem.Type != ItemType.SCP500)
+        if (ev.UsableItem.Type is not ItemType.SCP500)
             return;
         Timing.CallDelayed(0.3f, () =>
         {
@@ -114,7 +102,6 @@ public class PlayerHandler : CustomEventsHandler
         if (!deniable.CanUse)
         {
             ev.IsAllowed = false;
-            return;
         }
     }
 
@@ -128,7 +115,7 @@ public class PlayerHandler : CustomEventsHandler
         if (role.KillerToNewRole.Count == 0)
             return;
 
-        var kv = role.KillerToNewRole.Where(x=>
+        var kv = role.KillerToNewRole.Where(x =>
             x.Key.KillerCustom == role.Rolename ||
             x.Key.KillerRole == ev.Attacker.Role ||
             x.Key.KillerTeam == ev.Attacker.Team
@@ -151,6 +138,7 @@ public class PlayerHandler : CustomEventsHandler
         Player player = ev.Player;
         if (PlayerEscaped.Contains(player))
             return;
+        List<Pickup> droppedItems = [];
         if (!CustomRoleHelpers.TryGetCustomRole(player, out var role))
         {
             if (ev.EscapeScenario == Escape.EscapeScenarioType.Custom)
@@ -163,19 +151,13 @@ public class PlayerHandler : CustomEventsHandler
             var roleTypeToEscapeTo = potentialEscapeRoles.Select(static x => x.Value).FirstOrDefault();
             if (roleTypeToEscapeTo == PlayerRoles.RoleTypeId.None)
                 return;
-            List<Pickup> droppedItems = [];
             foreach (var item in player.Items.ToList())
             {
                 var dropped = item.DropItem();
                 dropped.IsLocked = true;
                 droppedItems.Add(dropped);
             }
-            ev.IsAllowed = true;
-            ev.NewRole = roleTypeToEscapeTo;
-            ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
-            PlayerEscaped.Add(player);
-            Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
-            Timing.CallDelayed(3.5f, () => 
+            Timing.CallDelayed(2.5f, () =>
             {
                 foreach (var item in droppedItems)
                 {
@@ -184,6 +166,11 @@ public class PlayerHandler : CustomEventsHandler
                     item.IsInUse = false;
                 }
             });
+            ev.IsAllowed = true;
+            ev.NewRole = roleTypeToEscapeTo;
+            ev.EscapeScenario = Escape.EscapeScenarioType.Custom;
+            PlayerEscaped.Add(player);
+            Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
             return;
         }
 
@@ -200,16 +187,24 @@ public class PlayerHandler : CustomEventsHandler
             return;
         ev.IsAllowed = false;
         CustomRoleInfoStorage storage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
-        foreach ( var item in player.Items.ToList())
+        foreach (var item in player.Items.ToList())
         {
             var dropped = item.DropItem();
             dropped.IsLocked = true;
-            storage.ItemsAfterEscaped.Add(dropped);
+            droppedItems.Add(dropped);
         }
+        Timing.CallDelayed(2.5f, () =>
+        {
+            foreach (var item in droppedItems)
+            {
+                item.Position = player.Position;
+                item.IsLocked = false;
+                item.IsInUse = false;
+            }
+        });
         var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
         PlayerEscaped.Add(player);
-        Timing.CallDelayed(1.5f, ()=> PlayerEscaped.Remove(player));
-        Timing.CallDelayed(3.5f, storage.ItemsAfterEscaped.Clear);
+        Timing.CallDelayed(1.5f, () => PlayerEscaped.Remove(player));
     }
 
     public override void OnServerWaveRespawned(WaveRespawnedEventArgs ev)
@@ -236,10 +231,6 @@ public class PlayerHandler : CustomEventsHandler
         foreach (var item in tmp)
         {
             Main.Instance.InWaveRoles.Remove(item);
-        }
-        foreach (var item in ev.Players)
-        {
-            AppearanceSyncExtension.ForceSync(item);
         }
     }
 }

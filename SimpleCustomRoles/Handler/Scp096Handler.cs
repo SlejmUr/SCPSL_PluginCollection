@@ -30,7 +30,7 @@ public class Scp096Handler : CustomEventsHandler
     }
 
     public override void OnScp096TryingNotToCry(Scp096TryingNotToCryEventArgs ev)
-    {   
+    {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
             ev.IsAllowed = role.Scp.Scp096.CanTryingNotToCry;
     }
@@ -38,6 +38,6 @@ public class Scp096Handler : CustomEventsHandler
     public override void OnScp096Enraging(Scp096EnragingEventArgs ev)
     {
         if (CustomRoleHelpers.TryGetCustomRole(ev.Player, out var role))
-            ev.InitialDuration = role.Scp.Scp096.Enraging.Math.MathWithFloat(ev.InitialDuration, role.Scp.Scp096.Enraging.Value);
+            ev.InitialDuration = role.Scp.Scp096.Enraging.MathCalculation(ev.InitialDuration);
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace SimpleCustomRoles.RoleYaml;
+﻿namespace SimpleCustomRoles.RoleYaml;
 
 public class Deniable
 {

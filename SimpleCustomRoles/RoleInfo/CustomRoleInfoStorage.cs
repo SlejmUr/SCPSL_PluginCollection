@@ -3,9 +3,7 @@ using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.Modules;
 using LabApi.Features.Stores;
 using LabApi.Features.Wrappers;
-using LabApiExtensions.Extensions;
 using MEC;
-using PlayerRoles.FirstPersonControl;
 using PlayerRoles.PlayableScps.Scp049;
 using PlayerRoles.PlayableScps.Scp106;
 using PlayerRoles.PlayableScps.Scp1507;
@@ -23,7 +21,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     private bool onDefaultScale;
     public CustomRoleBaseInfo Role;
     public string OldCustomInfo = string.Empty;
-    public List<Pickup> ItemsAfterEscaped = [];
     public bool ResetRole { get; set; }
     public void Apply()
     {
@@ -36,8 +33,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     {
         Role = null;
         Owner.IsBypassEnabled = false;
-        ScaleHelper.SetScale(Owner, Vector3.one, false, true);
-        AppearanceSyncExtension.RemovePlayer(Owner, false);
+        ScaleHelper.SetScale(Owner, Vector3.one);
         Owner.Position += Vector3.up;
         if (string.IsNullOrEmpty(OldCustomInfo))
             OldCustomInfo = string.Empty;
@@ -51,7 +47,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         Vector3 scale = Role.Fpc.Scale;
         if (!onDefaultScale)
             scale = Vector3.one;
-        ScaleHelper.SetScale(Owner, scale, false, true);
+        ScaleHelper.SetScale(Owner, scale);
 
         onDefaultScale = !onDefaultScale;
     }
@@ -75,7 +71,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         yield return Timing.WaitForOneFrame;
         SetFpc();
         SetCustomInfo();
-        SetExtraFpc();
         SetScpRoleInfos();
     }
 
@@ -172,14 +167,6 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
                 Server.RunCommand(string.Format(Main.Instance.Config.CustomItemCommand, item, Owner.PlayerId));
             }
         }
-
-        foreach (var item in ItemsAfterEscaped)
-        {
-            item.Position = Owner.Position;
-            item.IsLocked = false;
-            if (!Owner.IsInventoryFull)
-                Owner.AddItem(item);
-        }
     }
 
     private void SetMaxStats()
@@ -187,11 +174,11 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 #if ENABLEEFFECTHUD
         float originalMaxHealth = Owner.MaxHealth;
 #endif
-        Owner.MaxHealth = Role.Stats.MaxHealth.Math.MathWithFloat(Owner.MaxHealth, Role.Stats.MaxHealth.Value);
-        Owner.MaxArtificialHealth = Role.Stats.MaxAhp.Math.MathWithFloat(Owner.MaxArtificialHealth, Role.Stats.MaxAhp.Value);
-        Owner.MaxHumeShield = Role.Stats.MaxHumeShield.Math.MathWithFloat(Owner.MaxHumeShield, Role.Stats.MaxHumeShield.Value);
+        Owner.MaxHealth = Role.Stats.MaxHealth.MathCalculation(Owner.MaxHealth);
+        Owner.MaxArtificialHealth = Role.Stats.MaxAhp.MathCalculation(Owner.MaxArtificialHealth);
+        Owner.MaxHumeShield = Role.Stats.MaxHumeShield.MathCalculation(Owner.MaxHumeShield);
         var max = Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue;
-        max = Role.Stats.MaxStamina.Math.MathWithFloat(max, Role.Stats.MaxStamina.Value);
+        max = Role.Stats.MaxStamina.MathCalculation(max);
         Owner.ReferenceHub.playerStats.GetModule<StaminaStat>().MaxValue = max;
 #if ENABLEEFFECTHUD
         EffectOnHUD.ShowEffects.AddHpModifier(Owner, "Custom Role", (int)(Owner.MaxHealth - originalMaxHealth));
@@ -200,9 +187,9 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
 
     private void SetStats()
     {
-        Owner.Health = Role.Stats.Health.Math.MathWithFloat(Owner.Health, Role.Stats.Health.Value);
-        Owner.ArtificialHealth = Role.Stats.Ahp.Math.MathWithFloat(Owner.ArtificialHealth, Role.Stats.Ahp.Value);
-        Owner.HumeShield = Role.Stats.HumeShield.Math.MathWithFloat(Owner.HumeShield, Role.Stats.HumeShield.Value);
+        Owner.Health = Role.Stats.Health.MathCalculation(Owner.Health);
+        Owner.ArtificialHealth = Role.Stats.Ahp.MathCalculation(Owner.ArtificialHealth);
+        Owner.HumeShield = Role.Stats.HumeShield.MathCalculation(Owner.HumeShield);
         Owner.Gravity = Role.Stats.Gravity;
     }
 
@@ -231,21 +218,27 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
     private void SetFpc()
     {
         // Scale
-        
+
         if (Role.Fpc.Scale != Vector3.one)
         {
-            ScaleHelper.SetScale(Owner, Role.Fpc.Scale, false, true);
+            ScaleHelper.SetScale(Owner, Role.Fpc.Scale);
         }
 
         if (Role.Fpc.FakeScale != Vector3.one)
         {
-            ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale, true, true);
+            ScaleHelper.SetScale(Owner, Role.Fpc.FakeScale, true);
         }
 
         //  Appearance
         if (Role.Fpc.Appearance != PlayerRoles.RoleTypeId.None)
         {
-            AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
+            /*
+            foreach (var item in Player.ReadyList.Where(x => x != Owner))
+            {
+                FpcServerPositionDistributor.SendRole(item.ReferenceHub, Owner.ReferenceHub, Role.Fpc.Appearance);
+            }
+            */
+            //AppearanceSyncExtension.AddPlayer(Owner, Role.Fpc.Appearance);
         }
         // Voice Channel
         if (Role.Fpc.VoiceChatChannel != VoiceChat.VoiceChatChannel.None)
@@ -255,41 +248,29 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         }
     }
 
-    private void SetExtraFpc()
-    {
-        if (Owner.RoleBase is not FpcStandardRoleBase fpcStandardRoleBase)
-            return;
-        fpcStandardRoleBase.FpcModule.FallDamageSettings.Enabled = Role.FallDamage.Enabled;
-
-        Role.FallDamage.Absolute.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.Absolute);
-        Role.FallDamage.ImmunityTime.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.ImmunityTime);
-        Role.FallDamage.MinVelocity.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.MinVelocity);
-        Role.FallDamage.Power.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.Power);
-        Role.FallDamage.MaxDamage.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.MaxDamage);
-        Role.FallDamage.Multiplier.MathWithValue(ref fpcStandardRoleBase.FpcModule.FallDamageSettings.Multiplier);
-    }
-
     private void SetHints()
     {
-        bool alreadyhaveinfo = false;
-        if (Role.Hint.Broadcast != string.Empty && Role.Hint.Hint != string.Empty)
+        bool useOriginal = true;
+        if (!string.IsNullOrEmpty(Role.Hint.Broadcast))
         {
-            alreadyhaveinfo = true;
-            Server.SendBroadcast(Owner, Role.Hint.Broadcast, Role.Hint.BroadcastDuration);
-            Owner.SendHint(Role.Hint.Hint, Role.Hint.HintDuration);
-
+            useOriginal = true;
+            Events.TriggerShowBroadcast(Owner, Role, ref useOriginal);
+            if (useOriginal)
+                Server.SendBroadcast(Owner, Role.Hint.Broadcast, Role.Hint.BroadcastDuration);
         }
-        if (Role.Hint.Broadcast != string.Empty && !alreadyhaveinfo)
+        if (!string.IsNullOrEmpty(Role.Hint.Hint))
         {
-            Server.SendBroadcast(Owner, Role.Hint.Broadcast, Role.Hint.BroadcastDuration);
+            useOriginal = true;
+            Events.TriggerShowHint(Owner, Role, ref useOriginal);
+            if (useOriginal)
+                Owner.SendHint(Role.Hint.Hint, Role.Hint.HintDuration);
         }
-        if (Role.Hint.Hint != string.Empty)
+        if (!string.IsNullOrEmpty(Role.Hint.BroadcastAll))
         {
-            Owner.SendHint(Role.Hint.Hint, Role.Hint.HintDuration);
-        }
-        if (Role.Hint.BroadcastAll != string.Empty)
-        {
-            Server.SendBroadcast(Role.Hint.BroadcastAll, Role.Hint.BroadcastAllDuration);
+            useOriginal = true;
+            Events.TriggerShowBroadcastAll(Owner, Role, ref useOriginal);
+            if (useOriginal)
+                Server.SendBroadcast(Role.Hint.BroadcastAll, Role.Hint.BroadcastAllDuration);
         }
     }
 
@@ -309,23 +290,23 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         {
             if (scp049Role.SubroutineModule.TryGetSubroutine(out Scp049AttackAbility scp049AttackAbility))
             {
-                Role.Scp.Scp049.AttackEffectDuration.MathWithValue(ref scp049AttackAbility._statusEffectDuration);
+                Role.Scp.Scp049.AttackEffectDuration.MathCalculation(ref scp049AttackAbility._statusEffectDuration);
             }
         }
         if (Owner.RoleBase is Scp106Role scp106Role && scp106Role != null)
         {
             if (scp106Role.SubroutineModule.TryGetSubroutine(out Scp106Attack scp106Attack))
             {
-                Role.Scp.Scp106.AttackHitCooldown.MathWithValue(ref scp106Attack._hitCooldown);
-                Role.Scp.Scp106.AttackMissCooldown.MathWithValue(ref scp106Attack._missCooldown);
-                Role.Scp.Scp106.AttackDamage.MathWithValue(ref scp106Attack._damage);
+                Role.Scp.Scp106.AttackHitCooldown.MathCalculation(ref scp106Attack._hitCooldown);
+                Role.Scp.Scp106.AttackMissCooldown.MathCalculation(ref scp106Attack._missCooldown);
+                Role.Scp.Scp106.AttackDamage.MathCalculation(ref scp106Attack._damage);
             }
         }
         if (Owner.RoleBase is Scp1507Role scp1507Role && scp1507Role != null)
         {
             if (scp1507Role.SubroutineModule.TryGetSubroutine(out Scp1507AttackAbility attackAbility))
             {
-                Role.Scp.Scp1507.AttackDamage.MathWithValue(ref attackAbility._damage);
+                Role.Scp.Scp1507.AttackDamage.MathCalculation(ref attackAbility._damage);
             }
         }
 
@@ -333,8 +314,8 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         {
             if (scp939Role.SubroutineModule.TryGetSubroutine(out Scp939AmnesticCloudAbility scp939AmnesticCloudAbility))
             {
-                Role.Scp.Scp939.CloudFailCooldown.MathWithValue(ref scp939AmnesticCloudAbility._failedCooldown);
-                Role.Scp.Scp939.CloudPlacedCooldown.MathWithValue(ref scp939AmnesticCloudAbility._placedCooldown);
+                Role.Scp.Scp939.CloudFailCooldown.MathCalculation(ref scp939AmnesticCloudAbility._failedCooldown);
+                Role.Scp.Scp939.CloudPlacedCooldown.MathCalculation(ref scp939AmnesticCloudAbility._placedCooldown);
             }
         }
     }

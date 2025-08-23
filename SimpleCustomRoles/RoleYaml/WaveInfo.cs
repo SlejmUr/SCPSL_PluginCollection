@@ -1,5 +1,4 @@
 ﻿using PlayerRoles;
-using System.ComponentModel;
 
 namespace SimpleCustomRoles.RoleYaml;
 

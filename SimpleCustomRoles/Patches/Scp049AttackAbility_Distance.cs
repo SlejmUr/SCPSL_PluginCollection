@@ -43,7 +43,7 @@ internal static class Scp049AttackAbility_Distance
     {
         Player player = Player.Get(referenceHub);
         if (CustomRoleHelpers.TryGetCustomRole(player, out var role) && role != null)
-            return role.Scp.Scp049.AttackDistance.MathWithValue(currentValue);
+            return role.Scp.Scp049.AttackDistance.MathCalculation(currentValue);
         return currentValue;
     }
 }
