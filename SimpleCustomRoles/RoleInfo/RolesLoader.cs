@@ -15,7 +15,7 @@ public static class RolesLoader
         if (Directory.Exists(Dir))
         {
             File.WriteAllText(Path.Combine(Dir, "Template.yml.d"), CustomYaml.Serializer.Serialize(CreateTemplate()));
-            foreach (var file in Directory.GetFiles(Dir))
+            foreach (var file in Directory.GetFiles(Dir, "*.yml", SearchOption.AllDirectories))
             {
                 if (file.Contains(".disable") || file.Contains(".d"))
                     continue;
