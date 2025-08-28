@@ -153,8 +153,9 @@ public class PlayerHandler : CustomEventsHandler
                 return;
             foreach (var item in player.Items.ToList())
             {
+                if (item is Scp1344Item scp1344Item)
+                    scp1344Item.Status = InventorySystem.Items.Usables.Scp1344.Scp1344Status.Idle;
                 var dropped = item.DropItem();
-                dropped.IsLocked = true;
                 droppedItems.Add(dropped);
             }
             Timing.CallDelayed(2.5f, () =>
@@ -162,8 +163,6 @@ public class PlayerHandler : CustomEventsHandler
                 foreach (var item in droppedItems)
                 {
                     item.Position = player.Position;
-                    item.IsLocked = false;
-                    item.IsInUse = false;
                 }
             });
             ev.IsAllowed = true;
@@ -189,8 +188,9 @@ public class PlayerHandler : CustomEventsHandler
         CustomRoleInfoStorage storage = CustomDataStore.GetOrAdd<CustomRoleInfoStorage>(player);
         foreach (var item in player.Items.ToList())
         {
+            if (item is Scp1344Item scp1344Item)
+                scp1344Item.Status = InventorySystem.Items.Usables.Scp1344.Scp1344Status.Idle;
             var dropped = item.DropItem();
-            dropped.IsLocked = true;
             droppedItems.Add(dropped);
         }
         Timing.CallDelayed(2.5f, () =>
@@ -198,8 +198,6 @@ public class PlayerHandler : CustomEventsHandler
             foreach (var item in droppedItems)
             {
                 item.Position = player.Position;
-                item.IsLocked = false;
-                item.IsInUse = false;
             }
         });
         var success = CustomRoleHelpers.SetNewRole(player, roleToEscapeTo, true);
