@@ -248,7 +248,7 @@ public class CustomRoleInfoStorage(Player owner) : CustomDataStore(owner)
         }
     }
 
-    private void SetHints()
+    internal void SetHints()
     {
         bool useOriginal = true;
         if (!string.IsNullOrEmpty(Role.Hint.Broadcast))
